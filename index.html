@@ -81,6 +81,14 @@ input,select,textarea{font-family:var(--font-body);}
 .del-saved:hover{color:var(--red);}
 .empty-saved{font-size:12px;color:var(--text3);font-style:italic;padding:4px 0;}
 
+/* INSTRUCTIONS */
+.instructions-section{padding:1rem;border-top:0.5px solid var(--border);background:var(--surface2);font-size:11px;line-height:1.7;color:var(--text2);}
+.instructions-section .sidebar-label{margin-bottom:.8rem;}
+.instructions-list{display:flex;flex-direction:column;gap:.6rem;}
+.instruction-item{display:flex;gap:8px;}
+.instruction-num{flex-shrink:0;width:18px;height:18px;display:flex;align-items:center;justify-content:center;background:var(--amber-bg);color:var(--amber2);border-radius:50%;font-family:var(--font-mono);font-size:9px;font-weight:500;}
+.instruction-text{flex:1;color:var(--text2);}
+
 /* MAIN — each view fills full height and scrolls internally */
 .main{display:flex;flex-direction:column;overflow:hidden;min-height:0;}
 .view{display:none;flex-direction:column;height:100%;overflow:hidden;}
@@ -261,6 +269,35 @@ input,select,textarea{font-family:var(--font-body);}
     <div class="sidebar-section" style="flex:1;overflow-y:auto;">
       <div class="sidebar-label">Noches guardadas</div>
       <div class="saved-list" id="saved-list"></div>
+    </div>
+    <div class="instructions-section">
+      <div class="sidebar-label">Cómo usar</div>
+      <div class="instructions-list">
+        <div class="instruction-item">
+          <div class="instruction-num">1</div>
+          <div class="instruction-text">Selecciona instrumentos y cantidad de sets</div>
+        </div>
+        <div class="instruction-item">
+          <div class="instruction-num">2</div>
+          <div class="instruction-text">Haz clic en "Generar Setlist"</div>
+        </div>
+        <div class="instruction-item">
+          <div class="instruction-num">3</div>
+          <div class="instruction-text">Personaliza Sets y songs en la vista Builder</div>
+        </div>
+        <div class="instruction-item">
+          <div class="instruction-num">4</div>
+          <div class="instruction-text">Cambia el nombre de la noche</div>
+        </div>
+        <div class="instruction-item">
+          <div class="instruction-num">5</div>
+          <div class="instruction-text">Haz clic en "Guardar" para guardar</div>
+        </div>
+        <div class="instruction-item">
+          <div class="instruction-num">6</div>
+          <div class="instruction-text">Exporta tu setlist en la vista Export</div>
+        </div>
+      </div>
     </div>
   </div>
 
