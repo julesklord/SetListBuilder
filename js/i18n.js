@@ -1,7 +1,4 @@
-// ─── TRANSLATIONS ────────────────────────────────────────────────────────────
-// Add a new language: copy an existing block, change the key (e.g. 'fr'),
-// add a lang button in index.html, and add 'fr' to the setLang() call.
-// Keys marked PRESERVE are intentionally not translated (setlist, BPM, genre names, etc.)
+// ─── TRANSLATIONS ───────────────────────────────────────────────────────────
 
 // ─── I18N ────────────────────────────────────────────────────────────────────
 const i18n = {
@@ -581,3 +578,7 @@ function setLang(lang){
   });
   renderDocs();
 }
+
+// ─── APP ─────────────────────────────────────────────────────────────────────
+// Depends on: songs.js (DEFAULTS), i18n.js (i18n, tr, setLang)
+// Load order in index.html: songs.js → i18n.js → app.js

@@ -1,3 +1,4 @@
+
 :root {
   --bg:#080706;--bg2:#0e0c0a;--surface:#131110;--surface2:#1a1714;--surface3:#222018;
   --border:rgba(255,255,255,0.055);--border2:rgba(255,255,255,0.1);--border3:rgba(255,255,255,0.16);
@@ -283,3 +284,279 @@ a:hover{color:var(--gold2);}
   background: var(--gold-bg) !important;
   color: var(--gold2) !important;
 }
+
+
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE FIRST (≤ 768px)
+   Strategy:
+   - Sidebar hidden, accessible via slide-up drawer
+   - Top nav stays, gains hamburger menu
+   - Bottom bar for primary navigation
+   - All fixed widths become fluid
+   - Font sizes scale down slightly
+   - Pool table hides less-critical columns
+═══════════════════════════════════════════════════════ */
+
+/* Bottom navigation bar (mobile only, hidden on desktop) */
+.bottom-nav {
+  display: none;
+}
+
+/* Mobile drawer overlay */
+.drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 150;
+}
+.drawer-overlay.open { display: block; }
+
+/* Slide-up drawer containing sidebar content */
+.mobile-drawer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--surface);
+  border-top: 0.5px solid var(--border2);
+  border-radius: 12px 12px 0 0;
+  z-index: 160;
+  transform: translateY(100%);
+  transition: transform .25s ease;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.mobile-drawer.open { transform: translateY(0); }
+
+.drawer-handle {
+  display: none;
+  width: 36px; height: 4px;
+  background: var(--border3);
+  border-radius: 2px;
+  margin: 10px auto 6px;
+}
+
+@media (max-width: 768px) {
+
+  /* Kill the fixed-height full-viewport lock */
+  html, body {
+    height: auto;
+    overflow: auto;
+    overflow-x: hidden;
+  }
+
+  /* Stack layout vertically */
+  .app-body {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 52px - 56px); /* minus topbar and bottom nav */
+    overflow: visible;
+  }
+
+  /* Hide desktop sidebar completely */
+  .sidebar { display: none; }
+
+  /* Main panel takes full width */
+  .main {
+    width: 100%;
+    overflow: visible;
+  }
+
+  /* Views scroll naturally instead of fixed viewport */
+  .view {
+    height: auto;
+    overflow: visible;
+  }
+  .view.active { display: flex; }
+
+  /* Topbar: shrink logo, remove border from theme/lang area */
+  .topbar {
+    padding: 0 .75rem;
+    gap: .5rem;
+    height: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { font-size: 14px; }
+  .logo-sub { display: none; }
+
+  /* Nav buttons — show only icons/abbreviated */
+  .nav { gap: 1px; }
+  .nav-btn {
+    font-size: 9px;
+    padding: 4px 8px;
+    letter-spacing: .04em;
+  }
+
+  /* Theme + lang toggles: smaller */
+  #btn-dark, #btn-light {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+  .lang-btn {
+    padding: 3px 6px !important;
+    font-size: 9px !important;
+  }
+
+  /* Bottom navigation bar */
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 56px;
+    background: var(--bg2);
+    border-top: 0.5px solid var(--border2);
+    z-index: 120;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .bn-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    color: var(--text3);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    transition: color .15s;
+    border: none;
+    background: transparent;
+    padding: 0;
+  }
+  .bn-item.active { color: var(--gold2); }
+  .bn-icon {
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+  }
+  .bn-item.active .bn-icon {
+    background: var(--gold-bg);
+  }
+  /* Settings/drawer button in bottom nav */
+  .bn-settings-btn {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2px; cursor: pointer;
+    color: var(--text3);
+    font-family: var(--font-mono);
+    font-size: 9px; letter-spacing: .04em; text-transform: uppercase;
+    border: none; background: transparent; padding: 0;
+    transition: color .15s;
+  }
+  .bn-settings-btn.active { color: var(--gold2); }
+
+  /* Add bottom padding so content doesn't hide behind bottom nav */
+  .sets-area,
+  .pool-wrap,
+  .export-area,
+  .docs-area {
+    padding-bottom: 72px;
+  }
+
+  /* Builder header */
+  .bld-header { padding: .75rem 1rem .6rem; gap: 8px; }
+  .night-input { font-size: 17px; min-width: 100px; }
+  .sets-area { padding: .75rem 1rem; gap: 1rem; }
+
+  /* Set cards */
+  .set-hdr { padding: 7px 10px; }
+  .song-row { padding: 7px 10px; gap: 6px; }
+  .skey, .sbpm { display: none; } /* hide on very narrow */
+  .sbadge { display: none; }      /* hide genre badge — saves space */
+
+  /* Pool */
+  .pool-hdr { padding: .75rem 1rem .6rem; flex-wrap: wrap; gap: 6px; }
+  .pool-title { font-size: 17px; }
+  .pool-search { min-width: 100px; }
+  .pf-row { flex-wrap: wrap; gap: 3px; }
+  .pf-btn { font-size: 9px; padding: 3px 7px; }
+  .pool-wrap { padding: 0 1rem 1rem; }
+
+  /* Pool table: hide less-critical columns on mobile */
+  .pool-tbl thead th:nth-child(5),  /* key */
+  .pool-tbl thead th:nth-child(6),  /* bpm */
+  .pool-tbl thead th:nth-child(7),  /* progression */
+  .pool-tbl thead th:nth-child(8),  /* instr */
+  .pool-tbl tbody td:nth-child(5),
+  .pool-tbl tbody td:nth-child(6),
+  .pool-tbl tbody td:nth-child(7),
+  .pool-tbl tbody td:nth-child(8) {
+    display: none;
+  }
+  .pool-tbl td, .pool-tbl th { padding: 7px 5px; }
+  .pool-tbl td.pt { font-size: 12px; }
+  .pool-tbl td.pa { font-size: 11px; }
+
+  /* Pool actions */
+  .pool-actions { padding: .5rem 1rem; flex-wrap: wrap; gap: 5px; }
+  .ai-add-btn, .manual-add-btn { font-size: 10px; padding: 7px 10px; }
+
+  /* AI panel */
+  .ai-panel { margin: .5rem 1rem; }
+
+  /* Export */
+  .export-area { padding: 1rem; }
+  .export-title { font-size: 17px; }
+  .exp-btns { flex-direction: column; }
+  .exp-btn { font-size: 10px; padding: 9px; }
+
+  /* Docs */
+  .docs-area { padding: 1rem; }
+  .docs-inner { max-width: 100%; }
+  .docs-hero h1 { font-size: 26px; }
+
+  /* API bar */
+  .settings-bar {
+    flex-wrap: wrap;
+    padding: .4rem .75rem;
+    gap: 5px;
+  }
+  .api-key-input { max-width: 100%; flex: 1 1 140px; font-size: 10px; }
+  #api-provider { max-width: 110px; }
+
+  /* Modal */
+  .overlay { padding: .5rem; align-items: flex-end; }
+  .modal {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 12px 12px 0 0;
+    padding: 1.25rem 1rem;
+  }
+  .fl-2, .fl-3 { grid-template-columns: 1fr; }
+
+  /* Drawer handle */
+  .drawer-handle { display: block; }
+
+  /* Docs: step layout */
+  .docs-step { gap: 7px; }
+  .docs-step-n { font-size: 10px; }
+
+  /* Toast: full width bottom */
+  .toast {
+    left: 1rem; right: 1rem; bottom: 68px;
+    max-width: none;
+    text-align: center;
+  }
+
+  /* Quick start inside drawer */
+  .mobile-drawer .s-section { border-bottom: 0.5px solid var(--border); }
+  .mobile-drawer .s-label { font-size: 9px; }
+}
+
+/* Very narrow phones (< 380px) */
+@media (max-width: 380px) {
+  .nav-btn { font-size: 8px; padding: 3px 6px; }
+  .logo { font-size: 12px; }
+  .night-input { font-size: 15px; }
+  .stitle { font-size: 12px; }
+}
+

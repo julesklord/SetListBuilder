@@ -1,3 +1,6 @@
+// ─── SONG POOL ─────────────────────────────────────────────────────────────
+// Edit this file to add, remove or correct songs.
+
 // ─── SONG POOL (DEFAULTS) ────────────────────────────────────────────────────
 // Edit this file to add, remove or correct songs.
 // Fields: id, title, artist, genre, key, bpm, prog, energy(1-5), instr(['g','p','v'])
@@ -125,3 +128,8 @@ let apiKeys = {
   gemini: localStorage.getItem('fmg-api-key-gemini') || '',
   chatgpt: localStorage.getItem('fmg-api-key-chatgpt') || ''
 };
+
+// ─── TRANSLATIONS ────────────────────────────────────────────────────────────
+// Add a new language: copy an existing block, change the key (e.g. 'fr'),
+// add a lang button in index.html, and add 'fr' to the setLang() call.
+// Keys marked PRESERVE are intentionally not translated (setlist, BPM, genre names, etc.)

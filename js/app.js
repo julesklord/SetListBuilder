@@ -1,6 +1,5 @@
-// ─── APP ─────────────────────────────────────────────────────────────────────
-// Depends on: songs.js (DEFAULTS), i18n.js (i18n, tr, setLang)
-// Load order in index.html: songs.js → i18n.js → app.js
+// ─── APP ────────────────────────────────────────────────────────────────────
+// Depends on: songs.js → i18n.js → app.js (load order matters)
 
 // ─── PERSIST ────────────────────────────────────────────────────────────────
 function persist() {
@@ -462,7 +461,89 @@ function doExportHTML(){
     c+=`<div class="st">Set ${si+1} — ${songs.length} songs · ~${durMin(songs)} min</div>`;
     songs.forEach((s,i)=>{c+=`<div class="r"><span class="n">${i+1}</span><span class="t">${s.title}</span><span class="a">${s.artist}</span><span class="k">${s.key}</span><span class="k" style="color:#524d44">${s.bpm} bpm</span></div>`;});
   });
-  c+=`<div class="brand">Fearlessly Media Group · FMG Setlist Builder</div></body></html>`;
+  c+=`<div class="brand">Fearlessly Media Group · FMG Setlist Builder</div>
+<!-- Mobile bottom navigation -->
+<div class="bottom-nav" id="bottom-nav">
+  <button class="bn-item active" id="bn-builder" onclick="gotoView('builder');setActiveBottomNav('builder')">
+    <div class="bn-icon">♪</div>
+    <span data-i18n="nav_builder">Builder</span>
+  </button>
+  <button class="bn-item" id="bn-pool" onclick="gotoView('pool');setActiveBottomNav('pool')">
+    <div class="bn-icon">☰</div>
+    <span data-i18n="nav_pool">Pool</span>
+  </button>
+  <button class="bn-item" id="bn-export" onclick="gotoView('export');setActiveBottomNav('export')">
+    <div class="bn-icon">↓</div>
+    <span data-i18n="nav_export">Export</span>
+  </button>
+  <button class="bn-item" id="bn-docs" onclick="gotoView('docs');setActiveBottomNav('docs')">
+    <div class="bn-icon">?</div>
+    <span data-i18n="nav_docs">Docs</span>
+  </button>
+  <button class="bn-settings-btn" id="bn-settings" onclick="toggleMobileDrawer()">
+    <div class="bn-icon">⚙</div>
+    <span>Settings</span>
+  </button>
+</div>
+
+<!-- Mobile drawer overlay -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeMobileDrawer()"></div>
+
+<!-- Mobile slide-up drawer (sidebar content) -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <div class="drawer-handle"></div>
+  <div class="s-section">
+    <div class="s-label" data-i18n="instruments">Instruments tonight</div>
+    <div class="instr-row">
+      <button class="chip" id="chip-guitar-m" onclick="toggleInstr('guitar')"><div class="chip-dot"></div><span data-i18n="guitar">Guitar</span></button>
+      <button class="chip" id="chip-piano-m" onclick="toggleInstr('piano')"><div class="chip-dot"></div><span data-i18n="piano">Piano</span></button>
+      <button class="chip" id="chip-wind-m" onclick="toggleInstr('wind')"><div class="chip-dot"></div><span data-i18n="winds">Winds</span></button>
+    </div>
+  </div>
+  <div class="s-section">
+    <div class="s-label" data-i18n="sets">Sets</div>
+    <div class="sets-row">
+      <button class="sc-btn" onclick="setN(2)">2</button>
+      <button class="sc-btn on" id="sc-btn-3-m" onclick="setN(3)">3</button>
+      <button class="sc-btn" onclick="setN(4)">4</button>
+    </div>
+    <div style="margin-top:7px;">
+      <div class="s-label" data-i18n="duration">Duration per set</div>
+      <select class="sel-input" id="dur-sel-m" onchange="syncDurSel(this.value)">
+        <option value="40">~40 min</option>
+        <option value="45" selected>~45 min</option>
+        <option value="55">~55 min</option>
+        <option value="60">~60 min</option>
+      </select>
+    </div>
+    <div style="margin-top:7px;">
+      <div class="s-label" data-i18n="genres_label">Genres to include</div>
+      <div style="display:flex;flex-direction:column;gap:3px;margin-top:3px;">
+        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-blues-m" checked style="cursor:pointer;"> Blues</label>
+        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-rock-m" checked style="cursor:pointer;"> Rock</label>
+        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-pop-m" checked style="cursor:pointer;"> Pop</label>
+        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-soul-m" checked style="cursor:pointer;"> Soul</label>
+        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-funk-m" style="cursor:pointer;"> Funk</label>
+        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-rnb-m" checked style="cursor:pointer;"> R&amp;B</label>
+        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-ballad-m" checked style="cursor:pointer;"> Ballad</label>
+        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-reggae-m" style="cursor:pointer;"> Reggae</label>
+        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-latin-m" style="cursor:pointer;"> Latin</label>
+        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-jazz-m" style="cursor:pointer;"> Jazz</label>
+        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-country-m" style="cursor:pointer;"> Country</label>
+      </div>
+    </div>
+    <button class="gen-btn" onclick="generate();closeMobileDrawer();" data-i18n="generate">Generate Setlist</button>
+  </div>
+  <div class="s-section" style="border-bottom:none;">
+    <div class="s-label">Import / Export</div>
+    <div style="display:flex;gap:4px;">
+      <button class="btn-xs" onclick="exportPoolJSON()" style="flex:1;" data-i18n="btn_export_json">Export JSON</button>
+      <button class="btn-xs" onclick="document.getElementById('import-file').click()" style="flex:1;" data-i18n="btn_import_json">Import JSON</button>
+    </div>
+  </div>
+</div>
+
+</body></html>`;
   const a=document.createElement('a');
   a.href='data:text/html;charset=utf-8,'+encodeURIComponent(c);
   a.download=title.replace(/\s+/g,'-').toLowerCase()+'.html';a.click();toast(tr('toast_html_dl'));
@@ -710,3 +791,106 @@ let _genreTimer;
 });
 generate();
 }); // DOMContentLoaded
+
+// ─── MOBILE / RESPONSIVE ─────────────────────────────────────────────────────
+function isMobile(){ return window.innerWidth <= 768; }
+
+function toggleMobileDrawer(){
+  const d = document.getElementById('mobile-drawer');
+  const o = document.getElementById('drawer-overlay');
+  const isOpen = d.classList.contains('open');
+  if(isOpen){ closeMobileDrawer(); }
+  else {
+    d.classList.add('open');
+    o.classList.add('open');
+    // sync mobile drawer state with desktop sidebar
+    syncMobileDrawer();
+  }
+}
+function closeMobileDrawer(){
+  document.getElementById('mobile-drawer')?.classList.remove('open');
+  document.getElementById('drawer-overlay')?.classList.remove('open');
+}
+
+function setActiveBottomNav(v){
+  document.querySelectorAll('.bn-item').forEach(b=>b.classList.remove('active'));
+  const el = document.getElementById('bn-'+v);
+  if(el) el.classList.add('active');
+}
+
+// Keep mobile drawer chip states in sync with desktop sidebar
+function syncMobileDrawer(){
+  const imap = {g:'guitar',p:'piano',v:'wind'};
+  // instrument chips
+  ['g','p','v'].forEach(k=>{
+    const mid = 'chip-'+imap[k]+'-m';
+    const el = document.getElementById(mid);
+    if(el) el.classList.toggle('on', instrs.includes(k));
+  });
+  // genre checkboxes — sync desktop → mobile
+  const genres = ['blues','rock','pop','soul','funk','rnb','ballad','reggae','latin','jazz','country'];
+  genres.forEach(g=>{
+    const desktop = document.getElementById('genre-'+g);
+    const mobile  = document.getElementById('genre-'+g+'-m');
+    if(desktop && mobile) mobile.checked = desktop.checked;
+  });
+  // dur-sel
+  const desktopDur = document.getElementById('dur-sel');
+  const mobileDur  = document.getElementById('dur-sel-m');
+  if(desktopDur && mobileDur) mobileDur.value = desktopDur.value;
+  // set count buttons
+  [2,3,4].forEach(n=>{
+    document.querySelectorAll('.sc-btn').forEach((b,i)=>{
+      b.classList.toggle('on',[2,3,4][i]===numSets);
+    });
+  });
+}
+
+// Sync mobile dur-sel → desktop and regenerate
+function syncDurSel(val){
+  const desktop = document.getElementById('dur-sel');
+  if(desktop) desktop.value = val;
+}
+
+// Sync mobile genre checkboxes → desktop on change
+function initMobileGenreSync(){
+  const genres = ['blues','rock','pop','soul','funk','rnb','ballad','reggae','latin','jazz','country'];
+  genres.forEach(g=>{
+    const mob = document.getElementById('genre-'+g+'-m');
+    if(mob){
+      mob.addEventListener('change',()=>{
+        const desktop = document.getElementById('genre-'+g);
+        if(desktop) desktop.checked = mob.checked;
+        clearTimeout(_genreTimer);
+        _genreTimer = setTimeout(()=>generate(), 150);
+      });
+    }
+  });
+}
+
+// Patch gotoView to also update bottom nav
+const _origGotoView = gotoView;
+gotoView = function(v){
+  _origGotoView(v);
+  setActiveBottomNav(v);
+  if(isMobile()) window.scrollTo(0,0);
+};
+
+// Patch toggleInstr to sync mobile drawer chips
+const _origToggleInstr = toggleInstr;
+toggleInstr = function(i){
+  _origToggleInstr(i);
+  // sync mobile chip
+  const map = {guitar:'g',piano:'p',wind:'v'};
+  const k = map[i];
+  const mobileChip = document.getElementById('chip-'+i+'-m');
+  if(mobileChip) mobileChip.classList.toggle('on', instrs.includes(k));
+  // sync desktop chip too (in case called from mobile)
+  const desktopChip = document.getElementById('chip-'+i);
+  if(desktopChip) desktopChip.classList.toggle('on', instrs.includes(k));
+};
+
+// Init mobile on load
+document.addEventListener('DOMContentLoaded', function(){
+  initMobileGenreSync();
+});

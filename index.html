@@ -1,274 +1,524 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FMG Setlist Builder</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>FMG Setlist Builder</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-</head>
-<body>
-<div class="topbar">
-  <div class="logo">Fearlessly Media Group <span class="logo-sub">// setlist builder</span></div>
-  <div class="nav">
-    <button class="nav-btn active" onclick="gotoView('builder')" data-i18n="nav_builder">Builder</button>
-    <button class="nav-btn" onclick="gotoView('pool')" data-i18n="nav_pool">Pool</button>
-    <button class="nav-btn" onclick="gotoView('export')" data-i18n="nav_export">Export</button>
-    <button class="nav-btn" onclick="gotoView('docs')" data-i18n="nav_docs">Docs</button>
-  </div>
-  <div style="display:flex;gap:3px;padding-left:1rem;border-left:0.5px solid var(--border2);">
-    <button id="btn-dark" onclick="setTheme('dark')" style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-size:11px;cursor:pointer;transition:all .15s;" title="Dark mode">🌙</button>
-    <button id="btn-light" onclick="setTheme('light')" style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-size:11px;cursor:pointer;transition:all .15s;" title="Light mode">☀️</button>
-  </div>
-  <div style="display:flex;gap:3px;padding-left:1rem;border-left:0.5px solid var(--border2);">
-    <button class="lang-btn" data-lang="en" onclick="setLang('en')" style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">EN</button>
-    <button class="lang-btn" data-lang="es" onclick="setLang('es')" style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">ES</button>
-    <button class="lang-btn" data-lang="pt" onclick="setLang('pt')" style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">PT</button>
-    <button class="lang-btn" data-lang="ru" onclick="setLang('ru')" style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">RU</button>
-  </div>
-</div>
+  </head>
 
-<div class="app-body">
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="s-section">
-      <div class="s-label" data-i18n="instruments">Instruments tonight</div>
-      <div class="instr-row">
-        <button class="chip" id="chip-guitar" onclick="toggleInstr('guitar')"><div class="chip-dot"></div>Guitar</button>
-        <button class="chip" id="chip-piano" onclick="toggleInstr('piano')"><div class="chip-dot"></div>Piano</button>
-        <button class="chip" id="chip-wind" onclick="toggleInstr('wind')"><div class="chip-dot"></div>Winds</button>
-      </div>
-      <div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.5;font-style:italic;" data-i18n="instr_hint">Generation prioritizes songs suited to the selected instruments.</div>
-    </div>
-    <div class="s-section">
-      <div class="s-label" data-i18n="sets">Sets</div>
-      <div class="sets-row">
-        <button class="sc-btn" onclick="setN(2)">2</button>
-        <button class="sc-btn on" onclick="setN(3)">3</button>
-        <button class="sc-btn" onclick="setN(4)">4</button>
-      </div>
-      <div style="margin-top:7px;">
-        <div class="s-label" data-i18n="duration">Duration per set</div>
-        <select class="sel-input" id="dur-sel">
-          <option value="40">~40 min</option>
-          <option value="45" selected>~45 min</option>
-          <option value="55">~55 min</option>
-          <option value="60">~60 min</option>
-        </select>
-      </div>
-      <div style="margin-top:7px;">
-        <div class="s-label" style="display:flex;align-items:center;justify-content:space-between;" data-i18n="genres_label">Genres to include<span style="display:flex;gap:4px;"><button onclick="setAllGenres(true)" data-i18n="genres_all" style="font-family:var(--font-mono);font-size:8px;padding:1px 6px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:2px;cursor:pointer;">all</button><button onclick="setAllGenres(false)" data-i18n="genres_none" style="font-family:var(--font-mono);font-size:8px;padding:1px 6px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:2px;cursor:pointer;">none</button></span></div>
-        <div style="display:flex;flex-direction:column;gap:3px;margin-top:3px;">
-          <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-            <input type="checkbox" id="genre-blues" checked style="cursor:pointer;"> Blues
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-            <input type="checkbox" id="genre-rock" checked style="cursor:pointer;"> Rock
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-            <input type="checkbox" id="genre-pop" checked style="cursor:pointer;"> Pop
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-            <input type="checkbox" id="genre-soul" checked style="cursor:pointer;"> Soul
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-            <input type="checkbox" id="genre-funk" style="cursor:pointer;"> Funk
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-            <input type="checkbox" id="genre-rnb" checked style="cursor:pointer;"> R&amp;B
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-            <input type="checkbox" id="genre-ballad" checked style="cursor:pointer;"> Ballad
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-            <input type="checkbox" id="genre-reggae" style="cursor:pointer;"> Reggae
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-            <input type="checkbox" id="genre-latin" style="cursor:pointer;"> Latin
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-            <input type="checkbox" id="genre-jazz" style="cursor:pointer;"> Jazz
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-            <input type="checkbox" id="genre-country" style="cursor:pointer;"> Country
-          </label>
+  <body>
+    </head>
+
+    <body>
+      <div class="topbar">
+        <div class="logo">Fearlessly Media Group <span class="logo-sub">// setlist builder</span></div>
+        <div class="nav">
+          <button class="nav-btn active" onclick="gotoView('builder')" data-i18n="nav_builder">Builder</button>
+          <button class="nav-btn" onclick="gotoView('pool')" data-i18n="nav_pool">Pool</button>
+          <button class="nav-btn" onclick="gotoView('export')" data-i18n="nav_export">Export</button>
+          <button class="nav-btn" onclick="gotoView('docs')" data-i18n="nav_docs">Docs</button>
+        </div>
+        <div style="display:flex;gap:3px;padding-left:1rem;border-left:0.5px solid var(--border2);">
+          <button id="btn-dark" onclick="setTheme('dark')"
+            style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-size:11px;cursor:pointer;transition:all .15s;"
+            title="Dark mode">🌙</button>
+          <button id="btn-light" onclick="setTheme('light')"
+            style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-size:11px;cursor:pointer;transition:all .15s;"
+            title="Light mode">☀️</button>
+        </div>
+        <div style="display:flex;gap:3px;padding-left:1rem;border-left:0.5px solid var(--border2);">
+          <button class="lang-btn" data-lang="en" onclick="setLang('en')"
+            style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">EN</button>
+          <button class="lang-btn" data-lang="es" onclick="setLang('es')"
+            style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">ES</button>
+          <button class="lang-btn" data-lang="pt" onclick="setLang('pt')"
+            style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">PT</button>
+          <button class="lang-btn" data-lang="ru" onclick="setLang('ru')"
+            style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">RU</button>
         </div>
       </div>
-      <button class="gen-btn" data-i18n="generate" onclick="generate()">Generate Setlist</button>
-    </div>
-    <div class="s-section">
-      <div class="s-label" data-i18n="import_export" style="margin-bottom:.5rem;">Import / Export pool</div>
-      <div style="display:flex;gap:4px;">
-        <button class="btn-xs" onclick="exportPoolJSON()" data-i18n="btn_export_json" style="flex:1;">Export JSON</button>
-        <button class="btn-xs" onclick="document.getElementById('import-file').click()" data-i18n="btn_import_json" style="flex:1;">Import JSON</button>
-      </div>
-      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importPoolJSON(event)">
-    </div>
-    <div class="s-section">
-      <div class="s-label" data-i18n="saved_nights">Saved nights</div>
-      <div id="saved-list"></div>
-    </div>
-    <div class="sidebar-scroll">
-      <div class="s-section" style="border-bottom:none;">
-        <div class="s-label" data-i18n="quick_start">Quick start guide</div>
-        <div style="font-size:11px;color:var(--text2);line-height:1.7;">
-          <div style="margin-bottom:8px;" data-i18n="qs_1"><strong style="color:var(--gold);">1.</strong> Select available instruments</div>
-          <div style="margin-bottom:8px;" data-i18n="qs_2"><strong style="color:var(--gold);">2.</strong> Choose # of sets &amp; duration</div>
-          <div style="margin-bottom:8px;" data-i18n="qs_3"><strong style="color:var(--gold);">3.</strong> Pick genres to include</div>
-          <div style="margin-bottom:8px;" data-i18n="qs_4"><strong style="color:var(--gold);">4.</strong> Click Generate Setlist</div>
-          <div style="margin-bottom:8px;" data-i18n="qs_5"><strong style="color:var(--gold);">5.</strong> Drag rows to reorder songs</div>
-          <div style="margin-bottom:8px;" data-i18n="qs_6"><strong style="color:var(--gold);">6.</strong> Go to Pool to add/edit songs</div>
-          <div style="margin-bottom:8px;" data-i18n="qs_7"><strong style="color:var(--gold);">7.</strong> Export as HTML, JSON, or text</div>
-          <div style="padding:8px;background:var(--surface2);border-radius:var(--r);margin-top:10px;font-size:10px;color:var(--text3);border:0.5px solid var(--border);" data-i18n="qs_note">All data stays in your browser. No account needed.</div>
+
+      <div class="app-body">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+          <div class="s-section">
+            <div class="s-label" data-i18n="instruments">Instruments tonight</div>
+            <div class="instr-row">
+              <button class="chip" id="chip-guitar" onclick="toggleInstr('guitar')">
+                <div class="chip-dot"></div>Guitar
+              </button>
+              <button class="chip" id="chip-piano" onclick="toggleInstr('piano')">
+                <div class="chip-dot"></div>Piano
+              </button>
+              <button class="chip" id="chip-wind" onclick="toggleInstr('wind')">
+                <div class="chip-dot"></div>Winds
+              </button>
+            </div>
+            <div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.5;font-style:italic;"
+              data-i18n="instr_hint">Generation prioritizes songs suited to the selected instruments.</div>
+          </div>
+          <div class="s-section">
+            <div class="s-label" data-i18n="sets">Sets</div>
+            <div class="sets-row">
+              <button class="sc-btn" onclick="setN(2)">2</button>
+              <button class="sc-btn on" onclick="setN(3)">3</button>
+              <button class="sc-btn" onclick="setN(4)">4</button>
+            </div>
+            <div style="margin-top:7px;">
+              <div class="s-label" data-i18n="duration">Duration per set</div>
+              <select class="sel-input" id="dur-sel">
+                <option value="40">~40 min</option>
+                <option value="45" selected>~45 min</option>
+                <option value="55">~55 min</option>
+                <option value="60">~60 min</option>
+              </select>
+            </div>
+            <div style="margin-top:7px;">
+              <div class="s-label" style="display:flex;align-items:center;justify-content:space-between;"
+                data-i18n="genres_label">Genres to include<span style="display:flex;gap:4px;"><button
+                    onclick="setAllGenres(true)" data-i18n="genres_all"
+                    style="font-family:var(--font-mono);font-size:8px;padding:1px 6px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:2px;cursor:pointer;">all</button><button
+                    onclick="setAllGenres(false)" data-i18n="genres_none"
+                    style="font-family:var(--font-mono);font-size:8px;padding:1px 6px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:2px;cursor:pointer;">none</button></span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:3px;margin-top:3px;">
+                <label
+                  style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
+                  <input type="checkbox" id="genre-blues" checked style="cursor:pointer;"> Blues
+                </label>
+                <label
+                  style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
+                  <input type="checkbox" id="genre-rock" checked style="cursor:pointer;"> Rock
+                </label>
+                <label
+                  style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
+                  <input type="checkbox" id="genre-pop" checked style="cursor:pointer;"> Pop
+                </label>
+                <label
+                  style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
+                  <input type="checkbox" id="genre-soul" checked style="cursor:pointer;"> Soul
+                </label>
+                <label
+                  style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
+                  <input type="checkbox" id="genre-funk" style="cursor:pointer;"> Funk
+                </label>
+                <label
+                  style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
+                  <input type="checkbox" id="genre-rnb" checked style="cursor:pointer;"> R&amp;B
+                </label>
+                <label
+                  style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
+                  <input type="checkbox" id="genre-ballad" checked style="cursor:pointer;"> Ballad
+                </label>
+                <label
+                  style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
+                  <input type="checkbox" id="genre-reggae" style="cursor:pointer;"> Reggae
+                </label>
+                <label
+                  style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
+                  <input type="checkbox" id="genre-latin" style="cursor:pointer;"> Latin
+                </label>
+                <label
+                  style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
+                  <input type="checkbox" id="genre-jazz" style="cursor:pointer;"> Jazz
+                </label>
+                <label
+                  style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
+                  <input type="checkbox" id="genre-country" style="cursor:pointer;"> Country
+                </label>
+              </div>
+            </div>
+            <button class="gen-btn" data-i18n="generate" onclick="generate()">Generate Setlist</button>
+          </div>
+          <div class="s-section">
+            <div class="s-label" data-i18n="import_export" style="margin-bottom:.5rem;">Import / Export pool</div>
+            <div style="display:flex;gap:4px;">
+              <button class="btn-xs" onclick="exportPoolJSON()" data-i18n="btn_export_json" style="flex:1;">Export
+                JSON</button>
+              <button class="btn-xs" onclick="document.getElementById('import-file').click()"
+                data-i18n="btn_import_json" style="flex:1;">Import JSON</button>
+            </div>
+            <input type="file" id="import-file" accept=".json" style="display:none" onchange="importPoolJSON(event)">
+          </div>
+          <div class="s-section">
+            <div class="s-label" data-i18n="saved_nights">Saved nights</div>
+            <div id="saved-list"></div>
+          </div>
+          <div class="sidebar-scroll">
+            <div class="s-section" style="border-bottom:none;">
+              <div class="s-label" data-i18n="quick_start">Quick start guide</div>
+              <div style="font-size:11px;color:var(--text2);line-height:1.7;">
+                <div style="margin-bottom:8px;" data-i18n="qs_1"><strong style="color:var(--gold);">1.</strong> Select
+                  available instruments</div>
+                <div style="margin-bottom:8px;" data-i18n="qs_2"><strong style="color:var(--gold);">2.</strong> Choose #
+                  of sets &amp; duration</div>
+                <div style="margin-bottom:8px;" data-i18n="qs_3"><strong style="color:var(--gold);">3.</strong> Pick
+                  genres to include</div>
+                <div style="margin-bottom:8px;" data-i18n="qs_4"><strong style="color:var(--gold);">4.</strong> Click
+                  Generate Setlist</div>
+                <div style="margin-bottom:8px;" data-i18n="qs_5"><strong style="color:var(--gold);">5.</strong> Drag
+                  rows to reorder songs</div>
+                <div style="margin-bottom:8px;" data-i18n="qs_6"><strong style="color:var(--gold);">6.</strong> Go to
+                  Pool to add/edit songs</div>
+                <div style="margin-bottom:8px;" data-i18n="qs_7"><strong style="color:var(--gold);">7.</strong> Export
+                  as HTML, JSON, or text</div>
+                <div
+                  style="padding:8px;background:var(--surface2);border-radius:var(--r);margin-top:10px;font-size:10px;color:var(--text3);border:0.5px solid var(--border);"
+                  data-i18n="qs_note">All data stays in your browser. No account needed.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN -->
+        <div class="main">
+
+          <!-- API KEY BAR -->
+          <div class="settings-bar warn" id="api-bar">
+            <span class="api-status missing" id="api-status" data-i18n="api_required">✦ API key required for AI
+              features</span>
+            <select class="sel-input" id="api-provider" style="max-width:120px;flex-shrink:0;"
+              onchange="updateApiLabel()">
+              <option value="claude">Claude (Anthropic)</option>
+              <option value="gemini">Gemini (Google)</option>
+              <option value="chatgpt">ChatGPT (OpenAI)</option>
+            </select>
+            <input class="api-key-input" id="api-key-input" type="password" placeholder="sk-ant-… or sk-… or sk-proj-…">
+            <button class="api-save-btn" onclick="saveApiKey()">Save</button>
+            <button class="btn-xs" onclick="gotoView('docs')" style="white-space:nowrap;">What is this?</button>
+          </div>
+
+          <!-- BUILDER VIEW -->
+          <div class="view active" id="view-builder">
+            <div class="bld-header">
+              <input class="night-input" id="night-title" placeholder="Night name…" value="Night 1">
+              <div class="hdr-actions">
+                <button class="btn-xs" onclick="saveNight()" data-i18n="btn_save_night">Save</button>
+                <button class="btn-xs ac" onclick="gotoView('export')" data-i18n="btn_export_bld">Export</button>
+              </div>
+            </div>
+            <div class="sets-area" id="sets-area"></div>
+          </div>
+
+          <!-- POOL VIEW -->
+          <div class="view" id="view-pool">
+            <div class="pool-hdr">
+              <div class="pool-title">Song pool</div><span id="pool-count"
+                style="font-family:var(--font-mono);font-size:10px;color:var(--text3);align-self:center;margin-left:6px;"></span>
+              <input class="pool-search" id="pool-search" placeholder="Search…" oninput="renderPool()"
+                data-i18n-ph="search">
+              <div class="pf-row">
+                <button class="pf-btn on" onclick="setPF('all',this)">All</button>
+                <button class="pf-btn" onclick="setPF('Blues',this)">Blues</button>
+                <button class="pf-btn" onclick="setPF('Rock',this)">Rock</button>
+                <button class="pf-btn" onclick="setPF('Pop',this)">Pop</button>
+                <button class="pf-btn" onclick="setPF('Soul',this)">Soul</button>
+                <button class="pf-btn" onclick="setPF('Funk',this)">Funk</button>
+                <button class="pf-btn" onclick="setPF('R&B',this)">R&ampB</button>
+                <button class="pf-btn" onclick="setPF('Ballad',this)">Ballad</button>
+                <button class="pf-btn" onclick="setPF('Reggae',this)">Reggae</button>
+                <button class="pf-btn" onclick="setPF('Latin',this)">Latin</button>
+                <button class="pf-btn" onclick="setPF('Jazz',this)">Jazz</button>
+                <button class="pf-btn" onclick="setPF('Country',this)">Country</button>
+              </div>
+            </div>
+            <div class="pool-actions">
+              <button class="ai-add-btn" onclick="toggleAIPanel()">
+                <span class="ai-spark">✦</span> Add with AI
+              </button>
+              <button class="manual-add-btn" onclick="openAddModal()">+ Manual</button>
+            </div>
+            <!-- AI PANEL -->
+            <div class="ai-panel" id="ai-panel">
+              <div class="ai-panel-title" data-i18n="ai_title"><span class="ai-spark">✦</span> AI song assistant</div>
+              <div class="ai-tabs">
+                <button class="ai-tab on" id="tab-lookup" onclick="setAITab('lookup')">Song lookup</button>
+                <button class="ai-tab" id="tab-suggest" onclick="setAITab('suggest')">Suggest by mood</button>
+              </div>
+              <div id="ai-lookup-ui">
+                <div class="ai-input-row">
+                  <input class="ai-input" id="ai-lookup-input" placeholder="e.g. Red House – Jimi Hendrix"
+                    onkeydown="if(event.key==='Enter')runAI()">
+                  <button class="ai-go-btn" id="ai-go-btn" onclick="runAI()">Fill info</button>
+                </div>
+              </div>
+              <div id="ai-suggest-ui" style="display:none;">
+                <div class="ai-input-row">
+                  <input class="ai-input" id="ai-suggest-input"
+                    placeholder="e.g. slow blues, guitar, melancholic, key of Am"
+                    onkeydown="if(event.key==='Enter')runAI()">
+                  <button class="ai-go-btn" id="ai-go-btn2" onclick="runAI()">Suggest</button>
+                </div>
+              </div>
+              <div class="ai-status" id="ai-status"></div>
+              <div class="ai-results" id="ai-results"></div>
+            </div>
+            <div class="pool-wrap">
+              <table class="pool-tbl">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Song</th>
+                    <th>Artist</th>
+                    <th>Genre</th>
+                    <th>Key</th>
+                    <th>BPM</th>
+                    <th>Progression</th>
+                    <th>Instr.</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="pool-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- EXPORT VIEW -->
+          <div class="view" id="view-export">
+            <div class="export-area">
+              <div class="export-title" data-i18n="export_title">Export setlist</div>
+              <div class="export-preview" id="export-preview"></div>
+              <div class="exp-btns">
+                <button class="exp-btn" onclick="doExportHTML()" data-i18n="btn_dl_html">Download HTML</button>
+                <button class="exp-btn" onclick="doExportText()" data-i18n="btn_copy_text">Copy as text</button>
+                <button class="exp-btn" onclick="doExportJSON()" data-i18n="btn_dl_json">Export JSON</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- DOCS VIEW -->
+          <div class="view" id="view-docs">
+            <div class="docs-area" id="docs-area"></div>
+          </div>
+
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- MAIN -->
-  <div class="main">
-
-    <!-- API KEY BAR -->
-    <div class="settings-bar warn" id="api-bar">
-      <span class="api-status missing" id="api-status" data-i18n="api_required">✦ API key required for AI features</span>
-      <select class="sel-input" id="api-provider" style="max-width:120px;flex-shrink:0;" onchange="updateApiLabel()">
-        <option value="claude">Claude (Anthropic)</option>
-        <option value="gemini">Gemini (Google)</option>
-        <option value="chatgpt">ChatGPT (OpenAI)</option>
-      </select>
-      <input class="api-key-input" id="api-key-input" type="password" placeholder="sk-ant-… or sk-… or sk-proj-…">
-      <button class="api-save-btn" onclick="saveApiKey()">Save</button>
-      <button class="btn-xs" onclick="gotoView('docs')" style="white-space:nowrap;">What is this?</button>
-    </div>
-
-    <!-- BUILDER VIEW -->
-    <div class="view active" id="view-builder">
-      <div class="bld-header">
-        <input class="night-input" id="night-title" placeholder="Night name…" value="Night 1">
-        <div class="hdr-actions">
-          <button class="btn-xs" onclick="saveNight()" data-i18n="btn_save_night">Save</button>
-          <button class="btn-xs ac" onclick="gotoView('export')" data-i18n="btn_export_bld">Export</button>
+      <!-- SONG MODAL -->
+      <div class="overlay" id="song-modal">
+        <div class="modal">
+          <div class="modal-title" id="modal-title">New song</div>
+          <div class="fl fl-2">
+            <div><label class="flabel">Title</label><input class="finput" id="m-title" placeholder="The Thrill Is Gone">
+            </div>
+            <div><label class="flabel">Artist</label><input class="finput" id="m-artist" placeholder="B.B. King"></div>
+          </div>
+          <div class="fl fl-3">
+            <div><label class="flabel">Genre</label><select class="finput" id="m-genre">
+                <option>Blues</option>
+                <option>Rock</option>
+                <option>Pop</option>
+                <option>Soul</option>
+                <option>Funk</option>
+                <option>R&B</option>
+                <option>Ballad</option>
+                <option>Reggae</option>
+                <option>Latin</option>
+                <option>Jazz</option>
+                <option>Country</option>
+              </select></div>
+            <div><label class="flabel">Key</label><input class="finput" id="m-key" placeholder="Am"></div>
+            <div><label class="flabel">BPM</label><input class="finput" id="m-bpm" type="number" placeholder="72"></div>
+          </div>
+          <div class="fl">
+            <div><label class="flabel">Progression</label><input class="finput" id="m-prog" placeholder="I–IV–I–V–IV–I">
+            </div>
+          </div>
+          <div class="fl">
+            <div><label class="flabel">Energy (1–5)</label><input class="finput" id="m-energy" type="number" min="1"
+                max="5" placeholder="3"></div>
+          </div>
+          <div class="fl">
+            <label class="flabel">Best instruments</label>
+            <div style="display:flex;gap:5px;margin-top:3px;">
+              <button class="itoggle on" id="mt-g" onclick="togMI('g')">Guitar</button>
+              <button class="itoggle" id="mt-p" onclick="togMI('p')">Piano</button>
+              <button class="itoggle" id="mt-v" onclick="togMI('v')">Winds</button>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()" data-i18n="btn_cancel">Cancel</button>
+            <button class="btn-save" onclick="saveSong()" data-i18n="btn_save">Save</button>
+          </div>
         </div>
       </div>
-      <div class="sets-area" id="sets-area"></div>
-    </div>
+      <div class="toast" id="toast"></div>
 
-    <!-- POOL VIEW -->
-    <div class="view" id="view-pool">
-      <div class="pool-hdr">
-        <div class="pool-title">Song pool</div><span id="pool-count" style="font-family:var(--font-mono);font-size:10px;color:var(--text3);align-self:center;margin-left:6px;"></span>
-        <input class="pool-search" id="pool-search" placeholder="Search…" oninput="renderPool()" data-i18n-ph="search">
-      <div class="pf-row">
-          <button class="pf-btn on" onclick="setPF('all',this)">All</button>
-          <button class="pf-btn" onclick="setPF('Blues',this)">Blues</button>
-          <button class="pf-btn" onclick="setPF('Rock',this)">Rock</button>
-          <button class="pf-btn" onclick="setPF('Pop',this)">Pop</button>
-          <button class="pf-btn" onclick="setPF('Soul',this)">Soul</button>
-          <button class="pf-btn" onclick="setPF('Funk',this)">Funk</button>
-          <button class="pf-btn" onclick="setPF('R&B',this)">R&ampB</button>
-          <button class="pf-btn" onclick="setPF('Ballad',this)">Ballad</button>
-          <button class="pf-btn" onclick="setPF('Reggae',this)">Reggae</button>
-          <button class="pf-btn" onclick="setPF('Latin',this)">Latin</button>
-          <button class="pf-btn" onclick="setPF('Jazz',this)">Jazz</button>
-          <button class="pf-btn" onclick="setPF('Country',this)">Country</button>
+
+      <!-- Song modal -->
+      <div class="overlay" id="song-modal">
+        <div class="modal">
+          <div class="modal-title" id="modal-title">New song</div>
+          <div class="fl fl-2">
+            <div><label class="flabel">Title</label><input class="finput" id="m-title" placeholder="The Thrill Is Gone">
+            </div>
+            <div><label class="flabel">Artist</label><input class="finput" id="m-artist" placeholder="B.B. King"></div>
+          </div>
+          <div class="fl fl-3">
+            <div><label class="flabel">Genre</label><select class="finput" id="m-genre">
+                <option>Blues</option>
+                <option>Rock</option>
+                <option>Pop</option>
+                <option>Soul</option>
+                <option>Funk</option>
+                <option>R&amp;B</option>
+                <option>Ballad</option>
+                <option>Reggae</option>
+                <option>Latin</option>
+                <option>Jazz</option>
+                <option>Country</option>
+              </select></div>
+            <div><label class="flabel">Key</label><input class="finput" id="m-key" placeholder="Am"></div>
+            <div><label class="flabel">BPM</label><input class="finput" id="m-bpm" type="number" placeholder="72"></div>
+          </div>
+          <div class="fl">
+            <div><label class="flabel">Progression</label><input class="finput" id="m-prog" placeholder="I–IV–I–V–IV–I">
+            </div>
+          </div>
+          <div class="fl">
+            <div><label class="flabel">Energy (1–5)</label><input class="finput" id="m-energy" type="number" min="1"
+                max="5" placeholder="3"></div>
+          </div>
+          <div class="fl">
+            <label class="flabel">Best instruments</label>
+            <div style="display:flex;gap:5px;margin-top:3px;">
+              <button class="itoggle on" id="mt-g" onclick="togMI('g')">Guitar</button>
+              <button class="itoggle" id="mt-p" onclick="togMI('p')">Piano</button>
+              <button class="itoggle" id="mt-v" onclick="togMI('v')">Winds</button>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-save" onclick="saveSong()">Save</button>
+          </div>
         </div>
       </div>
-      <div class="pool-actions">
-        <button class="ai-add-btn" onclick="toggleAIPanel()">
-          <span class="ai-spark">✦</span> Add with AI
+      <div class="toast" id="toast"></div>
+
+      <!-- Mobile: bottom navigation bar -->
+      <div class="bottom-nav" id="bottom-nav">
+        <button class="bn-item active" id="bn-builder" onclick="gotoView('builder');setActiveBottomNav('builder')">
+          <div class="bn-icon">♪</div>
+          <span data-i18n="nav_builder">Builder</span>
         </button>
-        <button class="manual-add-btn" onclick="openAddModal()">+ Manual</button>
+        <button class="bn-item" id="bn-pool" onclick="gotoView('pool');setActiveBottomNav('pool')">
+          <div class="bn-icon">☰</div>
+          <span data-i18n="nav_pool">Pool</span>
+        </button>
+        <button class="bn-item" id="bn-export" onclick="gotoView('export');setActiveBottomNav('export')">
+          <div class="bn-icon">↓</div>
+          <span data-i18n="nav_export">Export</span>
+        </button>
+        <button class="bn-item" id="bn-docs" onclick="gotoView('docs');setActiveBottomNav('docs')">
+          <div class="bn-icon">?</div>
+          <span data-i18n="nav_docs">Docs</span>
+        </button>
+        <button class="bn-settings-btn" id="bn-settings" onclick="toggleMobileDrawer()">
+          <div class="bn-icon">⚙</div>
+          <span>Settings</span>
+        </button>
       </div>
-      <!-- AI PANEL -->
-      <div class="ai-panel" id="ai-panel">
-        <div class="ai-panel-title" data-i18n="ai_title"><span class="ai-spark">✦</span> AI song assistant</div>
-        <div class="ai-tabs">
-          <button class="ai-tab on" id="tab-lookup" onclick="setAITab('lookup')">Song lookup</button>
-          <button class="ai-tab" id="tab-suggest" onclick="setAITab('suggest')">Suggest by mood</button>
-        </div>
-        <div id="ai-lookup-ui">
-          <div class="ai-input-row">
-            <input class="ai-input" id="ai-lookup-input" placeholder="e.g. Red House – Jimi Hendrix" onkeydown="if(event.key==='Enter')runAI()">
-            <button class="ai-go-btn" id="ai-go-btn" onclick="runAI()">Fill info</button>
+
+      <!-- Mobile: overlay behind drawer -->
+      <div class="drawer-overlay" id="drawer-overlay" onclick="closeMobileDrawer()"></div>
+
+      <!-- Mobile: slide-up settings drawer -->
+      <div class="mobile-drawer" id="mobile-drawer">
+        <div class="drawer-handle"></div>
+        <div class="s-section">
+          <div class="s-label" data-i18n="instruments">Instruments tonight</div>
+          <div class="instr-row">
+            <button class="chip" id="chip-guitar-m" onclick="toggleInstr('guitar')">
+              <div class="chip-dot"></div><span data-i18n="guitar">Guitar</span>
+            </button>
+            <button class="chip" id="chip-piano-m" onclick="toggleInstr('piano')">
+              <div class="chip-dot"></div><span data-i18n="piano">Piano</span>
+            </button>
+            <button class="chip" id="chip-wind-m" onclick="toggleInstr('wind')">
+              <div class="chip-dot"></div><span data-i18n="winds">Winds</span>
+            </button>
           </div>
         </div>
-        <div id="ai-suggest-ui" style="display:none;">
-          <div class="ai-input-row">
-            <input class="ai-input" id="ai-suggest-input" placeholder="e.g. slow blues, guitar, melancholic, key of Am" onkeydown="if(event.key==='Enter')runAI()">
-            <button class="ai-go-btn" id="ai-go-btn2" onclick="runAI()">Suggest</button>
+        <div class="s-section">
+          <div class="s-label" data-i18n="sets">Sets</div>
+          <div class="sets-row">
+            <button class="sc-btn" onclick="setN(2)">2</button>
+            <button class="sc-btn on" onclick="setN(3)">3</button>
+            <button class="sc-btn" onclick="setN(4)">4</button>
+          </div>
+          <div style="margin-top:7px;">
+            <div class="s-label" data-i18n="duration">Duration per set</div>
+            <select class="sel-input" id="dur-sel-m" onchange="syncDurSel(this.value)">
+              <option value="40">~40 min</option>
+              <option value="45" selected>~45 min</option>
+              <option value="55">~55 min</option>
+              <option value="60">~60 min</option>
+            </select>
+          </div>
+          <div style="margin-top:7px;">
+            <div class="s-label" data-i18n="genres_label">Genres to include</div>
+            <div style="display:flex;flex-direction:column;gap:3px;margin-top:3px;">
+              <label
+                style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
+                  type="checkbox" id="genre-blues-m" checked> Blues</label>
+              <label
+                style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
+                  type="checkbox" id="genre-rock-m" checked> Rock</label>
+              <label
+                style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
+                  type="checkbox" id="genre-pop-m" checked> Pop</label>
+              <label
+                style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
+                  type="checkbox" id="genre-soul-m" checked> Soul</label>
+              <label
+                style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
+                  type="checkbox" id="genre-funk-m"> Funk</label>
+              <label
+                style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
+                  type="checkbox" id="genre-rnb-m" checked> R&amp;B</label>
+              <label
+                style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
+                  type="checkbox" id="genre-ballad-m" checked> Ballad</label>
+              <label
+                style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
+                  type="checkbox" id="genre-reggae-m"> Reggae</label>
+              <label
+                style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
+                  type="checkbox" id="genre-latin-m"> Latin</label>
+              <label
+                style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
+                  type="checkbox" id="genre-jazz-m"> Jazz</label>
+              <label
+                style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
+                  type="checkbox" id="genre-country-m"> Country</label>
+            </div>
+          </div>
+          <button class="gen-btn" data-i18n="generate" onclick="generate();closeMobileDrawer();">Generate
+            Setlist</button>
+        </div>
+        <div class="s-section" style="border-bottom:none;padding-bottom:1.5rem;">
+          <div class="s-label">Import / Export</div>
+          <div style="display:flex;gap:4px;">
+            <button class="btn-xs" onclick="exportPoolJSON()" style="flex:1;" data-i18n="btn_export_json">Export
+              JSON</button>
+            <button class="btn-xs" onclick="document.getElementById('import-file').click()" style="flex:1;"
+              data-i18n="btn_import_json">Import JSON</button>
           </div>
         </div>
-        <div class="ai-status" id="ai-status"></div>
-        <div class="ai-results" id="ai-results"></div>
       </div>
-      <div class="pool-wrap">
-        <table class="pool-tbl">
-          <thead><tr><th>#</th><th>Song</th><th>Artist</th><th>Genre</th><th>Key</th><th>BPM</th><th>Progression</th><th>Instr.</th><th></th></tr></thead>
-          <tbody id="pool-tbody"></tbody>
-        </table>
-      </div>
-    </div>
 
-    <!-- EXPORT VIEW -->
-    <div class="view" id="view-export">
-      <div class="export-area">
-        <div class="export-title" data-i18n="export_title">Export setlist</div>
-        <div class="export-preview" id="export-preview"></div>
-        <div class="exp-btns">
-          <button class="exp-btn" onclick="doExportHTML()" data-i18n="btn_dl_html">Download HTML</button>
-          <button class="exp-btn" onclick="doExportText()" data-i18n="btn_copy_text">Copy as text</button>
-          <button class="exp-btn" onclick="doExportJSON()" data-i18n="btn_dl_json">Export JSON</button>
-        </div>
-      </div>
-    </div>
+      <!-- Load order: songs first, then i18n, then app -->
+      <script src="js/songs.js" defer></script>
+      <script src="js/i18n.js" defer></script>
+      <script src="js/app.js" defer></script>
+    </body>
 
-    <!-- DOCS VIEW -->
-    <div class="view" id="view-docs">
-      <div class="docs-area" id="docs-area"></div>
-    </div>
-
-  </div>
-</div>
-
-<!-- SONG MODAL -->
-<div class="overlay" id="song-modal">
-  <div class="modal">
-    <div class="modal-title" id="modal-title">New song</div>
-    <div class="fl fl-2">
-      <div><label class="flabel">Title</label><input class="finput" id="m-title" placeholder="The Thrill Is Gone"></div>
-      <div><label class="flabel">Artist</label><input class="finput" id="m-artist" placeholder="B.B. King"></div>
-    </div>
-    <div class="fl fl-3">
-      <div><label class="flabel">Genre</label><select class="finput" id="m-genre"><option>Blues</option><option>Rock</option><option>Pop</option><option>Soul</option><option>Funk</option><option>R&B</option><option>Ballad</option><option>Reggae</option><option>Latin</option><option>Jazz</option><option>Country</option></select></div>
-      <div><label class="flabel">Key</label><input class="finput" id="m-key" placeholder="Am"></div>
-      <div><label class="flabel">BPM</label><input class="finput" id="m-bpm" type="number" placeholder="72"></div>
-    </div>
-    <div class="fl">
-      <div><label class="flabel">Progression</label><input class="finput" id="m-prog" placeholder="I–IV–I–V–IV–I"></div>
-    </div>
-    <div class="fl">
-      <div><label class="flabel">Energy (1–5)</label><input class="finput" id="m-energy" type="number" min="1" max="5" placeholder="3"></div>
-    </div>
-    <div class="fl">
-      <label class="flabel">Best instruments</label>
-      <div style="display:flex;gap:5px;margin-top:3px;">
-        <button class="itoggle on" id="mt-g" onclick="togMI('g')">Guitar</button>
-        <button class="itoggle" id="mt-p" onclick="togMI('p')">Piano</button>
-        <button class="itoggle" id="mt-v" onclick="togMI('v')">Winds</button>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()" data-i18n="btn_cancel">Cancel</button>
-      <button class="btn-save" onclick="saveSong()" data-i18n="btn_save">Save</button>
-    </div>
-  </div>
-</div>
-<div class="toast" id="toast"></div>
-
-<script src="js/songs.js" defer></script>
-<script src="js/i18n.js" defer></script>
-<script src="js/app.js" defer></script>
-</body>
 </html>
