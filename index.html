@@ -44,30 +44,30 @@
 
     html.light {
       --bg: #f8f6f3;
-      --bg2: #f0ede8;
-      --surface: #ebe8e1;
-      --surface2: #e3dfd7;
-      --surface3: #dbd6cd;
+      --bg2: #ede9e2;
+      --surface: #e6e1d8;
+      --surface2: #ddd8ce;
+      --surface3: #d4cec3;
       --border: rgba(0, 0, 0, 0.06);
-      --border2: rgba(0, 0, 0, 0.12);
+      --border2: rgba(0, 0, 0, 0.11);
       --border3: rgba(0, 0, 0, 0.18);
-      --text: #2a2622;
-      --text2: #5c5651;
-      --text3: #8a8078;
-      --gold: #8b6c3f;
-      --gold2: #9d8155;
-      --gold-bg: rgba(139, 108, 63, 0.08);
-      --gold-border: rgba(139, 108, 63, 0.22);
-      --blue: #4a6d8a;
-      --blue-bg: rgba(74, 109, 138, 0.08);
-      --coral: #7a5953;
-      --coral-bg: rgba(122, 89, 83, 0.08);
-      --violet: #6d6084;
-      --violet-bg: rgba(109, 96, 132, 0.08);
-      --green: #5a7064;
-      --green-bg: rgba(90, 112, 100, 0.08);
-      --red: #7a5555;
-      --red-bg: rgba(122, 85, 85, 0.08);
+      --text: #2a2520;
+      --text2: #5c5650;
+      --text3: #8a8478;
+      --gold: #8a6830;
+      --gold2: #a07838;
+      --gold-bg: rgba(138, 104, 48, 0.08);
+      --gold-border: rgba(138, 104, 48, 0.22);
+      --blue: #3a5e8a;
+      --blue-bg: rgba(58, 94, 138, 0.08);
+      --coral: #8a4030;
+      --coral-bg: rgba(138, 64, 48, 0.08);
+      --violet: #5a4888;
+      --violet-bg: rgba(90, 72, 136, 0.08);
+      --green: #3a6844;
+      --green-bg: rgba(58, 104, 68, 0.08);
+      --red: #882020;
+      --red-bg: rgba(136, 32, 32, 0.08);
     }
 
     *,
@@ -123,8 +123,7 @@
 
     .logo {
       font-family: var(--font-display);
-      font-size: 24px;
-      font-weight: 500;
+      font-size: 17px;
       color: var(--gold2);
       white-space: nowrap;
       letter-spacing: .01em;
@@ -132,43 +131,10 @@
 
     .logo-sub {
       font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text3);
-      margin-left: 10px;
-      letter-spacing: .08em;
-    }
-
-    .lang-toggle {
-      display: flex;
-      gap: 4px;
-      margin-left: auto;
-      padding-left: 1.5rem;
-      border-left: 0.5px solid var(--border2);
-    }
-
-    .lang-btn {
-      padding: 4px 10px;
-      border: 0.5px solid var(--border2);
-      background: transparent;
-      color: var(--text3);
-      border-radius: var(--r);
       font-size: 10px;
-      font-family: var(--font-mono);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      transition: all .15s;
-      cursor: pointer;
-    }
-
-    .lang-btn:hover {
-      border-color: var(--border3);
-      color: var(--text);
-    }
-
-    .lang-btn.active {
-      border-color: var(--gold-border);
-      background: var(--gold-bg);
-      color: var(--gold2);
+      color: var(--text3);
+      margin-left: 8px;
+      letter-spacing: .08em;
     }
 
     .nav {
@@ -199,38 +165,6 @@
     .nav-btn:hover:not(.active) {
       color: var(--text);
       background: var(--surface2);
-    }
-
-    .theme-toggle {
-      display: flex;
-      gap: 4px;
-      padding-left: 1.5rem;
-      border-left: 0.5px solid var(--border2);
-    }
-
-    .theme-btn {
-      padding: 4px 10px;
-      border: 0.5px solid var(--border2);
-      background: transparent;
-      color: var(--text3);
-      border-radius: var(--r);
-      font-size: 10px;
-      font-family: var(--font-mono);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      transition: all .15s;
-      cursor: pointer;
-    }
-
-    .theme-btn:hover {
-      border-color: var(--border3);
-      color: var(--text);
-    }
-
-    .theme-btn.active {
-      border-color: var(--gold-border);
-      background: var(--gold-bg);
-      color: var(--gold2);
     }
 
     /* LAYOUT */
@@ -492,22 +426,10 @@
       outline: none;
       flex: 1;
       min-width: 140px;
-      padding: 4px 8px;
-      border-radius: var(--r);
-      transition: all .15s;
     }
 
     .night-input::placeholder {
       color: var(--text3);
-    }
-
-    .night-input:hover {
-      background: var(--surface2);
-    }
-
-    .night-input:focus {
-      background: var(--surface);
-      border: 0.5px solid var(--gold-border);
     }
 
     .hdr-actions {
@@ -1742,27 +1664,41 @@
       background: var(--border2);
       border-radius: 2px;
     }
+
+    .lang-btn.active {
+      border-color: var(--gold-border) !important;
+      background: var(--gold-bg) !important;
+      color: var(--gold2) !important;
+    }
   </style>
 </head>
 
 <body>
   <div class="topbar">
-    <div class="logo">FMG <span class="logo-sub">setlist builder</span></div>
+    <div class="logo">Fearlessly Media Group <span class="logo-sub">// setlist builder</span></div>
     <div class="nav">
-      <button class="nav-btn active" onclick="gotoView('builder')" data-key="nav_builder">Builder</button>
-      <button class="nav-btn" onclick="gotoView('pool')" data-key="nav_pool">Pool</button>
-      <button class="nav-btn" onclick="gotoView('export')" data-key="nav_export">Export</button>
-      <button class="nav-btn" onclick="gotoView('docs')" data-key="nav_docs">Docs</button>
+      <button class="nav-btn active" onclick="gotoView('builder')" data-i18n="nav_builder">Builder</button>
+      <button class="nav-btn" onclick="gotoView('pool')" data-i18n="nav_pool">Pool</button>
+      <button class="nav-btn" onclick="gotoView('export')" data-i18n="nav_export">Export</button>
+      <button class="nav-btn" onclick="gotoView('docs')" data-i18n="nav_docs">Docs</button>
     </div>
-    <div class="lang-toggle">
-      <button class="lang-btn active" id="lang-en" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" id="lang-es" onclick="setLang('es')">ES</button>
-      <button class="lang-btn" id="lang-pt" onclick="setLang('pt')">PT</button>
-      <button class="lang-btn" id="lang-ru" onclick="setLang('ru')">RU</button>
+    <div style="display:flex;gap:3px;padding-left:1rem;border-left:0.5px solid var(--border2);">
+      <button id="btn-dark" onclick="setTheme('dark')"
+        style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-size:11px;cursor:pointer;transition:all .15s;"
+        title="Dark mode">🌙</button>
+      <button id="btn-light" onclick="setTheme('light')"
+        style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-size:11px;cursor:pointer;transition:all .15s;"
+        title="Light mode">☀️</button>
     </div>
-    <div class="theme-toggle">
-      <button class="theme-btn active" id="theme-dark-btn" onclick="setTheme('dark')">🌙</button>
-      <button class="theme-btn" id="theme-light-btn" onclick="setTheme('light')">☀️</button>
+    <div style="display:flex;gap:3px;padding-left:1rem;border-left:0.5px solid var(--border2);">
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')"
+        style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">EN</button>
+      <button class="lang-btn" data-lang="es" onclick="setLang('es')"
+        style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">ES</button>
+      <button class="lang-btn" data-lang="pt" onclick="setLang('pt')"
+        style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">PT</button>
+      <button class="lang-btn" data-lang="ru" onclick="setLang('ru')"
+        style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .15s;">RU</button>
     </div>
   </div>
 
@@ -1770,7 +1706,7 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="s-section">
-        <div class="s-label" data-key="instruments">Instruments tonight</div>
+        <div class="s-label" data-i18n="instruments">Instruments tonight</div>
         <div class="instr-row">
           <button class="chip" id="chip-guitar" onclick="toggleInstr('guitar')">
             <div class="chip-dot"></div>Guitar
@@ -1782,18 +1718,18 @@
             <div class="chip-dot"></div>Winds
           </button>
         </div>
-        <div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.5;font-style:italic;">Generation
-          prioritizes songs suited to the selected instruments.</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.5;font-style:italic;"
+          data-i18n="instr_hint">Generation prioritizes songs suited to the selected instruments.</div>
       </div>
       <div class="s-section">
-        <div class="s-label" data-key="sets">Sets</div>
+        <div class="s-label" data-i18n="sets">Sets</div>
         <div class="sets-row">
           <button class="sc-btn" onclick="setN(2)">2</button>
           <button class="sc-btn on" onclick="setN(3)">3</button>
           <button class="sc-btn" onclick="setN(4)">4</button>
         </div>
         <div style="margin-top:7px;">
-          <div class="s-label" data-key="duration">Duration per set</div>
+          <div class="s-label" data-i18n="duration">Duration per set</div>
           <select class="sel-input" id="dur-sel">
             <option value="40">~40 min</option>
             <option value="45" selected>~45 min</option>
@@ -1802,7 +1738,13 @@
           </select>
         </div>
         <div style="margin-top:7px;">
-          <div class="s-label">Genres to include</div>
+          <div class="s-label" style="display:flex;align-items:center;justify-content:space-between;"
+            data-i18n="genres_label">Genres to include<span style="display:flex;gap:4px;"><button
+                onclick="setAllGenres(true)" data-i18n="genres_all"
+                style="font-family:var(--font-mono);font-size:8px;padding:1px 6px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:2px;cursor:pointer;">all</button><button
+                onclick="setAllGenres(false)" data-i18n="genres_none"
+                style="font-family:var(--font-mono);font-size:8px;padding:1px 6px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:2px;cursor:pointer;">none</button></span>
+          </div>
           <div style="display:flex;flex-direction:column;gap:3px;margin-top:3px;">
             <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
               <input type="checkbox" id="genre-blues" checked style="cursor:pointer;"> Blues
@@ -1839,36 +1781,43 @@
             </label>
           </div>
         </div>
-        <button class="gen-btn" onclick="generate()" data-key="generate">Generate Setlist</button>
+        <button class="gen-btn" data-i18n="generate" onclick="generate()">Generate Setlist</button>
       </div>
       <div class="s-section">
-        <div class="s-label" style="margin-bottom:.5rem;">Import / Export pool</div>
+        <div class="s-label" data-i18n="import_export" style="margin-bottom:.5rem;">Import / Export pool</div>
         <div style="display:flex;gap:4px;">
-          <button class="btn-xs" onclick="exportPoolJSON()" style="flex:1;">Export JSON</button>
-          <button class="btn-xs" onclick="document.getElementById('import-file').click()" style="flex:1;">Import
+          <button class="btn-xs" onclick="exportPoolJSON()" data-i18n="btn_export_json" style="flex:1;">Export
             JSON</button>
+          <button class="btn-xs" onclick="document.getElementById('import-file').click()" data-i18n="btn_import_json"
+            style="flex:1;">Import JSON</button>
         </div>
         <input type="file" id="import-file" accept=".json" style="display:none" onchange="importPoolJSON(event)">
       </div>
+      <div class="s-section">
+        <div class="s-label" data-i18n="saved_nights">Saved nights</div>
+        <div id="saved-list"></div>
+      </div>
       <div class="sidebar-scroll">
         <div class="s-section" style="border-bottom:none;">
-          <div class="s-label">Quick start guide</div>
+          <div class="s-label" data-i18n="quick_start">Quick start guide</div>
           <div style="font-size:11px;color:var(--text2);line-height:1.7;">
-            <div style="margin-bottom:8px;"><strong style="color:var(--gold);">1.</strong> Select available instruments
-            </div>
-            <div style="margin-bottom:8px;"><strong style="color:var(--gold);">2.</strong> Choose # of sets &amp;
-              duration</div>
-            <div style="margin-bottom:8px;"><strong style="color:var(--gold);">3.</strong> Pick genres to include</div>
-            <div style="margin-bottom:8px;"><strong style="color:var(--gold);">4.</strong> Click Generate Setlist</div>
-            <div style="margin-bottom:8px;"><strong style="color:var(--gold);">5.</strong> Drag rows to reorder songs
-            </div>
-            <div style="margin-bottom:8px;"><strong style="color:var(--gold);">6.</strong> Go to Pool to add/edit songs
-            </div>
-            <div style="margin-bottom:8px;"><strong style="color:var(--gold);">7.</strong> Export as HTML, JSON, or text
-            </div>
+            <div style="margin-bottom:8px;" data-i18n="qs_1"><strong style="color:var(--gold);">1.</strong> Select
+              available instruments</div>
+            <div style="margin-bottom:8px;" data-i18n="qs_2"><strong style="color:var(--gold);">2.</strong> Choose # of
+              sets &amp; duration</div>
+            <div style="margin-bottom:8px;" data-i18n="qs_3"><strong style="color:var(--gold);">3.</strong> Pick genres
+              to include</div>
+            <div style="margin-bottom:8px;" data-i18n="qs_4"><strong style="color:var(--gold);">4.</strong> Click
+              Generate Setlist</div>
+            <div style="margin-bottom:8px;" data-i18n="qs_5"><strong style="color:var(--gold);">5.</strong> Drag rows to
+              reorder songs</div>
+            <div style="margin-bottom:8px;" data-i18n="qs_6"><strong style="color:var(--gold);">6.</strong> Go to Pool
+              to add/edit songs</div>
+            <div style="margin-bottom:8px;" data-i18n="qs_7"><strong style="color:var(--gold);">7.</strong> Export as
+              HTML, JSON, or text</div>
             <div
-              style="padding:8px;background:var(--surface2);border-radius:var(--r);margin-top:10px;font-size:10px;color:var(--text3);border:0.5px solid var(--border);">
-              All data stays in your browser. No account needed.</div>
+              style="padding:8px;background:var(--surface2);border-radius:var(--r);margin-top:10px;font-size:10px;color:var(--text3);border:0.5px solid var(--border);"
+              data-i18n="qs_note">All data stays in your browser. No account needed.</div>
           </div>
         </div>
       </div>
@@ -1879,7 +1828,8 @@
 
       <!-- API KEY BAR -->
       <div class="settings-bar warn" id="api-bar">
-        <span class="api-status missing" id="api-status">✦ API key required for AI features</span>
+        <span class="api-status missing" id="api-status" data-i18n="api_required">✦ API key required for AI
+          features</span>
         <select class="sel-input" id="api-provider" style="max-width:120px;flex-shrink:0;" onchange="updateApiLabel()">
           <option value="claude">Claude (Anthropic)</option>
           <option value="gemini">Gemini (Google)</option>
@@ -1893,10 +1843,10 @@
       <!-- BUILDER VIEW -->
       <div class="view active" id="view-builder">
         <div class="bld-header">
-          <input class="night-input" id="night-title" placeholder="Click to enter night name…" value="Night 1">
+          <input class="night-input" id="night-title" placeholder="Night name…" value="Night 1">
           <div class="hdr-actions">
-            <button class="btn-xs" onclick="saveNight()">Save</button>
-            <button class="btn-xs ac" onclick="gotoView('export')">Export</button>
+            <button class="btn-xs" onclick="saveNight()" data-i18n="btn_save_night">Save</button>
+            <button class="btn-xs ac" onclick="gotoView('export')" data-i18n="btn_export_bld">Export</button>
           </div>
         </div>
         <div class="sets-area" id="sets-area"></div>
@@ -1905,10 +1855,12 @@
       <!-- POOL VIEW -->
       <div class="view" id="view-pool">
         <div class="pool-hdr">
-          <div class="pool-title" data-key="pool_title">Song pool</div>
-          <input class="pool-search" id="pool-search" placeholder="Search…" oninput="renderPool()" data-key="search">
+          <div class="pool-title">Song pool</div><span id="pool-count"
+            style="font-family:var(--font-mono);font-size:10px;color:var(--text3);align-self:center;margin-left:6px;"></span>
+          <input class="pool-search" id="pool-search" placeholder="Search…" oninput="renderPool()"
+            data-i18n-ph="search">
           <div class="pf-row">
-            <button class="pf-btn on" onclick="setPF('all',this)" data-key="all_genres">All</button>
+            <button class="pf-btn on" onclick="setPF('all',this)">All</button>
             <button class="pf-btn" onclick="setPF('Blues',this)">Blues</button>
             <button class="pf-btn" onclick="setPF('Rock',this)">Rock</button>
             <button class="pf-btn" onclick="setPF('Pop',this)">Pop</button>
@@ -1930,7 +1882,7 @@
         </div>
         <!-- AI PANEL -->
         <div class="ai-panel" id="ai-panel">
-          <div class="ai-panel-title"><span class="ai-spark">✦</span> AI song assistant</div>
+          <div class="ai-panel-title" data-i18n="ai_title"><span class="ai-spark">✦</span> AI song assistant</div>
           <div class="ai-tabs">
             <button class="ai-tab on" id="tab-lookup" onclick="setAITab('lookup')">Song lookup</button>
             <button class="ai-tab" id="tab-suggest" onclick="setAITab('suggest')">Suggest by mood</button>
@@ -1976,187 +1928,19 @@
       <!-- EXPORT VIEW -->
       <div class="view" id="view-export">
         <div class="export-area">
-          <div class="export-title">Export setlist</div>
+          <div class="export-title" data-i18n="export_title">Export setlist</div>
           <div class="export-preview" id="export-preview"></div>
           <div class="exp-btns">
-            <button class="exp-btn" onclick="doExportHTML()">Download HTML</button>
-            <button class="exp-btn" onclick="doExportText()">Copy as text</button>
-            <button class="exp-btn" onclick="doExportJSON()">Export JSON</button>
+            <button class="exp-btn" onclick="doExportHTML()" data-i18n="btn_dl_html">Download HTML</button>
+            <button class="exp-btn" onclick="doExportText()" data-i18n="btn_copy_text">Copy as text</button>
+            <button class="exp-btn" onclick="doExportJSON()" data-i18n="btn_dl_json">Export JSON</button>
           </div>
         </div>
       </div>
 
       <!-- DOCS VIEW -->
       <div class="view" id="view-docs">
-        <div class="docs-area">
-          <div class="docs-inner">
-            <div class="docs-hero">
-              <h1>FMG Setlist Builder</h1>
-              <p>A tool for musicians to build, organize, and export setlists — with AI-powered song lookup and
-                mood-based suggestions. All data stays in your browser. No account required.</p>
-            </div>
-
-            <div class="docs-section">
-              <h2>Getting started</h2>
-              <div class="docs-step">
-                <div class="docs-step-n">1</div>
-                <p>Select the <strong>instruments available tonight</strong> in the sidebar. Choose any combination of
-                  Guitar, Piano, and Winds — the generator will prioritize songs suited to your selection.</p>
-              </div>
-              <div class="docs-step">
-                <div class="docs-step-n">2</div>
-                <p>Choose the <strong>number of sets</strong> (2, 3, or 4) and <strong>duration per set</strong> (~40,
-                  ~45, ~55, or ~60 min).</p>
-              </div>
-              <div class="docs-step">
-                <div class="docs-step-n">3</div>
-                <p>Select which <strong>genres to include</strong> in the generation. Choose from Blues, Rock, Pop,
-                  Soul, Funk, R&B, Ballad, Reggae, Latin, Jazz, or Country. Check the boxes next to the genres you want.
-                </p>
-              </div>
-              <div class="docs-step">
-                <div class="docs-step-n">4</div>
-                <p>Click <span class="docs-kbd">Generate Setlist</span>. The algorithm builds an energy curve for each
-                  set — opening low, building through the middle, peaking in the final set. Songs are selected only from
-                  your chosen genres and instruments.</p>
-              </div>
-              <div class="docs-step">
-                <div class="docs-step-n">5</div>
-                <p><strong>Drag and drop</strong> songs within a set to reorder them. Use the <span
-                    class="docs-kbd">×</span> button to remove a song, or the dropdown at the bottom of each set to add
-                  one.</p>
-              </div>
-              <div class="docs-step">
-                <div class="docs-step-n">6</div>
-                <p>Give your setlist a name in the title field and click <span class="docs-kbd">Export</span> to
-                  download as HTML, JSON, or copy as text.</p>
-              </div>
-            </div>
-
-            <div class="docs-section">
-              <h2>Instruments &amp; generation</h2>
-              <p>The setlist generator intelligently prioritizes songs based on your selected instruments and genres.
-              </p>
-              <h3>How instruments work</h3>
-              <p>When you select Guitar, Piano, or Winds in the sidebar, the algorithm prefers songs tagged for those
-                instruments. Each song has instrument tags (G, P, V) indicating how well it suits each instrument. If
-                there aren't enough songs matching your selections, the algorithm falls back to the full pool.</p>
-              <h3>Energy curve</h3>
-              <p>Each setlist follows a musical energy pattern:</p>
-              <ul>
-                <li><strong>Set 1 &amp; 2:</strong> Opens slow/mellow, builds toward mid-energy</li>
-                <li><strong>Final set:</strong> Climbs higher, ends on a peak</li>
-              </ul>
-              <p>This keeps audiences engaged and provides natural peaks and valleys in your performance.</p>
-            </div>
-            <div class="docs-section">
-              <h2>AI features</h2>
-              <div class="docs-warning"><strong>Important:</strong> AI features require an API key from one of three
-                providers: <strong>Claude (Anthropic)</strong>, <strong>Gemini (Google)</strong>, or <strong>ChatGPT
-                  (OpenAI)</strong>. Your key is stored only in your browser's localStorage — it is never sent to any
-                server other than the selected API provider directly from your browser. Get keys from: <a
-                  href="https://console.anthropic.com" target="_blank">Anthropic</a> | <a
-                  href="https://aistudio.google.com/apikey" target="_blank">Google</a> | <a
-                  href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a>. API usage is billed per
-                request (very low cost).</div>
-              <h3>Choosing an API provider</h3>
-              <p>Use the dropdown in the settings bar to select which AI provider to use. Each provider has similar
-                performance for music metadata tasks. Claude and ChatGPT tend to be slightly more reliable for complex
-                requests, while Gemini is often faster and cheaper.</p>
-              <h3>Song lookup</h3>
-              <p>Type a song name and artist (e.g. "Red House – Jimi Hendrix") and the AI will automatically fill in the
-                genre, key, BPM, chord progression, energy level, and best instrument fit. You can select from any of
-                the 11 supported genres. Review and click <span class="docs-kbd">Add to pool</span> to save it.</p>
-              <h3>Suggest by mood</h3>
-              <p>Describe what you're looking for (e.g. "upbeat funk with bass, energetic, Dm") and the AI will suggest
-                5 songs that fit — with full metadata ready to add to your pool. Works across all genres.</p>
-            </div>
-
-            <div class="docs-section">
-              <h2>Song pool</h2>
-              <p>The pool is your master library of songs. It comes pre-loaded with <strong>90 carefully curated
-                  songs</strong> spanning 11 genres: Blues, Rock, Pop, Soul, Funk, R&B, Ballad, Reggae, Latin, Jazz, and
-                Country — ensuring you have plenty of options without needing AI to generate setlists. You can:</p>
-              <ul>
-                <li>Add songs manually via <span class="docs-kbd">+ Manual</span></li>
-                <li>Add songs via AI lookup or suggestion</li>
-                <li>Edit any song's metadata (genre, key, BPM, progression, instruments)</li>
-                <li>Delete songs from the pool</li>
-                <li>Export the pool as JSON and import it on another device</li>
-              </ul>
-              <p>Each song has an <strong>instrument tag</strong> (G = Guitar, P = Piano, V = Winds) that controls which
-                songs get prioritized when you select available instruments and genres for generation.</p>
-            </div>
-
-            <div class="docs-section">
-              <h2>Export &amp; share</h2>
-              <p>All setlists and song pool data live in your browser's localStorage. To move your data to another
-                device or share with collaborators, use the export features:</p>
-              <ul>
-                <li><strong>Download HTML</strong> — a self-contained styled HTML file of your setlist, ready to print
-                  or distribute</li>
-                <li><strong>Copy as text</strong> — plain text version perfect for messaging, emails, or notes</li>
-                <li><strong>Export JSON</strong> — raw setlist data for archiving or detailed analysis</li>
-                <li><strong>Export pool JSON</strong> (in Pool view) — save your entire song library as a file</li>
-                <li><strong>Import pool JSON</strong> (in Pool view) — load a previously exported pool (merges with
-                  existing songs, no duplicates)</li>
-              </ul>
-            </div>
-
-            <div class="docs-section">
-              <h2>Deploying to GitHub Pages</h2>
-              <p>Deploy this app publicly so your band or team can access it from anywhere.</p>
-              <div class="docs-step">
-                <div class="docs-step-n">1</div>
-                <p>Create a GitHub account at <a href="https://github.com" target="_blank">github.com</a> if needed.</p>
-              </div>
-              <div class="docs-step">
-                <div class="docs-step-n">2</div>
-                <p>Create a new public repository (e.g. <code>fmg-setlist</code>).</p>
-              </div>
-              <div class="docs-step">
-                <div class="docs-step-n">3</div>
-                <p>Rename this file to <code>index.html</code> and commit it to <code>main</code>.</p>
-              </div>
-              <div class="docs-step">
-                <div class="docs-step-n">4</div>
-                <p>Go to <strong>Settings → Pages → Source → main branch</strong>. Save.</p>
-              </div>
-              <div class="docs-step">
-                <div class="docs-step-n">5</div>
-                <p>In a few minutes, your app will be live at <code>yourusername.github.io/fmg-setlist</code>.</p>
-              </div>
-              <p style="margin-top:.75rem;"><strong>Important:</strong> Each visitor has their own independent song pool
-                and setlist data stored locally in their browser. Data doesn't sync between users — use JSON
-                export/import to share pools across devices.</p>
-            </div>
-
-            <div class="docs-section">
-              <h2>Tips &amp; tricks</h2>
-              <ul>
-                <li><strong>Genre mixing:</strong> Try selecting 2-3 genres for variety. Blues + Soul creates a cohesive
-                  vibe, while Pop + Rock + Soul broadens appeal.</li>
-                <li><strong>Song sequencing:</strong> Drag rows to manually fine-tune the energy curve. Avoid two
-                  high-energy songs back-to-back.</li>
-                <li><strong>Test the algorithm:</strong> Generate several setlists by unchecking/checking genres. The
-                  algorithm uses randomization, so each run is slightly different.</li>
-                <li><strong>Add custom songs:</strong> Don't see a song you want? Go to Pool and add it manually or use
-                  AI lookup.</li>
-                <li><strong>Backup your pool:</strong> Export your song pool as JSON regularly. Store it somewhere safe
-                  in case your browser clears localStorage.</li>
-                <li><strong>Share setlists:</strong> Export as HTML for a professional-looking document to share with
-                  band members or send to venues.</li>
-              </ul>
-            </div>
-
-            <hr class="docs-divider">
-            <div class="docs-fmg">
-              <div class="docs-fmg-logo">Fearlessly Media Group</div>
-              <div class="docs-fmg-text">Built for musicians.<br>fmg-setlist v2.2 — 90 songs, 11 genres, AI-powered,
-                multi-provider, open source.</div>
-            </div>
-          </div>
-        </div>
+        <div class="docs-area" id="docs-area"></div>
       </div>
 
     </div>
@@ -2205,8 +1989,8 @@
         </div>
       </div>
       <div class="modal-actions">
-        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-        <button class="btn-save" onclick="saveSong()">Save</button>
+        <button class="btn-cancel" onclick="closeModal()" data-i18n="btn_cancel">Cancel</button>
+        <button class="btn-save" onclick="saveSong()" data-i18n="btn_save">Save</button>
       </div>
     </div>
   </div>
@@ -2215,30 +1999,30 @@
   <script>
     // ─── DATA ───────────────────────────────────────────────────────────────────
     const DEFAULTS = [
-      { id: 1, title: "The Thrill Is Gone", artist: "B.B. King", genre: "Blues", key: "Bm", bpm: 60, prog: "i–IV–i–V–IV–i", energy: 3, instr: ['g', 'p', 'v'] },
+      { id: 1, title: "The Thrill Is Gone", artist: "B.B. King", genre: "Blues", key: "Bm", bpm: 90, prog: "i–IV–i–V–IV–i", energy: 3, instr: ['g', 'p', 'v'] },
       { id: 2, title: "Stormy Monday", artist: "T-Bone Walker", genre: "Blues", key: "G", bpm: 55, prog: "I–IV–I–V–IV–I", energy: 2, instr: ['g', 'p', 'v'] },
-      { id: 3, title: "Ain't No Sunshine", artist: "Bill Withers", genre: "Soul", key: "Am", bpm: 76, prog: "i–III–VII–i", energy: 3, instr: ['g', 'p'] },
+      { id: 3, title: "Ain't No Sunshine", artist: "Bill Withers", genre: "Soul", key: "Am", bpm: 79, prog: "i–III–VII–i", energy: 3, instr: ['g', 'p'] },
       { id: 4, title: "Further On Up the Road", artist: "E. Clapton / B. Bland", genre: "Blues", key: "Em", bpm: 58, prog: "I–IV–I–V–IV–I", energy: 2, instr: ['g'] },
       { id: 5, title: "Tears in Heaven", artist: "Eric Clapton", genre: "Ballad", key: "A", bpm: 64, prog: "I–V–vi–IV", energy: 2, instr: ['g'] },
       { id: 6, title: "Sweet Home Chicago", artist: "Robert Johnson", genre: "Blues", key: "E", bpm: 90, prog: "I–IV–I–V–IV–I", energy: 4, instr: ['g', 'p', 'v'] },
       { id: 7, title: "I Put a Spell on You", artist: "Jay Hawkins", genre: "Blues", key: "Cm", bpm: 68, prog: "i–i7–iv–V7", energy: 3, instr: ['g', 'p', 'v'] },
-      { id: 8, title: "Stand by Me", artist: "Ben E. King", genre: "Soul", key: "A", bpm: 114, prog: "I–vi–IV–V", energy: 4, instr: ['g', 'p', 'v'] },
-      { id: 9, title: "Wonderful Tonight", artist: "Eric Clapton", genre: "Ballad", key: "G", bpm: 62, prog: "I–V–IV–V", energy: 2, instr: ['g'] },
-      { id: 10, title: "House of the Rising Sun", artist: "The Animals", genre: "Rock", key: "Am", bpm: 52, prog: "i–III–IV–VI–i", energy: 2, instr: ['g', 'p'] },
+      { id: 8, title: "Stand by Me", artist: "Ben E. King", genre: "Soul", key: "A", bpm: 116, prog: "I–vi–IV–V", energy: 4, instr: ['g', 'p', 'v'] },
+      { id: 9, title: "Wonderful Tonight", artist: "Eric Clapton", genre: "Ballad", key: "G", bpm: 96, prog: "I–V–IV–V", energy: 2, instr: ['g'] },
+      { id: 10, title: "House of the Rising Sun", artist: "The Animals", genre: "Rock", key: "Am", bpm: 117, prog: "i–III–IV–VI–i", energy: 2, instr: ['g', 'p'] },
       { id: 11, title: "Pride and Joy", artist: "SRV", genre: "Blues", key: "E", bpm: 120, prog: "I–IV–I–V–IV–I", energy: 5, instr: ['g'] },
-      { id: 12, title: "Killing Me Softly", artist: "Roberta Flack", genre: "Soul", key: "Dm", bpm: 72, prog: "ii–V–I–IV", energy: 2, instr: ['g', 'p', 'v'] },
+      { id: 12, title: "Killing Me Softly", artist: "Roberta Flack", genre: "Soul", key: "Dm", bpm: 123, prog: "ii–V–I–IV", energy: 2, instr: ['g', 'p', 'v'] },
       { id: 13, title: "Lonely Avenue", artist: "Ray Charles", genre: "Blues", key: "Bb", bpm: 84, prog: "I–IV–V–IV", energy: 3, instr: ['g', 'p', 'v'] },
-      { id: 14, title: "Mustang Sally", artist: "Wilson Pickett", genre: "Soul", key: "C", bpm: 96, prog: "I–IV–I–V", energy: 4, instr: ['g', 'p', 'v'] },
+      { id: 14, title: "Mustang Sally", artist: "Wilson Pickett", genre: "Soul", key: "C", bpm: 110, prog: "I–IV–I–V", energy: 4, instr: ['g', 'p', 'v'] },
       { id: 15, title: "Let the Good Times Roll", artist: "BB King", genre: "Blues", key: "C", bpm: 100, prog: "I–IV–I–V–IV–I", energy: 4, instr: ['g', 'p', 'v'] },
       { id: 16, title: "Midnight Hour", artist: "Wilson Pickett", genre: "Soul", key: "D", bpm: 108, prog: "I–IV–V", energy: 4, instr: ['g', 'p', 'v'] },
-      { id: 17, title: "Sitting on the Dock", artist: "Otis Redding", genre: "Soul", key: "G", bpm: 68, prog: "I–IV–I–IV", energy: 3, instr: ['g', 'p', 'v'] },
+      { id: 17, title: "Sitting on the Dock", artist: "Otis Redding", genre: "Soul", key: "G", bpm: 104, prog: "I–IV–I–IV", energy: 3, instr: ['g', 'p', 'v'] },
       { id: 18, title: "Have You Ever Loved a Woman", artist: "Freddie King", genre: "Blues", key: "F#", bpm: 62, prog: "I–IV–I–V–IV–I", energy: 3, instr: ['g'] },
       { id: 19, title: "Love in Vain", artist: "Robert Johnson", genre: "Blues", key: "Em", bpm: 58, prog: "I–IV–I–V–IV–I", energy: 2, instr: ['g'] },
       { id: 20, title: "Drift Away", artist: "Dobie Gray", genre: "Soul", key: "D", bpm: 96, prog: "I–V–vi–IV", energy: 3, instr: ['g', 'p'] },
       { id: 21, title: "The Sky Is Crying", artist: "Elmore James", genre: "Blues", key: "A", bpm: 56, prog: "I–IV–I–V–IV–I", energy: 2, instr: ['g'] },
       { id: 22, title: "Since I've Been Loving You", artist: "Led Zeppelin", genre: "Rock", key: "Cm", bpm: 56, prog: "i–iv–i–V–iv–i", energy: 2, instr: ['g', 'p', 'v'] },
       { id: 23, title: "Nobody Knows You (Down and Out)", artist: "Eric Clapton", genre: "Blues", key: "G", bpm: 58, prog: "I–III–IV–iv–I–V", energy: 2, instr: ['g'] },
-      { id: 24, title: "Little Wing", artist: "Jimi Hendrix", genre: "Rock", key: "Em", bpm: 68, prog: "i–VII–VI–V–IV", energy: 2, instr: ['g'] },
+      { id: 24, title: "Little Wing", artist: "Jimi Hendrix", genre: "Rock", key: "Em", bpm: 70, prog: "i–VII–VI–V–IV", energy: 2, instr: ['g'] },
       { id: 25, title: "Superstition", artist: "Stevie Wonder", genre: "Funk", key: "Eb", bpm: 100, prog: "i–VII–i–VII", energy: 5, instr: ['g', 'p', 'v'] },
       { id: 26, title: "Every Day I Have the Blues", artist: "BB King", genre: "Blues", key: "Bb", bpm: 112, prog: "I–IV–I–V–IV–I", energy: 5, instr: ['g', 'p', 'v'] },
       { id: 27, title: "If I Ain't Got You", artist: "Alicia Keys", genre: "Soul", key: "Dbm", bpm: 74, prog: "i–VI–III–VII", energy: 3, instr: ['g', 'p'] },
@@ -2262,28 +2046,28 @@
       { id: 45, title: "Black Hole Sun", artist: "Soundgarden", genre: "Rock", key: "Cm", bpm: 70, prog: "i–VI–VII–VI", energy: 3, instr: ['g', 'p', 'v'] },
       { id: 46, title: "Layla", artist: "Eric Clapton", genre: "Rock", key: "Dm", bpm: 76, prog: "i–VII–i–VII", energy: 3, instr: ['g', 'p'] },
       { id: 47, title: "November Rain", artist: "Guns N' Roses", genre: "Rock", key: "F#m", bpm: 80, prog: "I–IV–V–IV", energy: 3, instr: ['g', 'p', 'v'] },
-      { id: 48, title: "Zombie", artist: "The Cranberries", genre: "Rock", key: "Em", bpm: 120, prog: "i–III–VII–i", energy: 4, instr: ['g', 'v'] },
-      { id: 49, title: "Brown Eyed Girl", artist: "Van Morrison", genre: "Pop", key: "G", bpm: 128, prog: "I–IV–I–V", energy: 4, instr: ['g', 'p', 'v'] },
+      { id: 48, title: "Zombie", artist: "The Cranberries", genre: "Rock", key: "Em", bpm: 84, prog: "i–III–VII–i", energy: 4, instr: ['g', 'v'] },
+      { id: 49, title: "Brown Eyed Girl", artist: "Van Morrison", genre: "Pop", key: "G", bpm: 150, prog: "I–IV–I–V", energy: 4, instr: ['g', 'p', 'v'] },
       { id: 50, title: "Zombie Jamboree", artist: "Kid Creole", genre: "Reggae", key: "G", bpm: 96, prog: "I–IV–V–IV", energy: 3, instr: ['g', 'p', 'v'] },
       { id: 51, title: "Is This Love", artist: "Bob Marley", genre: "Reggae", key: "G", bpm: 76, prog: "I–V–vi–IV", energy: 3, instr: ['g', 'p', 'v'] },
       { id: 52, title: "Three Little Birds", artist: "Bob Marley", genre: "Reggae", key: "A", bpm: 76, prog: "I–IV–I–V", energy: 3, instr: ['g', 'p', 'v'] },
       { id: 53, title: "Bésame Mucho", artist: "Consuelo Velazquez", genre: "Latin", key: "G", bpm: 120, prog: "I–IV–V–IV", energy: 3, instr: ['g', 'p', 'v'] },
       { id: 54, title: "Siboney", artist: "Ernesto Lecuona", genre: "Latin", key: "Dm", bpm: 96, prog: "i–i–IV–V", energy: 3, instr: ['g', 'p', 'v'] },
       { id: 55, title: "Tequila", artist: "The Champs", genre: "Latin", key: "A", bpm: 128, prog: "I–IV–I–IV", energy: 4, instr: ['g', 'p', 'v'] },
-      { id: 56, title: "Summertime", artist: "DJ Jazzy Jeff & Fresh Prince", genre: "Jazz", key: "Gm", bpm: 94, prog: "i–iv–i–V", energy: 2, instr: ['g', 'p', 'v'] },
+      { id: 56, title: "Summertime", artist: "George Gershwin", genre: "Jazz", key: "Am", bpm: 52, prog: "i–V7–i–IV", energy: 1, instr: ['g', 'p', 'v'] },
       { id: 57, title: "All of Me", artist: "John Legend", genre: "Soul", key: "F#m", bpm: 76, prog: "vi–IV–I–V", energy: 2, instr: ['g', 'p', 'v'] },
       { id: 58, title: "Thinking Out Loud", artist: "Ed Sheeran", genre: "Ballad", key: "Bb", bpm: 64, prog: "I–V–vi–IV", energy: 2, instr: ['g', 'p'] },
       { id: 59, title: "Perfect", artist: "Ed Sheeran", genre: "Pop", key: "G", bpm: 76, prog: "I–V–vi–IV", energy: 2, instr: ['g', 'p'] },
       { id: 60, title: "Shape of You", artist: "Ed Sheeran", genre: "Pop", key: "C#m", bpm: 96, prog: "I–V–vi–IV", energy: 4, instr: ['g', 'p', 'v'] },
-      { id: 61, title: "Hoochie Coochie Man", artist: "Muddy Waters", genre: "Blues", key: "Bb", bpm: 92, prog: "I–I–I–V–I", energy: 4, instr: ['g', 'v'] },
+      { id: 61, title: "Hoochie Coochie Man", artist: "Muddy Waters", genre: "Blues", key: "Bb", bpm: 113, prog: "I–I–I–V–I", energy: 4, instr: ['g', 'v'] },
       { id: 62, title: "Got My Mojo Working", artist: "Muddy Waters", genre: "Blues", key: "E", bpm: 120, prog: "I–IV–V–IV", energy: 5, instr: ['g', 'p', 'v'] },
       { id: 63, title: "Help Me", artist: "Sonny Boy Williamson", genre: "Blues", key: "G", bpm: 80, prog: "I–IV–I–V", energy: 3, instr: ['g', 'p'] },
       { id: 64, title: "Mannish Boy", artist: "Muddy Waters", genre: "Blues", key: "E", bpm: 88, prog: "I–I–I–IV", energy: 4, instr: ['g', 'p', 'v'] },
       { id: 65, title: "Five Long Years", artist: "Eddie Boyd", genre: "Blues", key: "F", bpm: 96, prog: "I–IV–I–V", energy: 3, instr: ['g', 'p'] },
-      { id: 66, title: "Shine On You Crazy Diamond", artist: "Pink Floyd", genre: "Rock", key: "Am", bpm: 60, prog: "i–VII–VI–VII", energy: 2, instr: ['g', 'p', 'v'] },
+      { id: 66, title: "Shine On You Crazy Diamond", artist: "Pink Floyd", genre: "Rock", key: "Am", bpm: 63, prog: "i–VII–VI–VII", energy: 2, instr: ['g', 'p', 'v'] },
       { id: 67, title: "Bohemian Rhapsody", artist: "Queen", genre: "Rock", key: "Bb", bpm: 55, prog: "IV–I–V–IV", energy: 3, instr: ['g', 'p', 'v'] },
-      { id: 68, title: "Comfortably Numb", artist: "Pink Floyd", genre: "Rock", key: "G#m", bpm: 64, prog: "i–VI–III–VII", energy: 3, instr: ['g', 'p', 'v'] },
-      { id: 69, title: "Whole Lotta Love", artist: "Led Zeppelin", genre: "Rock", key: "Em", bpm: 96, prog: "i–i–i–IV", energy: 5, instr: ['g', 'v'] },
+      { id: 68, title: "Comfortably Numb", artist: "Pink Floyd", genre: "Rock", key: "G#m", bpm: 63, prog: "i–VI–III–VII", energy: 3, instr: ['g', 'p', 'v'] },
+      { id: 69, title: "Whole Lotta Love", artist: "Led Zeppelin", genre: "Rock", key: "Em", bpm: 89, prog: "i–i–i–IV", energy: 5, instr: ['g', 'v'] },
       { id: 70, title: "My Generation", artist: "The Who", genre: "Rock", key: "G", bpm: 128, prog: "I–IV–V–IV", energy: 5, instr: ['g', 'v'] },
       { id: 71, title: "Hey Jude", artist: "The Beatles", genre: "Pop", key: "C", bpm: 76, prog: "I–IV–I–V", energy: 3, instr: ['g', 'p', 'v'] },
       { id: 72, title: "The Sound of Silence", artist: "Simon & Garfunkel", genre: "Pop", key: "Em", bpm: 72, prog: "i–VI–III–VII", energy: 2, instr: ['g', 'p'] },
@@ -2307,141 +2091,8 @@
       { id: 90, title: "Sexual Healing", artist: "Marvin Gaye", genre: "R&B", key: "Em", bpm: 96, prog: "i–VI–III–VII", energy: 3, instr: ['g', 'p', 'v'] },
     ];
 
-    // ─── I18N (INTERNACIONALIZATION) ─────────────────────────────────────────────
-    const i18n = {
-      en: {
-        nav_builder: 'Builder',
-        nav_pool: 'Pool',
-        nav_export: 'Export',
-        nav_docs: 'Docs',
-        instruments: 'Instruments tonight',
-        sets: 'Sets',
-        duration: 'Duration per set',
-        generate: 'Generate Setlist',
-        saved: 'Saved nights',
-        how_to: 'How to use',
-        pool_title: 'Song Pool',
-        search: 'Search…',
-        all_genres: 'All',
-        add_song: '+ Add song to pool',
-        edit: 'Edit',
-        delete: '×',
-        export_title: 'Export setlist',
-        modal_new: 'New song',
-        modal_edit: 'Edit song',
-        field_title: 'Title',
-        field_artist: 'Artist',
-        field_genre: 'Genre',
-        field_key: 'Key',
-        field_bpm: 'BPM',
-        field_prog: 'Progression',
-        field_energy: 'Energy (1–5)',
-        field_instr: 'Favored instruments',
-        cancel: 'Cancel',
-        save: 'Save',
-        night_input_placeholder: 'Click to enter night name…'
-      },
-      es: {
-        nav_builder: 'Constructor',
-        nav_pool: 'Cancionero',
-        nav_export: 'Exportar',
-        nav_docs: 'Docs',
-        instruments: 'Instrumentos esta noche',
-        sets: 'Sets',
-        duration: 'Duración por set',
-        generate: 'Generar Setlist',
-        saved: 'Noches guardadas',
-        how_to: 'Cómo usar',
-        pool_title: 'Pool de canciones',
-        search: 'Buscar…',
-        all_genres: 'Todas',
-        add_song: '+ Agregar canción al pool',
-        edit: 'Editar',
-        delete: '×',
-        export_title: 'Exportar setlist',
-        modal_new: 'Nueva canción',
-        modal_edit: 'Editar canción',
-        field_title: 'Título',
-        field_artist: 'Artista',
-        field_genre: 'Género',
-        field_key: 'Tonalidad',
-        field_bpm: 'BPM',
-        field_prog: 'Progresión',
-        field_energy: 'Energía (1–5)',
-        field_instr: 'Instrumentos que favorece',
-        cancel: 'Cancelar',
-        save: 'Guardar',
-        night_input_placeholder: 'Haz clic para ingresar el nombre de la noche…'
-      },
-      pt: {
-        nav_builder: 'Construtor',
-        nav_pool: 'Cancionero',
-        nav_export: 'Exportar',
-        nav_docs: 'Docs',
-        instruments: 'Instrumentos esta noite',
-        sets: 'Sets',
-        duration: 'Duração por set',
-        generate: 'Gerar Setlist',
-        saved: 'Noites salvas',
-        how_to: 'Como usar',
-        pool_title: 'Pool de canções',
-        search: 'Pesquisar…',
-        all_genres: 'Todas',
-        add_song: '+ Adicionar canção ao pool',
-        edit: 'Editar',
-        delete: '×',
-        export_title: 'Exportar setlist',
-        modal_new: 'Nova canção',
-        modal_edit: 'Editar canção',
-        field_title: 'Título',
-        field_artist: 'Artista',
-        field_genre: 'Gênero',
-        field_key: 'Tom',
-        field_bpm: 'BPM',
-        field_prog: 'Progressão',
-        field_energy: 'Energia (1–5)',
-        field_instr: 'Instrumentos favorecidos',
-        cancel: 'Cancelar',
-        save: 'Salvar',
-        night_input_placeholder: 'Clique para inserir o nome da noite…'
-      },
-      ru: {
-        nav_builder: 'Конструктор',
-        nav_pool: 'Каталог',
-        nav_export: 'Экспорт',
-        nav_docs: 'Помощь',
-        instruments: 'Инструменты сегодня',
-        sets: 'Сеты',
-        duration: 'Длит. за сет',
-        generate: 'Создать сетлист',
-        saved: 'Сохранённые ночи',
-        how_to: 'Как использовать',
-        pool_title: 'База песен',
-        search: 'Поиск…',
-        all_genres: 'Все',
-        add_song: '+ Добавить песню',
-        edit: 'Изменить',
-        delete: '×',
-        export_title: 'Экспорт сетлиста',
-        modal_new: 'Новая песня',
-        modal_edit: 'Изменить песню',
-        field_title: 'Название',
-        field_artist: 'Артист',
-        field_genre: 'Жанр',
-        field_key: 'Тональность',
-        field_bpm: 'BPM',
-        field_prog: 'Прогрессия',
-        field_energy: 'Энергия (1–5)',
-        field_instr: 'Благоприятные инструменты',
-        cancel: 'Отмена',
-        save: 'Сохранить',
-        night_input_placeholder: 'Введите название ночи…'
-      }
-    };
 
-    let currentLang = localStorage.getItem('fmg-lang') || 'en';
-
-
+    let pool = JSON.parse(localStorage.getItem('fmg-pool') || 'null') || DEFAULTS;
     let nights = JSON.parse(localStorage.getItem('fmg-nights') || '[]');
     let sets = [];
     let numSets = 3;
@@ -2458,6 +2109,586 @@
       gemini: localStorage.getItem('fmg-api-key-gemini') || '',
       chatgpt: localStorage.getItem('fmg-api-key-chatgpt') || ''
     };
+
+    // ─── I18N ────────────────────────────────────────────────────────────────────
+    const i18n = {
+      en: {
+        // topbar
+        logo_sub: '// setlist builder',
+        // nav
+        nav_builder: 'Builder', nav_pool: 'Pool', nav_export: 'Export', nav_docs: 'Docs',
+        // sidebar
+        instruments: 'Instruments tonight',
+        instr_hint: 'Generation prioritizes songs suited to the selected instruments.',
+        sets: 'Sets', duration: 'Duration per set',
+        genres_label: 'Genres to include', genres_all: 'all', genres_none: 'none',
+        import_export: 'Import / Export pool',
+        btn_export_json: 'Export JSON', btn_import_json: 'Import JSON',
+        quick_start: 'Quick start guide',
+        qs_1: 'Select available instruments',
+        qs_2: 'Choose # of sets & duration',
+        qs_3: 'Pick genres to include',
+        qs_4: 'Click Generate Setlist',
+        qs_5: 'Drag rows to reorder songs',
+        qs_6: 'Go to Pool to add/edit songs',
+        qs_7: 'Export as HTML, JSON, or text',
+        qs_note: 'All data stays in your browser. No account needed.',
+        generate: 'Generate Setlist',
+        // instruments
+        guitar: 'Guitar', piano: 'Piano', winds: 'Winds',
+        // api bar
+        api_required: '✦ API key required for AI features',
+        api_save: 'Save', api_what: 'What is this?',
+        // builder
+        night_placeholder: 'Night name…',
+        btn_save_night: 'Save', btn_export: 'Export',
+        // pool
+        pool_title: 'Song pool',
+        search_ph: 'Search…',
+        pf_all: 'All',
+        btn_add_ai: '✦ Add with AI', btn_add_manual: '+ Manual',
+        // ai panel
+        ai_title: 'AI song assistant',
+        ai_tab_lookup: 'Song lookup', ai_tab_suggest: 'Suggest by mood',
+        ai_ph_lookup: 'e.g. Red House – Jimi Hendrix',
+        ai_ph_suggest: 'e.g. slow blues, guitar, melancholic, key of Am',
+        ai_btn_fill: 'Fill info', ai_btn_suggest: 'Suggest',
+        // pool table headers
+        th_song: 'Song', th_artist: 'Artist', th_genre: 'Genre', th_key: 'Key',
+        th_bpm: 'BPM', th_prog: 'Progression', th_instr: 'Instr.',
+        // pool row buttons
+        btn_edit: 'Edit', btn_delete: '×',
+        // export
+        export_title: 'Export setlist',
+        btn_dl_html: 'Download HTML', btn_copy_text: 'Copy as text', btn_dl_json: 'Export JSON',
+        // modal
+        modal_new: 'New song', modal_edit: 'Edit song',
+        field_title: 'Title', field_artist: 'Artist', field_genre: 'Genre',
+        field_key: 'Key', field_bpm: 'BPM', field_prog: 'Progression',
+        field_energy: 'Energy (1–5)', field_instr: 'Best instruments',
+        btn_cancel: 'Cancel', btn_save: 'Save',
+        // docs — hero
+        docs_hero_p: 'A tool for musicians to build, organize, and export setlists — with AI-powered song lookup and mood-based suggestions. All data stays in your browser. No account required.',
+        // docs — sections
+        docs_getting_started: 'Getting started',
+        docs_instr_gen: 'Instruments & generation',
+        docs_ai: 'AI features',
+        docs_pool: 'Song pool',
+        docs_export_share: 'Export & share',
+        docs_github: 'Deploying to GitHub Pages',
+        docs_tips: 'Tips & tricks',
+        docs_instr_hint: 'When you select Guitar, Piano, or Winds in the sidebar, the algorithm prefers songs tagged for those instruments. Each song has instrument tags (G, P, V) indicating how well it suits each instrument. If there aren\'t enough songs matching your selections, the algorithm falls back to the full pool.',
+        docs_energy_title: 'Energy curve',
+        docs_energy_p: 'Each setlist follows a musical energy pattern:',
+        docs_energy_note: 'This keeps audiences engaged and provides natural peaks and valleys in your performance.',
+        docs_energy_1: 'Set 1 & 2: Opens slow/mellow, builds toward mid-energy',
+        docs_energy_2: 'Final set: Climbs higher, ends on a peak',
+        docs_ai_provider: 'Choosing an API provider',
+        docs_ai_provider_p: 'Use the dropdown in the settings bar to select which AI provider to use. Each provider has similar performance for music metadata tasks. Claude and ChatGPT tend to be slightly more reliable for complex requests, while Gemini is often faster and cheaper.',
+        docs_ai_lookup_p: 'Type a song name and artist (e.g. "Red House – Jimi Hendrix") and the AI will automatically fill in the genre, key, BPM, chord progression, energy level, and best instrument fit. Review and click Add to pool to save it.',
+        docs_ai_suggest_p: 'Describe what you\'re looking for (e.g. "upbeat funk with bass, energetic, Dm") and the AI will suggest 5 songs that fit — with full metadata ready to add to your pool. Works across all genres.',
+        docs_pool_p: 'The pool is your master library of songs. It comes pre-loaded with 90 carefully curated songs spanning 11 genres — ensuring you have plenty of options without needing AI to generate setlists.',
+        docs_pool_li1: 'Add songs manually via + Manual',
+        docs_pool_li2: 'Add songs via AI lookup or suggestion',
+        docs_pool_li3: 'Edit any song\'s metadata (genre, key, BPM, progression, instruments)',
+        docs_pool_li4: 'Delete songs from the pool',
+        docs_pool_li5: 'Export the pool as JSON and import it on another device',
+        docs_pool_instr_p: 'Each song has an instrument tag (G = Guitar, P = Piano, V = Winds) that controls which songs get prioritized when you select available instruments and genres for generation.',
+        docs_export_p: 'All data lives in your browser\'s localStorage. To move it between devices or share with collaborators, use the export features:',
+        docs_export_li1: 'Download HTML — a self-contained styled file of your setlist, ready to print or distribute',
+        docs_export_li2: 'Copy as text — plain text version for messaging, emails, or notes',
+        docs_export_li3: 'Export JSON — raw setlist data for archiving',
+        docs_export_li4: 'Export pool JSON (in Pool view) — save your entire song library as a file',
+        docs_export_li5: 'Import pool JSON (in Pool view) — load a previously exported pool, merges with no duplicates',
+        docs_github_p: 'Deploy this app publicly so your band or team can access it from anywhere.',
+        docs_github_note: 'Each visitor has their own independent song pool and setlist data stored locally in their browser. Data doesn\'t sync between users — use JSON export/import to share pools across devices.',
+        docs_tip1_title: 'Genre mixing:',
+        docs_tip1: 'Try selecting 2-3 genres for variety. Blues + Soul creates a cohesive vibe, while Pop + Rock + Soul broadens appeal.',
+        docs_tip2_title: 'Song sequencing:',
+        docs_tip2: 'Drag rows to manually fine-tune the energy curve. Avoid two high-energy songs back-to-back.',
+        docs_tip3_title: 'Test the algorithm:',
+        docs_tip3: 'Generate several setlists by unchecking/checking genres. The algorithm uses randomization, so each run is slightly different.',
+        docs_tip4_title: 'Add custom songs:',
+        docs_tip4: 'Don\'t see a song you want? Go to Pool and add it manually or use AI lookup.',
+        docs_tip5_title: 'Backup your pool:',
+        docs_tip5: 'Export your song pool as JSON regularly. Store it somewhere safe in case your browser clears localStorage.',
+        docs_tip6_title: 'Share setlists:',
+        docs_tip6: 'Export as HTML for a professional-looking document to share with band members or send to venues.',
+        docs_built: 'Built for musicians.',
+        docs_version: 'fmg-setlist v2.3 — 90 songs, 11 genres, AI-powered, multi-provider, open source.',
+        // saved nights
+        saved_nights: 'Saved nights', no_saved: 'No saved nights',
+        // toasts / confirms
+        toast_saved: 'Saved: ',
+        toast_generated: 'Setlist generated — ',
+        toast_songs_added: ' songs',
+        toast_removed: 'Removed: ',
+        toast_imported: ' new songs imported',
+        toast_pool_exported: 'Pool exported',
+        toast_html_dl: 'HTML downloaded',
+        toast_json_dl: 'JSON downloaded',
+        toast_copied: 'Copied to clipboard',
+        toast_api_saved: 'API key saved',
+        toast_already_set: 'Already in this set',
+        toast_song_added: 'Song added',
+        toast_song_updated: 'Song updated',
+        toast_min_instr: 'At least one instrument must be selected',
+        toast_req_fields: 'Title and artist required',
+        toast_invalid_json: 'Invalid JSON file',
+        confirm_del_song: '" from pool?',
+        confirm_del_night: 'Delete "',
+        confirm_del_night2: '"?',
+        api_set_key: 'Set your API key first',
+        ai_enter_query: 'Enter a song or description',
+        toast_already_pool: 'Already in pool',
+        toast_added: 'Added: ',
+      },
+      es: {
+        logo_sub: '// constructor de setlists',
+        nav_builder: 'Constructor', nav_pool: 'Cancionero', nav_export: 'Exportar', nav_docs: 'Docs',
+        instruments: 'Instrumentos esta noche',
+        instr_hint: 'La generación prioriza canciones adecuadas a los instrumentos seleccionados.',
+        sets: 'Sets', duration: 'Duración por set',
+        genres_label: 'Géneros a incluir', genres_all: 'todos', genres_none: 'ninguno',
+        import_export: 'Importar / Exportar pool',
+        btn_export_json: 'Exportar JSON', btn_import_json: 'Importar JSON',
+        quick_start: 'Guía rápida',
+        qs_1: 'Selecciona los instrumentos disponibles',
+        qs_2: 'Elige nº de sets y duración',
+        qs_3: 'Selecciona los géneros a incluir',
+        qs_4: 'Haz clic en Generar Setlist',
+        qs_5: 'Arrastra filas para reordenar canciones',
+        qs_6: 'Ve al Cancionero para agregar/editar',
+        qs_7: 'Exporta como HTML, JSON o texto',
+        qs_note: 'Todos los datos se quedan en tu navegador. Sin cuenta.',
+        generate: 'Generar Setlist',
+        guitar: 'Guitarra', piano: 'Piano', winds: 'Vientos',
+        api_required: '✦ Se requiere API key para funciones IA',
+        api_save: 'Guardar', api_what: '¿Qué es esto?',
+        night_placeholder: 'Nombre de la noche…',
+        btn_save_night: 'Guardar', btn_export: 'Exportar',
+        pool_title: 'Pool de canciones',
+        search_ph: 'Buscar…',
+        pf_all: 'Todas',
+        btn_add_ai: '✦ Agregar con IA', btn_add_manual: '+ Manual',
+        ai_title: 'Asistente IA de canciones',
+        ai_tab_lookup: 'Buscar canción', ai_tab_suggest: 'Sugerir por mood',
+        ai_ph_lookup: 'ej. Red House – Jimi Hendrix',
+        ai_ph_suggest: 'ej. blues lento, guitarra, melancólico, tonalidad Am',
+        ai_btn_fill: 'Rellenar info', ai_btn_suggest: 'Sugerir',
+        th_song: 'Canción', th_artist: 'Artista', th_genre: 'Género', th_key: 'Tono',
+        th_bpm: 'BPM', th_prog: 'Progresión', th_instr: 'Instr.',
+        btn_edit: 'Editar', btn_delete: '×',
+        export_title: 'Exportar setlist',
+        btn_dl_html: 'Descargar HTML', btn_copy_text: 'Copiar como texto', btn_dl_json: 'Exportar JSON',
+        modal_new: 'Nueva canción', modal_edit: 'Editar canción',
+        field_title: 'Título', field_artist: 'Artista', field_genre: 'Género',
+        field_key: 'Tonalidad', field_bpm: 'BPM', field_prog: 'Progresión',
+        field_energy: 'Energía (1–5)', field_instr: 'Instrumentos que favorece',
+        btn_cancel: 'Cancelar', btn_save: 'Guardar',
+        docs_hero_p: 'Una herramienta para músicos para construir, organizar y exportar setlists — con búsqueda de canciones por IA y sugerencias por mood. Todos los datos se quedan en tu navegador. Sin cuenta.',
+        docs_getting_started: 'Primeros pasos',
+        docs_instr_gen: 'Instrumentos y generación',
+        docs_ai: 'Funciones IA',
+        docs_pool: 'Pool de canciones',
+        docs_export_share: 'Exportar y compartir',
+        docs_github: 'Publicar en GitHub Pages',
+        docs_tips: 'Consejos y trucos',
+        docs_instr_hint: 'Al seleccionar Guitarra, Piano o Vientos, el algoritmo prefiere canciones etiquetadas para esos instrumentos. Si no hay suficientes, usa el pool completo.',
+        docs_energy_title: 'Curva de energía',
+        docs_energy_p: 'Cada setlist sigue un patrón de energía musical:',
+        docs_energy_note: 'Esto mantiene al público enganchado con picos y valles naturales en tu actuación.',
+        docs_energy_1: 'Sets 1 y 2: Abre suave, construye hacia energía media',
+        docs_energy_2: 'Set final: Sube más alto, termina en el pico',
+        docs_ai_provider: 'Elegir proveedor de IA',
+        docs_ai_provider_p: 'Usa el selector para elegir el proveedor de IA. Claude y ChatGPT son ligeramente más fiables para solicitudes complejas; Gemini suele ser más rápido y económico.',
+        docs_ai_lookup_p: 'Escribe el nombre de una canción y artista y la IA rellenará automáticamente género, tono, BPM, progresión, energía e instrumentos. Revisa y haz clic en Agregar al pool.',
+        docs_ai_suggest_p: 'Describe lo que buscas (ej. "funk animado con bajo, energético, Dm") y la IA sugerirá 5 canciones con metadata completa lista para agregar al pool.',
+        docs_pool_p: 'El pool es tu biblioteca de canciones. Viene precargado con 90 canciones cuidadosamente seleccionadas de 11 géneros.',
+        docs_pool_li1: 'Agregar canciones manualmente con + Manual',
+        docs_pool_li2: 'Agregar canciones por búsqueda IA o sugerencia',
+        docs_pool_li3: 'Editar metadata de cualquier canción (género, tono, BPM, progresión, instrumentos)',
+        docs_pool_li4: 'Eliminar canciones del pool',
+        docs_pool_li5: 'Exportar el pool como JSON e importarlo en otro dispositivo',
+        docs_pool_instr_p: 'Cada canción tiene una etiqueta de instrumento (G = Guitarra, P = Piano, V = Vientos) que controla qué canciones se priorizan según los instrumentos seleccionados.',
+        docs_export_p: 'Todos los datos viven en el localStorage de tu navegador. Para moverlos entre dispositivos o compartir:',
+        docs_export_li1: 'Descargar HTML — archivo con estilo listo para imprimir o distribuir',
+        docs_export_li2: 'Copiar como texto — versión de texto plano para mensajes o notas',
+        docs_export_li3: 'Exportar JSON — datos del setlist para archivo',
+        docs_export_li4: 'Exportar pool JSON (en Pool) — guarda toda tu biblioteca como archivo',
+        docs_export_li5: 'Importar pool JSON (en Pool) — carga un pool exportado, sin duplicados',
+        docs_github_p: 'Publica esta app para que tu banda o equipo pueda acceder desde cualquier lugar.',
+        docs_github_note: 'Cada visitante tiene su propio pool y setlists guardados localmente en su navegador. Los datos no se sincronizan entre usuarios — usa export/import JSON para compartir.',
+        docs_tip1_title: 'Mezcla de géneros:',
+        docs_tip1: 'Prueba seleccionando 2-3 géneros. Blues + Soul crea un ambiente coherente; Pop + Rock + Soul amplía el atractivo.',
+        docs_tip2_title: 'Secuencia de canciones:',
+        docs_tip2: 'Arrastra filas para ajustar manualmente la curva de energía. Evita dos canciones de alta energía seguidas.',
+        docs_tip3_title: 'Prueba el algoritmo:',
+        docs_tip3: 'Genera varios setlists marcando/desmarcando géneros. El algoritmo usa aleatoriedad, cada ejecución es diferente.',
+        docs_tip4_title: 'Agregar canciones personalizadas:',
+        docs_tip4: '¿No ves una canción? Ve al Pool y agrégala manualmente o usa búsqueda IA.',
+        docs_tip5_title: 'Respalda tu pool:',
+        docs_tip5: 'Exporta tu pool como JSON regularmente y guárdalo en un lugar seguro.',
+        docs_tip6_title: 'Comparte setlists:',
+        docs_tip6: 'Exporta como HTML para un documento de aspecto profesional para compartir con tu banda o enviar al venue.',
+        docs_built: 'Hecho para músicos.',
+        docs_version: 'fmg-setlist v2.3 — 90 canciones, 11 géneros, potenciado por IA, multi-proveedor, open source.',
+        saved_nights: 'Noches guardadas', no_saved: 'Sin noches guardadas',
+        toast_saved: 'Guardado: ',
+        toast_generated: 'Setlist generado — ',
+        toast_songs_added: ' canciones',
+        toast_removed: 'Eliminado: ',
+        toast_imported: ' canciones importadas',
+        toast_pool_exported: 'Pool exportado',
+        toast_html_dl: 'HTML descargado',
+        toast_json_dl: 'JSON descargado',
+        toast_copied: 'Copiado al portapapeles',
+        toast_api_saved: 'API key guardada',
+        toast_already_set: 'Ya está en este set',
+        toast_song_added: 'Canción agregada',
+        toast_song_updated: 'Canción actualizada',
+        toast_min_instr: 'Al menos un instrumento debe estar seleccionado',
+        toast_req_fields: 'Título y artista requeridos',
+        toast_invalid_json: 'Archivo JSON inválido',
+        confirm_del_song: '" del pool?',
+        confirm_del_night: '¿Eliminar "',
+        confirm_del_night2: '"?',
+        api_set_key: 'Primero establece tu API key',
+        ai_enter_query: 'Escribe una canción o descripción',
+        toast_already_pool: 'Ya está en el pool',
+        toast_added: 'Agregado: ',
+      },
+      pt: {
+        logo_sub: '// construtor de setlists',
+        nav_builder: 'Construtor', nav_pool: 'Cancioneiro', nav_export: 'Exportar', nav_docs: 'Docs',
+        instruments: 'Instrumentos esta noite',
+        instr_hint: 'A geração prioriza músicas adequadas aos instrumentos selecionados.',
+        sets: 'Sets', duration: 'Duração por set',
+        genres_label: 'Gêneros a incluir', genres_all: 'todos', genres_none: 'nenhum',
+        import_export: 'Importar / Exportar pool',
+        btn_export_json: 'Exportar JSON', btn_import_json: 'Importar JSON',
+        quick_start: 'Guia rápido',
+        qs_1: 'Selecione os instrumentos disponíveis',
+        qs_2: 'Escolha nº de sets e duração',
+        qs_3: 'Selecione os gêneros a incluir',
+        qs_4: 'Clique em Gerar Setlist',
+        qs_5: 'Arraste linhas para reordenar músicas',
+        qs_6: 'Vá ao Cancioneiro para adicionar/editar',
+        qs_7: 'Exporte como HTML, JSON ou texto',
+        qs_note: 'Todos os dados ficam no seu navegador. Sem conta.',
+        generate: 'Gerar Setlist',
+        guitar: 'Guitarra', piano: 'Piano', winds: 'Metais/Sopros',
+        api_required: '✦ API key necessária para recursos de IA',
+        api_save: 'Salvar', api_what: 'O que é isso?',
+        night_placeholder: 'Nome da noite…',
+        btn_save_night: 'Salvar', btn_export: 'Exportar',
+        pool_title: 'Pool de músicas',
+        search_ph: 'Pesquisar…',
+        pf_all: 'Todas',
+        btn_add_ai: '✦ Adicionar com IA', btn_add_manual: '+ Manual',
+        ai_title: 'Assistente IA de músicas',
+        ai_tab_lookup: 'Buscar música', ai_tab_suggest: 'Sugerir por mood',
+        ai_ph_lookup: 'ex. Red House – Jimi Hendrix',
+        ai_ph_suggest: 'ex. blues lento, guitarra, melancólico, tom Am',
+        ai_btn_fill: 'Preencher info', ai_btn_suggest: 'Sugerir',
+        th_song: 'Música', th_artist: 'Artista', th_genre: 'Gênero', th_key: 'Tom',
+        th_bpm: 'BPM', th_prog: 'Progressão', th_instr: 'Instr.',
+        btn_edit: 'Editar', btn_delete: '×',
+        export_title: 'Exportar setlist',
+        btn_dl_html: 'Baixar HTML', btn_copy_text: 'Copiar como texto', btn_dl_json: 'Exportar JSON',
+        modal_new: 'Nova música', modal_edit: 'Editar música',
+        field_title: 'Título', field_artist: 'Artista', field_genre: 'Gênero',
+        field_key: 'Tom', field_bpm: 'BPM', field_prog: 'Progressão',
+        field_energy: 'Energia (1–5)', field_instr: 'Instrumentos favorecidos',
+        btn_cancel: 'Cancelar', btn_save: 'Salvar',
+        docs_hero_p: 'Uma ferramenta para músicos construírem, organizarem e exportarem setlists — com busca de músicas por IA e sugestões por mood. Todos os dados ficam no seu navegador. Sem conta.',
+        docs_getting_started: 'Primeiros passos',
+        docs_instr_gen: 'Instrumentos e geração',
+        docs_ai: 'Recursos de IA',
+        docs_pool: 'Pool de músicas',
+        docs_export_share: 'Exportar e compartilhar',
+        docs_github: 'Publicar no GitHub Pages',
+        docs_tips: 'Dicas e truques',
+        docs_instr_hint: 'Ao selecionar Guitarra, Piano ou Metais, o algoritmo prefere músicas marcadas para esses instrumentos. Se não houver suficientes, usa o pool completo.',
+        docs_energy_title: 'Curva de energia',
+        docs_energy_p: 'Cada setlist segue um padrão de energia musical:',
+        docs_energy_note: 'Isso mantém o público engajado com picos e vales naturais na sua performance.',
+        docs_energy_1: 'Sets 1 e 2: Abre suave, cresce até energia média',
+        docs_energy_2: 'Set final: Sobe mais, termina no pico',
+        docs_ai_provider: 'Escolher provedor de IA',
+        docs_ai_provider_p: 'Use o seletor para escolher o provedor de IA. Claude e ChatGPT são levemente mais confiáveis para pedidos complexos; Gemini costuma ser mais rápido e barato.',
+        docs_ai_lookup_p: 'Digite o nome de uma música e artista e a IA preencherá automaticamente gênero, tom, BPM, progressão, energia e instrumentos. Revise e clique em Adicionar ao pool.',
+        docs_ai_suggest_p: 'Descreva o que você procura e a IA sugerirá 5 músicas com metadata completa pronta para adicionar ao pool.',
+        docs_pool_p: 'O pool é sua biblioteca de músicas. Vem pré-carregado com 90 músicas cuidadosamente selecionadas de 11 gêneros.',
+        docs_pool_li1: 'Adicionar músicas manualmente com + Manual',
+        docs_pool_li2: 'Adicionar músicas por busca IA ou sugestão',
+        docs_pool_li3: 'Editar metadata de qualquer música',
+        docs_pool_li4: 'Deletar músicas do pool',
+        docs_pool_li5: 'Exportar o pool como JSON e importar em outro dispositivo',
+        docs_pool_instr_p: 'Cada música tem uma tag de instrumento (G = Guitarra, P = Piano, V = Metais) que controla quais músicas são priorizadas.',
+        docs_export_p: 'Todos os dados vivem no localStorage do seu navegador.',
+        docs_export_li1: 'Baixar HTML — arquivo estilizado pronto para imprimir ou distribuir',
+        docs_export_li2: 'Copiar como texto — versão de texto simples para mensagens ou notas',
+        docs_export_li3: 'Exportar JSON — dados do setlist para arquivamento',
+        docs_export_li4: 'Exportar pool JSON (em Pool) — salva toda sua biblioteca como arquivo',
+        docs_export_li5: 'Importar pool JSON (em Pool) — carrega pool exportado, sem duplicatas',
+        docs_github_p: 'Publique este app para que sua banda ou equipe possa acessar de qualquer lugar.',
+        docs_github_note: 'Cada visitante tem seu próprio pool e setlists armazenados localmente. Os dados não sincronizam entre usuários.',
+        docs_tip1_title: 'Mistura de gêneros:',
+        docs_tip1: 'Tente selecionar 2-3 gêneros. Blues + Soul cria um ambiente coeso; Pop + Rock + Soul amplia o apelo.',
+        docs_tip2_title: 'Sequência de músicas:',
+        docs_tip2: 'Arraste linhas para ajustar a curva de energia. Evite duas músicas de alta energia seguidas.',
+        docs_tip3_title: 'Teste o algoritmo:',
+        docs_tip3: 'Gere vários setlists marcando/desmarcando gêneros. O algoritmo usa aleatoriedade.',
+        docs_tip4_title: 'Adicionar músicas personalizadas:',
+        docs_tip4: 'Não encontrou uma música? Vá ao Pool e adicione manualmente ou use a busca IA.',
+        docs_tip5_title: 'Faça backup do pool:',
+        docs_tip5: 'Exporte seu pool como JSON regularmente e guarde em local seguro.',
+        docs_tip6_title: 'Compartilhe setlists:',
+        docs_tip6: 'Exporte como HTML para um documento profissional para compartilhar com sua banda.',
+        docs_built: 'Feito para músicos.',
+        docs_version: 'fmg-setlist v2.3 — 90 músicas, 11 gêneros, IA, multi-provedor, open source.',
+        saved_nights: 'Noites salvas', no_saved: 'Sem noites salvas',
+        toast_saved: 'Salvo: ',
+        toast_generated: 'Setlist gerado — ',
+        toast_songs_added: ' músicas',
+        toast_removed: 'Removido: ',
+        toast_imported: ' músicas importadas',
+        toast_pool_exported: 'Pool exportado',
+        toast_html_dl: 'HTML baixado',
+        toast_json_dl: 'JSON baixado',
+        toast_copied: 'Copiado para a área de transferência',
+        toast_api_saved: 'API key salva',
+        toast_already_set: 'Já está neste set',
+        toast_song_added: 'Música adicionada',
+        toast_song_updated: 'Música atualizada',
+        toast_min_instr: 'Pelo menos um instrumento deve estar selecionado',
+        toast_req_fields: 'Título e artista são obrigatórios',
+        toast_invalid_json: 'Arquivo JSON inválido',
+        confirm_del_song: '" do pool?',
+        confirm_del_night: 'Excluir "',
+        confirm_del_night2: '"?',
+        api_set_key: 'Configure sua API key primeiro',
+        ai_enter_query: 'Digite uma música ou descrição',
+        toast_already_pool: 'Já está no pool',
+        toast_added: 'Adicionado: ',
+      },
+      ru: {
+        logo_sub: '// конструктор сетлистов',
+        nav_builder: 'Конструктор', nav_pool: 'Каталог', nav_export: 'Экспорт', nav_docs: 'Помощь',
+        instruments: 'Инструменты сегодня',
+        instr_hint: 'Генерация отдаёт приоритет песням, подходящим для выбранных инструментов.',
+        sets: 'Сеты', duration: 'Длительность сета',
+        genres_label: 'Жанры для включения', genres_all: 'все', genres_none: 'ничего',
+        import_export: 'Импорт / Экспорт каталога',
+        btn_export_json: 'Экспорт JSON', btn_import_json: 'Импорт JSON',
+        quick_start: 'Быстрый старт',
+        qs_1: 'Выберите доступные инструменты',
+        qs_2: 'Выберите количество сетов и длительность',
+        qs_3: 'Выберите жанры для включения',
+        qs_4: 'Нажмите Создать сетлист',
+        qs_5: 'Перетащите строки для изменения порядка',
+        qs_6: 'Перейдите в Каталог для добавления/редактирования',
+        qs_7: 'Экспортируйте как HTML, JSON или текст',
+        qs_note: 'Все данные хранятся в вашем браузере. Аккаунт не нужен.',
+        generate: 'Создать сетлист',
+        guitar: 'Гитара', piano: 'Фортепиано', winds: 'Духовые',
+        api_required: '✦ API ключ необходим для функций ИИ',
+        api_save: 'Сохранить', api_what: 'Что это такое?',
+        night_placeholder: 'Название вечера…',
+        btn_save_night: 'Сохранить', btn_export: 'Экспорт',
+        pool_title: 'База песен',
+        search_ph: 'Поиск…',
+        pf_all: 'Все',
+        btn_add_ai: '✦ Добавить с ИИ', btn_add_manual: '+ Вручную',
+        ai_title: 'ИИ-ассистент песен',
+        ai_tab_lookup: 'Найти песню', ai_tab_suggest: 'Предложить по настроению',
+        ai_ph_lookup: 'напр. Red House – Jimi Hendrix',
+        ai_ph_suggest: 'напр. медленный блюз, гитара, Am',
+        ai_btn_fill: 'Заполнить', ai_btn_suggest: 'Предложить',
+        th_song: 'Песня', th_artist: 'Артист', th_genre: 'Жанр', th_key: 'Тональность',
+        th_bpm: 'BPM', th_prog: 'Прогрессия', th_instr: 'Инстр.',
+        btn_edit: 'Изменить', btn_delete: '×',
+        export_title: 'Экспорт сетлиста',
+        btn_dl_html: 'Скачать HTML', btn_copy_text: 'Копировать текст', btn_dl_json: 'Экспорт JSON',
+        modal_new: 'Новая песня', modal_edit: 'Изменить песню',
+        field_title: 'Название', field_artist: 'Артист', field_genre: 'Жанр',
+        field_key: 'Тональность', field_bpm: 'BPM', field_prog: 'Прогрессия',
+        field_energy: 'Энергия (1–5)', field_instr: 'Подходящие инструменты',
+        btn_cancel: 'Отмена', btn_save: 'Сохранить',
+        docs_hero_p: 'Инструмент для музыкантов для составления, организации и экспорта сетлистов — с поиском песен через ИИ. Все данные хранятся в вашем браузере.',
+        docs_getting_started: 'Начало работы',
+        docs_instr_gen: 'Инструменты и генерация',
+        docs_ai: 'Функции ИИ',
+        docs_pool: 'База песен',
+        docs_export_share: 'Экспорт и обмен',
+        docs_github: 'Публикация на GitHub Pages',
+        docs_tips: 'Советы',
+        docs_instr_hint: 'При выборе инструментов алгоритм предпочитает песни, помеченные для них. Если таких недостаточно, используется весь каталог.',
+        docs_energy_title: 'Кривая энергии',
+        docs_energy_p: 'Каждый сетлист следует музыкальной кривой энергии:',
+        docs_energy_note: 'Это удерживает внимание аудитории, создавая естественные пики и спады.',
+        docs_energy_1: 'Сеты 1 и 2: Открывается мягко, нарастает к средней энергии',
+        docs_energy_2: 'Финальный сет: Поднимается выше, заканчивается на пике',
+        docs_ai_provider: 'Выбор провайдера ИИ',
+        docs_ai_provider_p: 'Claude и ChatGPT надёжнее для сложных запросов; Gemini обычно быстрее и дешевле.',
+        docs_ai_lookup_p: 'Введите название песни и артиста — ИИ автоматически заполнит жанр, тональность, BPM, прогрессию, энергию и инструменты.',
+        docs_ai_suggest_p: 'Опишите, что ищете, и ИИ предложит 5 подходящих песен с полными данными.',
+        docs_pool_p: 'База — ваша главная библиотека. Поставляется с 90 тщательно отобранными песнями 11 жанров.',
+        docs_pool_li1: 'Добавлять песни вручную',
+        docs_pool_li2: 'Добавлять через поиск ИИ',
+        docs_pool_li3: 'Редактировать метаданные любой песни',
+        docs_pool_li4: 'Удалять песни из базы',
+        docs_pool_li5: 'Экспортировать базу как JSON и импортировать на другом устройстве',
+        docs_pool_instr_p: 'Каждая песня имеет метку инструмента (G = Гитара, P = Фортепиано, V = Духовые).',
+        docs_export_p: 'Все данные хранятся в localStorage вашего браузера.',
+        docs_export_li1: 'Скачать HTML — стилизованный файл сетлиста для печати',
+        docs_export_li2: 'Копировать текст — текстовая версия для сообщений',
+        docs_export_li3: 'Экспорт JSON — данные сетлиста для архива',
+        docs_export_li4: 'Экспорт JSON каталога (в Каталоге) — сохранить всю библиотеку',
+        docs_export_li5: 'Импорт JSON каталога (в Каталоге) — загрузить экспортированный каталог',
+        docs_github_p: 'Опубликуйте приложение, чтобы группа имела к нему доступ из любого места.',
+        docs_github_note: 'У каждого посетителя своя база и сетлисты в браузере. Данные не синхронизируются.',
+        docs_tip1_title: 'Смешение жанров:',
+        docs_tip1: 'Попробуйте 2-3 жанра. Blues + Soul создаёт единый стиль.',
+        docs_tip2_title: 'Последовательность песен:',
+        docs_tip2: 'Перетаскивайте для тонкой настройки кривой энергии.',
+        docs_tip3_title: 'Тестируйте алгоритм:',
+        docs_tip3: 'Генерируйте несколько сетлистов — алгоритм использует случайность.',
+        docs_tip4_title: 'Добавить свои песни:',
+        docs_tip4: 'Не нашли песню? Добавьте вручную или через ИИ.',
+        docs_tip5_title: 'Резервная копия:',
+        docs_tip5: 'Регулярно экспортируйте базу как JSON.',
+        docs_tip6_title: 'Делитесь сетлистами:',
+        docs_tip6: 'Экспортируйте как HTML для профессионального документа.',
+        docs_built: 'Создано для музыкантов.',
+        docs_version: 'fmg-setlist v2.3 — 90 песен, 11 жанров, ИИ, open source.',
+        saved_nights: 'Сохранённые вечера', no_saved: 'Нет сохранённых вечеров',
+        toast_saved: 'Сохранено: ',
+        toast_generated: 'Сетлист создан — ',
+        toast_songs_added: ' песен',
+        toast_removed: 'Удалено: ',
+        toast_imported: ' песен импортировано',
+        toast_pool_exported: 'Каталог экспортирован',
+        toast_html_dl: 'HTML скачан',
+        toast_json_dl: 'JSON скачан',
+        toast_copied: 'Скопировано',
+        toast_api_saved: 'API ключ сохранён',
+        toast_already_set: 'Уже в этом сете',
+        toast_song_added: 'Песня добавлена',
+        toast_song_updated: 'Песня обновлена',
+        toast_min_instr: 'Нужен хотя бы один инструмент',
+        toast_req_fields: 'Название и артист обязательны',
+        toast_invalid_json: 'Неверный файл JSON',
+        confirm_del_song: '" из каталога?',
+        confirm_del_night: 'Удалить "',
+        confirm_del_night2: '"?',
+        api_set_key: 'Сначала введите API ключ',
+        ai_enter_query: 'Введите песню или описание',
+        toast_already_pool: 'Уже в каталоге',
+        toast_added: 'Добавлено: ',
+      }
+    };
+    let currentLang = localStorage.getItem('fmg-lang') || 'en';
+    function tr(k) { return i18n[currentLang]?.[k] ?? i18n.en[k] ?? k; }
+    function setLang(lang) {
+      if (!i18n[lang]) lang = 'en';
+      currentLang = lang;
+      localStorage.setItem('fmg-lang', lang);
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+      function setq(sel, key) {
+        const el = typeof sel === 'string' ? document.querySelector(sel) : sel;
+        if (!el) return;
+        const tn = [...el.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
+        if (tn) tn.textContent = tr(key); else el.textContent = tr(key);
+      }
+      function setph(id, key) { const el = document.getElementById(id); if (el) el.placeholder = tr(key); }
+      // logo
+      setq('.logo-sub', 'logo_sub');
+      // nav
+      document.querySelectorAll('.nav-btn[data-i18n]').forEach(b => b.textContent = tr(b.dataset.i18n));
+      // api bar
+      const as = document.getElementById('api-status'); if (as && as.classList.contains('missing')) as.textContent = tr('api_required');
+      setq('#api-bar .api-save-btn', 'api_save');
+      setq('#api-bar .btn-xs', 'api_what');
+      // sidebar
+      setq('.s-label[data-i18n="instruments"]', 'instruments');
+      setq('.instr-hint', 'instr_hint');
+      const cg = document.getElementById('chip-guitar'); if (cg) cg.childNodes[cg.childNodes.length - 1].textContent = tr('guitar');
+      const cp = document.getElementById('chip-piano'); if (cp) cp.childNodes[cp.childNodes.length - 1].textContent = tr('piano');
+      const cw = document.getElementById('chip-wind'); if (cw) cw.childNodes[cw.childNodes.length - 1].textContent = tr('winds');
+      setq('.s-label[data-i18n="sets"]', 'sets');
+      setq('.s-label[data-i18n="duration"]', 'duration');
+      setq('.s-label[data-i18n="genres_label"]', 'genres_label');
+      setq('button[data-i18n="genres_all"]', 'genres_all');
+      setq('button[data-i18n="genres_none"]', 'genres_none');
+      setq('button[data-i18n="generate"]', 'generate');
+      setq('.s-label[data-i18n="import_export"]', 'import_export');
+      setq('button[data-i18n="btn_export_json"]', 'btn_export_json');
+      setq('button[data-i18n="btn_import_json"]', 'btn_import_json');
+      setq('.s-label[data-i18n="quick_start"]', 'quick_start');
+      ['qs_1', 'qs_2', 'qs_3', 'qs_4', 'qs_5', 'qs_6', 'qs_7', 'qs_note'].forEach(k => {
+        const el = document.querySelector('[data-i18n="' + k + '"]');
+        if (!el) return;
+        // these elements have a <strong> child + trailing text node
+        const tns = [...el.childNodes].filter(n => n.nodeType === 3);
+        const last = tns[tns.length - 1];
+        if (last) last.textContent = ' ' + tr(k).replace(/^\d+\.\s*/, '');
+        else setq(el, k);
+      });
+      // builder
+      setph('night-title', 'night_placeholder');
+      setq('button[data-i18n="btn_save_night"]', 'btn_save_night');
+      setq('button[data-i18n="btn_export_bld"]', 'btn_export');
+      // pool
+      setq('.pool-title', 'pool_title');
+      setph('pool-search', 'search_ph');
+      document.querySelectorAll('.pf-btn').forEach(b => { if (b.dataset.i18n) setq(b, b.dataset.i18n); });
+      setq('.ai-add-btn', 'btn_add_ai');
+      setq('.manual-add-btn', 'btn_add_manual');
+      // ai panel
+      setq('.ai-panel-title', 'ai_title');
+      const tl = document.getElementById('tab-lookup'); if (tl) tl.textContent = tr('ai_tab_lookup');
+      const ts = document.getElementById('tab-suggest'); if (ts) ts.textContent = tr('ai_tab_suggest');
+      setph('ai-lookup-input', 'ai_ph_lookup');
+      setph('ai-suggest-input', 'ai_ph_suggest');
+      const gb = document.getElementById('ai-go-btn'); if (gb) gb.textContent = tr('ai_btn_fill');
+      const gb2 = document.getElementById('ai-go-btn2'); if (gb2) gb2.textContent = tr('ai_btn_suggest');
+      // pool table headers
+      const ths = document.querySelectorAll('.pool-tbl thead th');
+      ['', 'th_song', 'th_artist', 'th_genre', 'th_key', 'th_bpm', 'th_prog', 'th_instr', ''].forEach((k, i) => { if (k && ths[i]) ths[i].textContent = tr(k); });
+      // export
+      setq('.export-title', 'export_title');
+      const eb = document.querySelectorAll('.exp-btn');
+      if (eb[0]) eb[0].textContent = tr('btn_dl_html');
+      if (eb[1]) eb[1].textContent = tr('btn_copy_text');
+      if (eb[2]) eb[2].textContent = tr('btn_dl_json');
+      // modal
+      const mt = document.getElementById('modal-title');
+      if (mt) mt.textContent = editId ? tr('modal_edit') : tr('modal_new');
+      const fls = document.querySelectorAll('.flabel');
+      ['field_title', 'field_artist', 'field_genre', 'field_key', 'field_bpm', 'field_prog', 'field_energy', 'field_instr'].forEach((k, i) => { if (fls[i]) fls[i].textContent = tr(k); });
+      setq('.btn-cancel', 'btn_cancel');
+      setq('.btn-save', 'btn_save');
+      // saved nights label
+      setq('.s-label[data-i18n="saved_nights"]', 'saved_nights');
+      renderSaved();
+      // docs h2 sections
+      const h2s = document.querySelectorAll('.docs-section h2');
+      ['docs_getting_started', 'docs_instr_gen', 'docs_ai', 'docs_pool', 'docs_export_share', 'docs_github', 'docs_tips'].forEach((k, i) => { if (h2s[i]) h2s[i].textContent = tr(k); });
+      // docs data-i18n elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const skip = ['nav-btn', 's-label', 'lang-btn', 'pf-btn'];
+        if (skip.some(c => el.classList.contains(c))) return;
+        const k = el.dataset.i18n;
+        if (k && i18n.en[k] !== undefined) {
+          const tn = [...el.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
+          if (tn) tn.textContent = tr(k); else if (!el.children.length) el.textContent = tr(k);
+        }
+      });
+      renderDocs();
+    }
+
 
     // ─── PERSIST ────────────────────────────────────────────────────────────────
     function persist() {
@@ -2494,6 +2725,9 @@
       apiProvider = document.getElementById('api-provider').value;
       localStorage.setItem('fmg-api-provider', apiProvider);
       document.getElementById('api-key-input').value = '';
+      setTheme(localStorage.getItem('fmg-theme') || 'dark');
+      setLang(currentLang);
+      renderDocs();
       initApiBar();
     }
     function saveApiKey() {
@@ -2502,7 +2736,7 @@
       apiKeys[apiProvider] = val;
       localStorage.setItem('fmg-api-key-' + apiProvider, val);
       initApiBar();
-      toast('API key saved');
+      toast(tr('toast_api_saved'));
     }
 
     // ─── NAVIGATION ─────────────────────────────────────────────────────────────
@@ -2513,6 +2747,7 @@
       document.querySelectorAll('.nav-btn')[['builder', 'pool', 'export', 'docs'].indexOf(v)].classList.add('active');
       if (v === 'pool') renderPool();
       if (v === 'export') renderExport();
+      if (v === 'docs') renderDocs();
     }
 
     // ─── INSTRUMENTS / SETS ─────────────────────────────────────────────────────
@@ -2521,7 +2756,7 @@
       const key = map[i];
       const chip = document.getElementById('chip-' + i);
       if (instrs.includes(key)) {
-        if (instrs.length === 1) { toast('At least one instrument must be active'); return; }
+        if (instrs.length === 1) { toast(tr('toast_min_instr')); return; }
         instrs = instrs.filter(x => x !== key); chip.classList.remove('on');
       } else { instrs.push(key); chip.classList.add('on'); }
     }
@@ -2531,11 +2766,20 @@
     }
 
     // ─── GENERATE ────────────────────────────────────────────────────────────────
+    function setAllGenres(val) {
+      ['blues', 'rock', 'pop', 'soul', 'funk', 'rnb', 'ballad', 'reggae', 'latin', 'jazz', 'country'].forEach(g => {
+        const el = document.getElementById('genre-' + g);
+        if (el) el.checked = val;
+      });
+      generate();
+    }
     function updateGenreFilters() {
-      selectedGenres = ['blues', 'rock', 'pop', 'soul', 'funk', 'rnb', 'ballad', 'reggae', 'latin', 'jazz', 'country'].map(g => ({ blues: 'Blues', rock: 'Rock', pop: 'Pop', soul: 'Soul', funk: 'Funk', rnb: 'R&B', ballad: 'Ballad', reggae: 'Reggae', latin: 'Latin', jazz: 'Jazz', country: 'Country' }[g])).filter(g => document.getElementById('genre-' + g.toLowerCase())?.checked);
+      const map = { blues: 'Blues', rock: 'Rock', pop: 'Pop', soul: 'Soul', funk: 'Funk', rnb: 'R&B', ballad: 'Ballad', reggae: 'Reggae', latin: 'Latin', jazz: 'Jazz', country: 'Country' };
+      selectedGenres = ['blues', 'rock', 'pop', 'soul', 'funk', 'rnb', 'ballad', 'reggae', 'latin', 'jazz', 'country']
+        .filter(g => document.getElementById('genre-' + g)?.checked)
+        .map(g => map[g]);
     }
     function generate() {
-      if (!instrs || instrs.length === 0) { instrs = ['g']; toast('Instrument reset: Guitar enabled'); }
       updateGenreFilters();
       const dur = parseInt(document.getElementById('dur-sel').value);
       const sps = Math.round(dur / 4.5);
@@ -2559,7 +2803,7 @@
         sets.push(noConsecKey(arr));
       }
       renderSets();
-      toast('Setlist generated — ' + sets.reduce((a, s) => a + s.length, 0) + ' songs');
+      toast(tr('toast_generated') + sets.reduce((a, s) => a + s.length, 0) + tr('toast_songs_added'));
     }
     function noConsecKey(a) {
       const r = [...a];
@@ -2572,6 +2816,10 @@
     function renderSets() {
       const area = document.getElementById('sets-area');
       area.innerHTML = '';
+      if (!sets.length) {
+        area.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-family:var(--font-mono);font-size:12px;flex-direction:column;gap:8px;"><div>No sets generated yet.</div><div style="font-size:10px;">Click Generate Setlist in the sidebar.</div></div>';
+        return;
+      }
       sets.forEach((songs, si) => {
         const ep = Math.round((songs.reduce((a, s) => a + s.energy, 0) / (songs.length * 5 || 1)) * 100);
         const card = document.createElement('div');
@@ -2629,7 +2877,7 @@
     function addToSet(si) {
       const sel = document.getElementById('as-' + si);
       const id = parseInt(sel.value); if (!id) return;
-      if (sets[si].find(s => s.id === id)) { toast('Already in this set'); return; }
+      if (sets[si].find(s => s.id === id)) { toast(tr('toast_already_set')); return; }
       const s = pool.find(x => x.id === id);
       if (s) { sets[si].push(s); renderSets(); }
     }
@@ -2640,12 +2888,12 @@
       const date = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
       nights.unshift({ id: Date.now(), title, date, sets: sets.map(s => [...s]), instrs: [...instrs] });
       if (nights.length > 30) nights.pop();
-      persist(); renderSaved(); toast('Saved: ' + title);
+      persist(); renderSaved(); toast(tr('toast_saved') + title);
     }
     function loadNight(id) {
       const n = nights.find(x => x.id === id); if (!n) return;
       sets = n.sets.map(s => s.map(song => pool.find(p => p.id === song.id) || song));
-      instrs = n.instrs || ['g'];
+      instrs = (Array.isArray(n.instrs) && n.instrs.length > 0) ? n.instrs : ['g'];
       document.getElementById('night-title').value = n.title;
       // Update instrument chips
       document.querySelectorAll('[id^="chip-"]').forEach(el => el.classList.remove('on'));
@@ -2654,10 +2902,14 @@
       renderSets(); gotoView('builder');
       document.querySelectorAll('.sv-item').forEach(el => el.classList.toggle('cur', parseInt(el.dataset.id) === id));
     }
-    function delNight(id) { nights = nights.filter(x => x.id !== id); persist(); renderSaved(); }
+    function delNight(id) {
+      const n = nights.find(x => x.id === id);
+      if (n && !confirm(tr('confirm_del_night') + n.title + tr('confirm_del_night2'))) return;
+      nights = nights.filter(x => x.id !== id); persist(); renderSaved();
+    }
     function renderSaved() {
       const el = document.getElementById('saved-list');
-      if (!nights.length) { el.innerHTML = '<div class="sv-empty">No saved nights</div>'; return; }
+      if (!nights.length) { el.innerHTML = "<div class=\"sv-empty\">" + tr('no_saved') + "</div>"; return; }
       el.innerHTML = nights.map(n => `
     <div class="sv-item" data-id="${n.id}" onclick="loadNight(${n.id})">
       <span class="sv-date">${n.date}</span>
@@ -2673,6 +2925,8 @@
       let s = pool;
       if (pf !== 'all') s = s.filter(x => x.genre === pf);
       if (q) s = s.filter(x => x.title.toLowerCase().includes(q) || x.artist.toLowerCase().includes(q));
+      const pc = document.getElementById('pool-count');
+      if (pc) pc.textContent = s.length + ' / ' + pool.length;
       document.getElementById('pool-tbody').innerHTML = s.map((x, i) => {
         const gClass = x.genre === 'R&B' ? 'RnB' : x.genre;
         return `<tr>
@@ -2692,7 +2946,12 @@
     </tr>`;
       }).join('');
     }
-    function delSong(id) { pool = pool.filter(s => s.id !== id); persist(); renderPool(); }
+    function delSong(id) {
+      const s = pool.find(x => x.id === id); if (!s) return;
+      if (!confirm(tr('confirm_del_night') + s.title + tr('confirm_del_song'))) return;
+      pool = pool.filter(x => x.id !== id); persist(); renderPool();
+      toast(tr('toast_removed') + s.title);
+    }
 
     // ─── AI PANEL ────────────────────────────────────────────────────────────────
     function toggleAIPanel() {
@@ -2710,12 +2969,12 @@
     }
     async function runAI() {
       const currentKey = apiKeys[apiProvider];
-      if (!currentKey) { toast('Set your ' + apiProvider + ' API key first'); gotoView('docs'); return; }
+      if (!currentKey) { toast(tr('api_set_key')); gotoView('docs'); return; }
       const status = document.getElementById('ai-status');
       const results = document.getElementById('ai-results');
       const goBtn = document.getElementById(aiTab === 'lookup' ? 'ai-go-btn' : 'ai-go-btn2');
       const query = document.getElementById(aiTab === 'lookup' ? 'ai-lookup-input' : 'ai-suggest-input').value.trim();
-      if (!query) { toast('Enter a song or description'); return; }
+      if (!query) { toast(tr('ai_enter_query')); return; }
       status.className = 'ai-status'; status.textContent = 'Asking ' + apiProvider + '…';
       results.innerHTML = ''; goBtn.disabled = true;
 
@@ -2751,7 +3010,7 @@
           const res = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + currentKey },
-            body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 1000, system: systemPrompt, messages: [{ role: 'user', content: query }] })
+            body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 1000, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: query }] })
           });
           if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || 'API error ' + res.status); }
           const data = await res.json();
@@ -2776,13 +3035,13 @@
     }
     function addAISong(i, s) {
       if (pool.find(x => x.title.toLowerCase() === s.title.toLowerCase() && x.artist.toLowerCase() === s.artist.toLowerCase())) {
-        toast('Already in pool'); return;
+        toast(tr('toast_already_pool')); return;
       }
       const song = { ...s, id: nextId++, instr: Array.isArray(s.instr) ? s.instr : ['g'] };
       pool.push(song); persist();
       const btn = document.querySelector(`#air-${i} .ai-add-song-btn`);
       if (btn) { btn.textContent = 'Added ✓'; btn.className = 'ai-add-song-btn added'; btn.disabled = true; }
-      toast('Added: ' + s.title);
+      toast(tr('toast_added') + s.title);
     }
 
     // ─── MODAL ───────────────────────────────────────────────────────────────────
@@ -2814,7 +3073,7 @@
     function saveSong() {
       const title = document.getElementById('m-title').value.trim();
       const artist = document.getElementById('m-artist').value.trim();
-      if (!title || !artist) { toast('Title and artist required'); return; }
+      if (!title || !artist) { toast(tr('toast_req_fields')); return; }
       const s = {
         id: editId || nextId++, title, artist,
         genre: document.getElementById('m-genre').value,
@@ -2827,14 +3086,14 @@
       if (editId) { pool[pool.findIndex(x => x.id === editId)] = s; }
       else pool.push(s);
       persist(); closeModal(); renderPool();
-      toast(editId ? 'Song updated' : 'Song added');
+      toast(editId ? tr('toast_song_updated') : tr('toast_song_added'));
     }
 
     // ─── IMPORT / EXPORT POOL ────────────────────────────────────────────────────
     function exportPoolJSON() {
       const a = document.createElement('a');
       a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(pool, null, 2));
-      a.download = 'fmg-pool.json'; a.click(); toast('Pool exported');
+      a.download = 'fmg-pool.json'; a.click(); toast(tr('toast_pool_exported'));
     }
     function importPoolJSON(e) {
       const file = e.target.files[0]; if (!file) return;
@@ -2848,8 +3107,8 @@
               pool.push({ ...s, id: nextId++ }); added++;
             }
           });
-          persist(); renderPool(); toast(`Imported ${added} new songs`);
-        } catch { toast('Invalid JSON file'); }
+          persist(); renderPool(); toast(added + tr('toast_imported'));
+        } catch { toast(tr('toast_invalid_json')); }
       };
       reader.readAsText(file);
       e.target.value = '';
@@ -2887,7 +3146,7 @@
       c += `<div class="brand">Fearlessly Media Group · FMG Setlist Builder</div></body></html>`;
       const a = document.createElement('a');
       a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(c);
-      a.download = title.replace(/\s+/g, '-').toLowerCase() + '.html'; a.click(); toast('HTML downloaded');
+      a.download = title.replace(/\s+/g, '-').toLowerCase() + '.html'; a.click(); toast(tr('toast_html_dl'));
     }
     function doExportText() {
       const title = document.getElementById('night-title').value || 'Setlist';
@@ -2898,55 +3157,211 @@
         t += '\n';
       });
       t += 'Fearlessly Media Group';
-      navigator.clipboard.writeText(t).then(() => toast('Copied to clipboard'));
+      navigator.clipboard.writeText(t).then(() => toast(tr('toast_copied')));
     }
     function doExportJSON() {
       const title = document.getElementById('night-title').value || 'Setlist';
       const data = { title, date: new Date().toISOString(), sets };
       const a = document.createElement('a');
       a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data, null, 2));
-      a.download = title.replace(/\s+/g, '-').toLowerCase() + '.json'; a.click(); toast('JSON downloaded');
+      a.download = title.replace(/\s+/g, '-').toLowerCase() + '.json'; a.click(); toast(tr('toast_json_dl'));
     }
 
     // ─── THEME ───────────────────────────────────────────────────────────────────
-    function setTheme(theme) {
-      if (theme === 'light') { document.documentElement.classList.add('light'); }
-      else { document.documentElement.classList.remove('light'); }
-      localStorage.setItem('fmg-theme', theme);
-      document.getElementById('theme-dark-btn').classList.toggle('active', theme === 'dark');
-      document.getElementById('theme-light-btn').classList.toggle('active', theme === 'light');
-    }
-    function initTheme() {
-      const savedTheme = localStorage.getItem('fmg-theme') || 'dark';
-      setTheme(savedTheme);
+    function setTheme(t) {
+      document.documentElement.classList.toggle('light', t === 'light');
+      localStorage.setItem('fmg-theme', t);
+      document.getElementById('btn-dark').style.borderColor = t === 'dark' ? 'var(--gold-border)' : 'var(--border2)';
+      document.getElementById('btn-dark').style.color = t === 'dark' ? 'var(--gold2)' : 'var(--text3)';
+      document.getElementById('btn-light').style.borderColor = t === 'light' ? 'var(--gold-border)' : 'var(--border2)';
+      document.getElementById('btn-light').style.color = t === 'light' ? 'var(--gold2)' : 'var(--text3)';
     }
 
-    // ─── LANGUAGE ────────────────────────────────────────────────────────────────
-    function t(key) {
-      return i18n[currentLang]?.[key] || i18n.en?.[key] || key;
+    // ─── DOCS RENDERER ───────────────────────────────────────────────────────────
+    function renderDocs() {
+      const area = document.getElementById('docs-area');
+      if (!area) return;
+      const T = (k) => tr(k) || '';
+      const L = currentLang;
+      const kbd = (t) => '<span class="docs-kbd">' + t + '</span>';
+      const h3 = (t) => '<h3>' + t + '</h3>';
+      const step = (n, txt) => '<div class="docs-step"><div class="docs-step-n">' + n + '</div><p>' + txt + '</p></div>';
+      const li = function () { return '<ul>' + Array.from(arguments).map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul>'; };
+      const tip = (title, body) => '<li><strong>' + title + '</strong> ' + body + '</li>';
+
+      function loc(en, es, pt, ru) {
+        if (L === 'es') return es;
+        if (L === 'pt') return pt;
+        if (L === 'ru') return ru;
+        return en;
+      }
+
+      const warn = '<div class="docs-warning"><strong>' +
+        loc('Important:', 'Importante:', 'Importante:', 'Важно:') +
+        '</strong> ' +
+        loc(
+          'AI features require an API key from one of three providers:',
+          'Las funciones IA requieren una API key de uno de estos tres proveedores:',
+          'Os recursos de IA requerem uma API key de um dos três provedores:',
+          'Функции ИИ требуют API ключ от одного из трёх провайдеров:'
+        ) +
+        ' <strong>Claude (Anthropic)</strong>, <strong>Gemini (Google)</strong>, ' +
+        loc('or', 'o', 'ou', 'или') +
+        ' <strong>ChatGPT (OpenAI)</strong>. ' +
+        loc(
+          "Your key is stored only in your browser — never sent anywhere else. Get keys from:",
+          "Tu key se guarda solo en tu navegador. Obtén las keys en:",
+          "Sua key fica apenas no seu navegador. Obtenha as keys em:",
+          "Ваш ключ хранится только в браузере. Получите ключи на:"
+        ) +
+        ' <a href="https://console.anthropic.com" target="_blank">Anthropic</a> | ' +
+        '<a href="https://aistudio.google.com/apikey" target="_blank">Google</a> | ' +
+        '<a href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a>.</div>';
+
+      area.innerHTML =
+        '<div class="docs-inner">' +
+        '<div class="docs-hero">' +
+        '<h1>FMG Setlist Builder</h1>' +
+        '<p>' + T('docs_hero_p') + '</p>' +
+        '</div>' +
+
+        '<div class="docs-section">' +
+        '<h2>' + T('docs_getting_started') + '</h2>' +
+        step(1, loc(
+          'Select the <strong>instruments available tonight</strong> in the sidebar. Choose any combination of Guitar, Piano, and Winds.',
+          'Selecciona los <strong>instrumentos disponibles esta noche</strong> en el sidebar.',
+          'Selecione os <strong>instrumentos disponíveis esta noite</strong> no sidebar.',
+          'Выберите <strong>доступные инструменты</strong> в боковой панели.'
+        )) +
+        step(2, loc(
+          'Choose the <strong>number of sets</strong> (2, 3, or 4) and <strong>duration per set</strong>.',
+          'Elige el <strong>número de sets</strong> (2, 3 o 4) y la <strong>duración por set</strong>.',
+          'Escolha o <strong>número de sets</strong> (2, 3 ou 4) e a <strong>duração por set</strong>.',
+          'Выберите <strong>количество сетов</strong> (2, 3 или 4) и <strong>длительность</strong>.'
+        )) +
+        step(3, loc(
+          'Select which <strong>genres to include</strong>. Check the boxes in the sidebar.',
+          'Selecciona los <strong>géneros a incluir</strong>. Marca las casillas en el sidebar.',
+          'Selecione os <strong>gêneros a incluir</strong>. Marque as caixas no sidebar.',
+          'Выберите <strong>жанры для включения</strong>. Отметьте в боковой панели.'
+        )) +
+        step(4,
+          loc('Click', 'Haz clic en', 'Clique em', 'Нажмите') + ' ' +
+          kbd('Generate Setlist') + '. ' +
+          T('docs_energy_p')
+        ) +
+        step(5, loc(
+          'Drag and drop songs within a set to reorder them. Use ' + kbd('×') + ' to remove a song.',
+          'Arrastra y suelta canciones para reordenarlas. Usa ' + kbd('×') + ' para eliminar.',
+          'Arraste e solte músicas para reordená-las. Use ' + kbd('×') + ' para remover.',
+          'Перетаскивайте песни для изменения порядка. Используйте ' + kbd('×') + ' для удаления.'
+        )) +
+        step(6,
+          loc('Give your setlist a name and click', 'Da un nombre y haz clic en', 'Dê um nome e clique em', 'Дайте название и нажмите') + ' ' +
+          kbd('Export') + ' ' +
+          loc('to download.', 'para descargar.', 'para baixar.', 'для скачивания.')
+        ) +
+        '</div>' +
+
+        '<div class="docs-section">' +
+        '<h2>' + T('docs_instr_gen') + '</h2>' +
+        '<p>' + loc(
+          'The generator intelligently prioritizes songs based on your selected instruments and genres.',
+          'El generador prioriza canciones según los instrumentos y géneros seleccionados.',
+          'O gerador prioriza músicas com base nos instrumentos e gêneros selecionados.',
+          'Генератор приоритизирует песни по выбранным инструментам и жанрам.'
+        ) + '</p>' +
+        h3(loc('How instruments work', 'Cómo funcionan los instrumentos', 'Como os instrumentos funcionam', 'Как работают инструменты')) +
+        '<p>' + T('docs_instr_hint') + '</p>' +
+        h3(T('docs_energy_title')) +
+        '<p>' + T('docs_energy_p') + '</p>' +
+        '<ul><li>' + T('docs_energy_1') + '</li><li>' + T('docs_energy_2') + '</li></ul>' +
+        '<p>' + T('docs_energy_note') + '</p>' +
+        '</div>' +
+
+        '<div class="docs-section">' +
+        '<h2>' + T('docs_ai') + '</h2>' +
+        warn +
+        h3(T('docs_ai_provider')) +
+        '<p>' + T('docs_ai_provider_p') + '</p>' +
+        h3(loc('Song lookup', 'Búsqueda de canción', 'Busca de música', 'Поиск песни')) +
+        '<p>' + T('docs_ai_lookup_p') + '</p>' +
+        h3(loc('Suggest by mood', 'Sugerir por mood', 'Sugerir por mood', 'Предложить по настроению')) +
+        '<p>' + T('docs_ai_suggest_p') + '</p>' +
+        '</div>' +
+
+        '<div class="docs-section">' +
+        '<h2>' + T('docs_pool') + '</h2>' +
+        '<p>' + T('docs_pool_p') + '</p>' +
+        li(T('docs_pool_li1'), T('docs_pool_li2'), T('docs_pool_li3'), T('docs_pool_li4'), T('docs_pool_li5')) +
+        '<p>' + T('docs_pool_instr_p') + '</p>' +
+        '</div>' +
+
+        '<div class="docs-section">' +
+        '<h2>' + T('docs_export_share') + '</h2>' +
+        '<p>' + T('docs_export_p') + '</p>' +
+        li(T('docs_export_li1'), T('docs_export_li2'), T('docs_export_li3'), T('docs_export_li4'), T('docs_export_li5')) +
+        '</div>' +
+
+        '<div class="docs-section">' +
+        '<h2>' + T('docs_github') + '</h2>' +
+        '<p>' + T('docs_github_p') + '</p>' +
+        step(1,
+          loc('Create a GitHub account at', 'Crea una cuenta en', 'Crie uma conta em', 'Создайте аккаунт на') +
+          ' <a href="https://github.com" target="_blank">github.com</a>.'
+        ) +
+        step(2,
+          loc(
+            'Create a new public repository (e.g. <code>fmg-setlist</code>).',
+            'Crea un repositorio público (ej. <code>fmg-setlist</code>).',
+            'Crie um repositório público (ex. <code>fmg-setlist</code>).',
+            'Создайте новый публичный репозиторий (напр. <code>fmg-setlist</code>).'
+          )
+        ) +
+        step(3,
+          loc('Rename this file to', 'Renombra este archivo a', 'Renomeie este arquivo para', 'Переименуйте файл в') +
+          ' <code>index.html</code> ' +
+          loc('and upload it to the repository.', 'y súbelo al repositorio.', 'e envie ao repositório.', 'и загрузите в репозиторий.')
+        ) +
+        step(4,
+          loc('Go to', 'Ve a', 'Vá em', 'Перейдите в') +
+          ' <strong>Settings → Pages → Source → main branch</strong>. ' +
+          loc('Save.', 'Guarda.', 'Salve.', 'Сохраните.')
+        ) +
+        step(5,
+          loc(
+            'In a few minutes your app will be live at',
+            'En unos minutos tu app estará en',
+            'Em alguns minutos seu app estará em',
+            'Через несколько минут приложение будет доступно на'
+          ) +
+          ' <code>yourusername.github.io/fmg-setlist</code>.'
+        ) +
+        '<p style="margin-top:.75rem;">' + T('docs_github_note') + '</p>' +
+        '</div>' +
+
+        '<div class="docs-section">' +
+        '<h2>' + T('docs_tips') + '</h2>' +
+        '<ul>' +
+        tip(T('docs_tip1_title'), T('docs_tip1')) +
+        tip(T('docs_tip2_title'), T('docs_tip2')) +
+        tip(T('docs_tip3_title'), T('docs_tip3')) +
+        tip(T('docs_tip4_title'), T('docs_tip4')) +
+        tip(T('docs_tip5_title'), T('docs_tip5')) +
+        tip(T('docs_tip6_title'), T('docs_tip6')) +
+        '</ul>' +
+        '</div>' +
+
+        '<hr class="docs-divider">' +
+        '<div class="docs-fmg">' +
+        '<div class="docs-fmg-logo">Fearlessly Media Group</div>' +
+        '<div class="docs-fmg-text">' + T('docs_built') + '<br>' + T('docs_version') + '</div>' +
+        '</div>' +
+        '</div>';
     }
 
-    function setLang(lang) {
-      if (!i18n[lang]) lang = 'en';
-      currentLang = lang;
-      localStorage.setItem('fmg-lang', lang);
-      document.querySelectorAll('.lang-btn').forEach((btn, i) => btn.classList.toggle('active', btn.id === `lang-${lang}`));
-
-      // Update all elements with data-key attribute
-      document.querySelectorAll('[data-key]').forEach(el => {
-        const key = el.dataset.key;
-        if (el.tagName === 'INPUT') el.placeholder = t(key);
-        else el.textContent = t(key);
-      });
-    }
-
-    function initLang() {
-      setLang(currentLang);
-    }
 
     // ─── INIT ────────────────────────────────────────────────────────────────────
-    initTheme();
-    initLang();
     initApiBar();
     // Initialize instrument chips based on selected instrs
     instrs.forEach(i => {
@@ -2955,9 +3370,10 @@
       if (id) document.getElementById('chip-' + id)?.classList.add('on');
     });
     // Add listeners to genre checkboxes to regenerate setlist on change
+    let _genreTimer;
     ['blues', 'rock', 'pop', 'soul', 'funk', 'rnb', 'ballad', 'reggae', 'latin', 'jazz', 'country'].forEach(g => {
       const el = document.getElementById('genre-' + g);
-      if (el) el.addEventListener('change', () => generate());
+      if (el) el.addEventListener('change', () => { clearTimeout(_genreTimer); _genreTimer = setTimeout(() => generate(), 150); });
     });
     generate();
   </script>
