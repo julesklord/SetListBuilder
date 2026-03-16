@@ -116,6 +116,12 @@ let nights = (()=>{
 let sets = [];
 let numSets = 3;
 let instrs = ['g'];
+let mustPlay = (()=>{
+  try {
+    const m = JSON.parse(localStorage.getItem('fmg-mustPlay') || '[]');
+    return new Set(Array.isArray(m) ? m : []);
+  } catch(e) { return new Set(); }
+})();
 let pf = 'all';
 let selectedGenres = ['Blues','Rock','Pop','Soul','R&B','Ballad'];
 let editId = null;

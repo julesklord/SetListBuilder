@@ -1,10 +1,26 @@
 // ─── APP ────────────────────────────────────────────────────────────────────
 // Depends on: songs.js → i18n.js → app.js (load order matters)
 
+// Note modal context
+let noteModalContext = {si: null, id: null};
+
+// ─── MUST PLAY ───────────────────────────────────────────────────────────────
+function toggleMustPlay(id){
+  if(mustPlay.has(id)){mustPlay.delete(id);}
+  else{mustPlay.add(id);}
+  renderPool();
+  // update lock icons in current sets
+  document.querySelectorAll(`.lock-btn[data-id="${id}"]`).forEach(b=>{
+    b.classList.toggle('locked', mustPlay.has(id));
+    b.title = mustPlay.has(id) ? 'Remove Must Play' : 'Mark as Must Play';
+  });
+}
+
 // ─── PERSIST ────────────────────────────────────────────────────────────────
 function persist() {
   localStorage.setItem('fmg-pool', JSON.stringify(pool));
   localStorage.setItem('fmg-nights', JSON.stringify(nights));
+  localStorage.setItem('fmg-mustPlay', JSON.stringify([...mustPlay]));
 }
 
 // ─── TOAST ──────────────────────────────────────────────────────────────────
@@ -44,10 +60,11 @@ initApiBar();
 function saveApiKey() {
   const val = document.getElementById('api-key-input').value.trim();
   if (!val || val.startsWith('••')) return;
+  if(val.length < 10){toast('API key seems too short');return;}
   apiKeys[apiProvider] = val;
   localStorage.setItem('fmg-api-key-'+apiProvider, val);
   initApiBar();
-  toast(tr('toast_api_saved'));
+  toast(tr('toast_api_saved')+' '+apiProvider);
 }
 
 // ─── NAVIGATION ─────────────────────────────────────────────────────────────
@@ -63,7 +80,7 @@ function gotoView(v) {
 
 // ─── INSTRUMENTS / SETS ─────────────────────────────────────────────────────
 function toggleInstr(i) {
-  const map = {guitar:'g', piano:'p', wind:'v'};
+  const map = {guitar:'g', piano:'p', wind:'v', voice:'o'};
   const key = map[i];
   const chip = document.getElementById('chip-'+i);
   if(instrs.includes(key)){
@@ -98,18 +115,25 @@ function generate(){
   if(elig.length < sps * numSets) elig = [...pool.filter(s=>selectedGenres.includes(s.genre))];
   if(elig.length < sps * numSets) elig = [...pool];
   const sh = a=>[...a].sort(()=>Math.random()-.5);
-  const low=sh(elig.filter(s=>s.energy<=2)), mid=sh(elig.filter(s=>s.energy===3)), high=sh(elig.filter(s=>s.energy>=4));
-  const used=new Set();
+  // Separate mustPlay songs from regular pool
+  const mpSongs = [...mustPlay].map(id=>pool.find(s=>s.id===id)).filter(Boolean);
+  const used = new Set(mpSongs.map(s=>s.id));
+  const free = elig.filter(s=>!mustPlay.has(s.id));
+  const low=sh(free.filter(s=>s.energy<=2)), mid=sh(free.filter(s=>s.energy===3)), high=sh(free.filter(s=>s.energy>=4));
   function pick(arr,n){const o=[];for(const s of arr){if(o.length>=n)break;if(!used.has(s.id)){o.push(s);used.add(s.id);}}return o;}
-  const fallback=sh(elig);
+  const fallback=sh(free);
   function pickFB(n){const o=[];for(const s of fallback){if(o.length>=n)break;if(!used.has(s.id)){o.push(s);used.add(s.id);}}return o;}
   sets=[];
+  // Distribute mustPlay songs evenly across sets
+  const mpPerSet = Math.ceil(mpSongs.length / numSets);
   for(let i=0;i<numSets;i++){
+    const setMp = mpSongs.slice(i*mpPerSet, (i+1)*mpPerSet);
+    const remaining = sps - setMp.length;
     const last=i===numSets-1;
-    const lN=last?Math.floor(sps*.2):Math.floor(sps*.35);
-    const hN=last?Math.floor(sps*.4):Math.floor(sps*.25);
-    const mN=sps-lN-hN;
-    let arr=[...pick(low,lN),...pick(mid,mN),...pick(high,hN)];
+    const lN=Math.max(0,last?Math.floor(remaining*.2):Math.floor(remaining*.35));
+    const hN=Math.max(0,last?Math.floor(remaining*.4):Math.floor(remaining*.25));
+    const mN=Math.max(0,remaining-lN-hN);
+    let arr=[...setMp,...pick(low,lN),...pick(mid,mN),...pick(high,hN)];
     if(arr.length<sps) arr=[...arr,...pickFB(sps-arr.length)];
     sets.push(noConsecKey(arr));
   }
@@ -155,13 +179,19 @@ function renderSets(){
 }
 function sRow(s,i,si){
   const gClass=s.genre==='R&B'?'RnB':s.genre;
+  const mpIcon = mustPlay.has(s.id) ? '<span class="mp-icon" title="Must Play">⚑</span>' : '';
+  const noteIndicator = s.note ? '<span style="color:var(--gold);font-size:11px;">✎</span>' : '';
   return `<div class="song-row" draggable="true" data-id="${s.id}" data-si="${si}">
     <span class="dh">⠿</span>
     <span class="snum">${i+1}</span>
-    <div class="sinfo"><div class="stitle">${s.title}</div><div class="sartist">${s.artist}</div></div>
+    <div class="sinfo">
+      <div class="stitle">${mpIcon}${s.title}</div>
+      <div class="sartist">${s.artist}</div>
+    </div>
     <span class="skey">${s.key}</span><span class="sbpm">${s.bpm}</span>
     <span class="sbadge b${gClass}">${s.genre}</span>
     <div class="emini">${Array.from({length:5},(_,j)=>`<div class="ed${j<s.energy?' on':''}${j<s.energy&&s.energy>=4?' hi':''}"></div>`).join('')}</div>
+    <button class="note-btn" onclick="openNoteModal(${si},${s.id})" title="Add note..." style="padding:4px 8px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:var(--r);cursor:pointer;font-size:12px;transition:all .15s;">${noteIndicator || '+ note'}</button>
     <button class="srem" onclick="remFromSet(${si},${s.id})">×</button>
   </div>`;
 }
@@ -185,6 +215,38 @@ function attachDrag(){
   });
 }
 function remFromSet(si,id){sets[si]=sets[si].filter(s=>s.id!==id);renderSets();}
+
+// ─── NOTE MODAL ────────────────────────────────────────────────────────────
+function openNoteModal(si, id){
+  noteModalContext = {si, id};
+  const song = sets[si]?.find(x=>x.id===id);
+  if(!song) return;
+  document.getElementById('m-note').value = song.note || '';
+  document.getElementById('note-modal').classList.add('open');
+}
+function closeNoteModal(){
+  document.getElementById('note-modal').classList.remove('open');
+  noteModalContext = {si: null, id: null};
+}
+function saveNote(){
+  const {si, id} = noteModalContext;
+  if(si === null || id === null) return;
+  if(!sets[si]) return;
+  const song = sets[si].find(x=>x.id===id);
+  if(song) {
+    song.note = document.getElementById('m-note').value.trim();
+    persist();
+    renderSets();
+  }
+  closeNoteModal();
+  toast('Note saved');
+}
+function setSongNote(si, id, val){
+  if(!sets[si]) return;
+  const s = sets[si].find(x=>x.id===id);
+  if(s) s.note = val.trim();
+}
+
 function addToSet(si){
   const sel=document.getElementById('as-'+si);
   if(!sel)return;
@@ -210,7 +272,7 @@ function loadNight(id){
   document.getElementById('night-title').value=n.title;
   // Update instrument chips
   document.querySelectorAll('[id^="chip-"]').forEach(el=>el.classList.remove('on'));
-  const map={'g':'guitar','p':'piano','v':'wind'};
+  const map={'g':'guitar','p':'piano','v':'wind','o':'voice'};
   instrs.forEach(i=>{const id=map[i];if(id)document.getElementById('chip-'+id)?.classList.add('on');});
   renderSets();gotoView('builder');
   document.querySelectorAll('.sv-item').forEach(el=>el.classList.toggle('cur',parseInt(el.dataset.id)===id));
@@ -252,7 +314,8 @@ function renderPool(){
         ${x.instr.includes('p')?'<div class="id id-p">P</div>':''}
         ${x.instr.includes('v')?'<div class="id id-v">V</div>':''}
       </div></td>
-      <td style="white-space:nowrap;">
+      <td style="white-space:nowrap;display:flex;gap:3px;align-items:center;">
+        <button class="lock-btn${mustPlay.has(x.id)?' locked':''}" data-id="${x.id}" onclick="toggleMustPlay(${x.id})" title="${mustPlay.has(x.id)?'Remove Must Play':'Mark as Must Play'}">⚑</button>
         <button class="eb-btn" onclick="openEdit(${x.id})">Edit</button>
         <button class="dl-btn" onclick="delSong(${x.id})">×</button>
       </td>
@@ -396,7 +459,11 @@ function saveSong(){
     energy:Math.min(5,Math.max(1,parseInt(document.getElementById('m-energy').value)||3)),
     instr:['g','p','v'].filter(i=>document.getElementById('mt-'+i).classList.contains('on'))
   };
-  if(editId){pool[pool.findIndex(x=>x.id===editId)]=s;}
+  if(editId){
+    const idx = pool.findIndex(x=>x.id===editId);
+    if(idx >= 0) pool[idx]=s;
+    else pool.push(s);
+  }
   else pool.push(s);
   persist();closeModal();renderPool();
   toast(editId?tr('toast_song_updated'):tr('toast_song_added'));
@@ -436,11 +503,15 @@ function renderExport(){
   }
   const title=document.getElementById('night-title').value||'Setlist';
   const date=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const iNames=instrs.map(i=>({g:'Guitar',p:'Piano',v:'Winds'}[i])).join(', ');
+  const iNames=instrs.map(i=>({g:'Guitar',p:'Piano',v:'Winds',o:'Voice'}[i])||'').filter(Boolean).join(', ');
   let html=`<div class="exp-night">${title}</div><div class="exp-meta">${date} &nbsp;·&nbsp; ${iNames} &nbsp;·&nbsp; ${numSets} sets</div>`;
   sets.forEach((songs,si)=>{
     html+=`<div class="exp-set"><div class="exp-set-title">Set ${si+1} — ${songs.length} songs · ~${durMin(songs)} min</div>
-      ${songs.map((s,i)=>`<div class="exp-row"><span class="en">${i+1}</span><span class="et">${s.title}</span><span class="ea">${s.artist}</span><span class="ek">${s.key}</span><span class="eb">${s.bpm}</span></div>`).join('')}
+      ${songs.map((s,i)=>{
+        const mp = mustPlay.has(s.id) ? '<span style="color:var(--gold);margin-right:3px;font-size:9px;">⚑</span>' : '';
+        const note = s.note ? `<div class="exp-note">${s.note}</div>` : '';
+        return `<div class="exp-row"><span class="en">${i+1}</span><span class="et">${mp}${s.title}</span><span class="ea">${s.artist}</span><span class="ek">${s.key}</span><span class="eb">${s.bpm}</span></div>${note}`;
+      }).join('')}
     </div>`;
   });
   document.getElementById('export-preview').innerHTML=html;
@@ -448,106 +519,100 @@ function renderExport(){
 function doExportHTML(){
   const title=document.getElementById('night-title').value||'Setlist';
   const date=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  let c=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${title} — FMG</title>
-  <style>body{font-family:monospace;background:#080706;color:#ede8df;padding:2rem;max-width:700px;margin:0 auto;}
-  h1{color:#e2b95a;font-size:1.8rem;margin-bottom:4px;font-family:Georgia,serif;}
-  .meta{color:#524d44;font-size:11px;margin-bottom:2rem;}
-  .st{color:#c49a3c;font-size:10px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid #1a1714;padding-bottom:4px;margin:1.5rem 0 .4rem;}
-  .r{display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #131110;font-size:12px;}
-  .n{color:#524d44;width:18px;}.t{flex:1;font-weight:bold;}.a{color:#968f82;}.k{color:#c49a3c;}
-  .brand{margin-top:3rem;padding-top:1rem;border-top:1px solid #1a1714;font-size:10px;color:#524d44;}</style>
-  </head><body><h1>${title}</h1><div class="meta">${date}</div>`;
+  const iNames=instrs.map(i=>({g:'Guitar',p:'Piano',v:'Winds',o:'Voice'}[i])||'').filter(Boolean).join(', ');
+  let rows='';
   sets.forEach((songs,si)=>{
-    c+=`<div class="st">Set ${si+1} — ${songs.length} songs · ~${durMin(songs)} min</div>`;
-    songs.forEach((s,i)=>{c+=`<div class="r"><span class="n">${i+1}</span><span class="t">${s.title}</span><span class="a">${s.artist}</span><span class="k">${s.key}</span><span class="k" style="color:#524d44">${s.bpm} bpm</span></div>`;});
+    rows+=`<div class="st">Set ${si+1} — ${songs.length} songs · ~${durMin(songs)} min</div>`;
+    songs.forEach((s,idx)=>{
+      const note = s.note ? `<div class="note">${s.note}</div>` : '';
+      const mp   = mustPlay.has(s.id) ? '<span class="mp">⚑</span>' : '';
+      rows+=`<div class="r"><span class="n">${idx+1}</span><span class="t">${mp}${s.title}</span><span class="a">${s.artist}</span><span class="k">${s.key}</span><span class="bpm">${s.bpm}</span></div>${note}`;
+    });
   });
-  c+=`<div class="brand">Fearlessly Media Group · FMG Setlist Builder</div>
-<!-- Mobile bottom navigation -->
-<div class="bottom-nav" id="bottom-nav">
-  <button class="bn-item active" id="bn-builder" onclick="gotoView('builder');setActiveBottomNav('builder')">
-    <div class="bn-icon">♪</div>
-    <span data-i18n="nav_builder">Builder</span>
-  </button>
-  <button class="bn-item" id="bn-pool" onclick="gotoView('pool');setActiveBottomNav('pool')">
-    <div class="bn-icon">☰</div>
-    <span data-i18n="nav_pool">Pool</span>
-  </button>
-  <button class="bn-item" id="bn-export" onclick="gotoView('export');setActiveBottomNav('export')">
-    <div class="bn-icon">↓</div>
-    <span data-i18n="nav_export">Export</span>
-  </button>
-  <button class="bn-item" id="bn-docs" onclick="gotoView('docs');setActiveBottomNav('docs')">
-    <div class="bn-icon">?</div>
-    <span data-i18n="nav_docs">Docs</span>
-  </button>
-  <button class="bn-settings-btn" id="bn-settings" onclick="toggleMobileDrawer()">
-    <div class="bn-icon">⚙</div>
-    <span>Settings</span>
-  </button>
-</div>
-
-<!-- Mobile drawer overlay -->
-<div class="drawer-overlay" id="drawer-overlay" onclick="closeMobileDrawer()"></div>
-
-<!-- Mobile slide-up drawer (sidebar content) -->
-<div class="mobile-drawer" id="mobile-drawer">
-  <div class="drawer-handle"></div>
-  <div class="s-section">
-    <div class="s-label" data-i18n="instruments">Instruments tonight</div>
-    <div class="instr-row">
-      <button class="chip" id="chip-guitar-m" onclick="toggleInstr('guitar')"><div class="chip-dot"></div><span data-i18n="guitar">Guitar</span></button>
-      <button class="chip" id="chip-piano-m" onclick="toggleInstr('piano')"><div class="chip-dot"></div><span data-i18n="piano">Piano</span></button>
-      <button class="chip" id="chip-wind-m" onclick="toggleInstr('wind')"><div class="chip-dot"></div><span data-i18n="winds">Winds</span></button>
-    </div>
-  </div>
-  <div class="s-section">
-    <div class="s-label" data-i18n="sets">Sets</div>
-    <div class="sets-row">
-      <button class="sc-btn" onclick="setN(2)">2</button>
-      <button class="sc-btn on" id="sc-btn-3-m" onclick="setN(3)">3</button>
-      <button class="sc-btn" onclick="setN(4)">4</button>
-    </div>
-    <div style="margin-top:7px;">
-      <div class="s-label" data-i18n="duration">Duration per set</div>
-      <select class="sel-input" id="dur-sel-m" onchange="syncDurSel(this.value)">
-        <option value="40">~40 min</option>
-        <option value="45" selected>~45 min</option>
-        <option value="55">~55 min</option>
-        <option value="60">~60 min</option>
-      </select>
-    </div>
-    <div style="margin-top:7px;">
-      <div class="s-label" data-i18n="genres_label">Genres to include</div>
-      <div style="display:flex;flex-direction:column;gap:3px;margin-top:3px;">
-        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-blues-m" checked style="cursor:pointer;"> Blues</label>
-        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-rock-m" checked style="cursor:pointer;"> Rock</label>
-        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-pop-m" checked style="cursor:pointer;"> Pop</label>
-        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-soul-m" checked style="cursor:pointer;"> Soul</label>
-        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-funk-m" style="cursor:pointer;"> Funk</label>
-        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-rnb-m" checked style="cursor:pointer;"> R&amp;B</label>
-        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-ballad-m" checked style="cursor:pointer;"> Ballad</label>
-        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-reggae-m" style="cursor:pointer;"> Reggae</label>
-        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-latin-m" style="cursor:pointer;"> Latin</label>
-        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-jazz-m" style="cursor:pointer;"> Jazz</label>
-        <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input type="checkbox" id="genre-country-m" style="cursor:pointer;"> Country</label>
-      </div>
-    </div>
-    <button class="gen-btn" onclick="generate();closeMobileDrawer();" data-i18n="generate">Generate Setlist</button>
-  </div>
-  <div class="s-section" style="border-bottom:none;">
-    <div class="s-label">Import / Export</div>
-    <div style="display:flex;gap:4px;">
-      <button class="btn-xs" onclick="exportPoolJSON()" style="flex:1;" data-i18n="btn_export_json">Export JSON</button>
-      <button class="btn-xs" onclick="document.getElementById('import-file').click()" style="flex:1;" data-i18n="btn_import_json">Import JSON</button>
-    </div>
-  </div>
-</div>
-
-</body></html>`;
+  const c=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${title} — FMG</title>
+  <style>
+    body{font-family:Georgia,serif;background:#fff;color:#111;padding:2rem;max-width:680px;margin:0 auto;}
+    h1{font-size:2rem;margin-bottom:3px;}
+    .meta{color:#888;font-size:11px;font-family:monospace;margin-bottom:2rem;}
+    .st{font-family:monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+        border-bottom:1px solid #ccc;padding-bottom:4px;margin:1.5rem 0 .4rem;color:#c49a3c;}
+    .r{display:flex;gap:10px;padding:5px 0;border-bottom:1px solid #eee;font-size:13px;align-items:baseline;}
+    .n{color:#aaa;width:18px;font-family:monospace;font-size:11px;flex-shrink:0;}
+    .t{flex:1;font-weight:bold;}.a{color:#666;min-width:100px;}
+    .k{font-family:monospace;color:#c49a3c;width:30px;flex-shrink:0;}
+    .bpm{font-family:monospace;color:#aaa;font-size:10px;width:36px;flex-shrink:0;}
+    .note{font-size:11px;color:#888;font-style:italic;padding:1px 0 4px 26px;}
+    .mp{color:#c49a3c;margin-right:3px;font-size:11px;}
+    .brand{margin-top:3rem;padding-top:.75rem;border-top:1px solid #eee;font-size:10px;color:#aaa;font-family:monospace;}
+  </style></head><body>
+  <h1>${title}</h1>
+  <div class="meta">${date} · ${iNames}</div>
+  ${rows}
+  <div class="brand">Fearlessly Media Group · FMG Setlist Builder</div>
+  </body></html>`;
   const a=document.createElement('a');
   a.href='data:text/html;charset=utf-8,'+encodeURIComponent(c);
-  a.download=title.replace(/\s+/g,'-').toLowerCase()+'.html';a.click();toast(tr('toast_html_dl'));
+  a.download=title.replace(/\s+/g,'-').toLowerCase()+'.html';
+  a.click();
+  toast(tr('toast_html_dl'));
 }
+
+function doExportPDF(){
+  if(!sets.length){toast(tr('generate')+'...');return;}
+  const title=document.getElementById('night-title').value||'Setlist';
+  const date=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const iNames=instrs.map(i=>({g:'Guitar',p:'Piano',v:'Winds',o:'Voice'}[i])||'').filter(Boolean).join(', ');
+  // Build print window
+  const w=window.open('','_blank','width=700,height=900');
+  if(!w){toast('Pop-up blocked — allow pop-ups for PDF');return;}
+  let rows='';
+  sets.forEach((songs,si)=>{
+    rows+=`<div class="st">Set ${si+1} &nbsp;·&nbsp; ${songs.length} songs &nbsp;·&nbsp; ~${durMin(songs)} min</div>`;
+    songs.forEach((s,idx)=>{
+      const note = s.note ? `<div class="note">${s.note}</div>` : '';
+      const mp   = mustPlay.has(s.id) ? '<span class="mp">⚑</span> ' : '';
+      rows+=`<div class="r">
+        <span class="n">${idx+1}</span>
+        <span class="t">${mp}${s.title}</span>
+        <span class="a">${s.artist}</span>
+        <span class="k">${s.key}</span>
+        <span class="bpm">${s.bpm}</span>
+      </div>${note}`;
+    });
+  });
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>${title} — FMG</title>
+  <style>
+    @page{margin:1.5cm 2cm;}
+    *{box-sizing:border-box;}
+    body{font-family:Georgia,serif;font-size:12px;color:#111;margin:0;padding:0;}
+    .cover{margin-bottom:1.5rem;border-bottom:2px solid #c49a3c;padding-bottom:.75rem;}
+    h1{font-size:24px;margin:0 0 3px;}
+    .meta{font-family:monospace;font-size:10px;color:#888;}
+    .st{font-family:monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+        border-bottom:1px solid #ccc;padding-bottom:3px;margin:1.2rem 0 .3rem;color:#c49a3c;
+        page-break-after:avoid;}
+    .r{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #f0f0f0;align-items:baseline;
+       page-break-inside:avoid;}
+    .n{color:#bbb;width:16px;font-family:monospace;font-size:10px;flex-shrink:0;}
+    .t{flex:1;font-weight:bold;font-size:12px;}
+    .a{color:#666;min-width:90px;font-size:11px;}
+    .k{font-family:monospace;color:#c49a3c;width:28px;flex-shrink:0;font-size:11px;}
+    .bpm{font-family:monospace;color:#bbb;font-size:9px;width:32px;flex-shrink:0;}
+    .note{font-size:10px;color:#888;font-style:italic;padding:1px 0 3px 24px;page-break-inside:avoid;}
+    .mp{color:#c49a3c;font-size:10px;}
+    .brand{margin-top:2rem;padding-top:.5rem;border-top:1px solid #eee;font-size:9px;color:#bbb;font-family:monospace;}
+    @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+  </style></head><body>
+  <div class="cover"><h1>${title}</h1><div class="meta">${date} · ${iNames}</div></div>
+  ${rows}
+  <div class="brand">Fearlessly Media Group · FMG Setlist Builder</div>
+  </body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>{w.print();},400);
+}
+
 function doExportText(){
   const title=document.getElementById('night-title').value||'Setlist';
   let t=title.toUpperCase()+'\n'+'─'.repeat(title.length)+'\n\n';
@@ -822,7 +887,7 @@ function setActiveBottomNav(v){
 function syncMobileDrawer(){
   const imap = {g:'guitar',p:'piano',v:'wind'};
   // instrument chips
-  ['g','p','v'].forEach(k=>{
+  ['g','p','v','o'].forEach(k=>{
     const mid = 'chip-'+imap[k]+'-m';
     const el = document.getElementById(mid);
     if(el) el.classList.toggle('on', instrs.includes(k));
@@ -885,7 +950,6 @@ toggleInstr = function(i){
   const k = map[i];
   const mobileChip = document.getElementById('chip-'+i+'-m');
   if(mobileChip) mobileChip.classList.toggle('on', instrs.includes(k));
-  // sync desktop chip too (in case called from mobile)
   const desktopChip = document.getElementById('chip-'+i);
   if(desktopChip) desktopChip.classList.toggle('on', instrs.includes(k));
 };

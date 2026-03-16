@@ -8,7 +8,7 @@ en:{
   // nav
   nav_builder:'Builder', nav_pool:'Pool', nav_export:'Export', nav_docs:'Docs',
   // sidebar
-  instruments:'Instruments tonight',
+  instruments:'Lead instrument tonight',
   instr_hint:'Generation prioritizes songs suited to the selected instruments.',
   sets:'Sets', duration:'Duration per set',
   genres_label:'Genres to include', genres_all:'all', genres_none:'none',
@@ -25,7 +25,7 @@ en:{
   qs_note:'All data stays in your browser. No account needed.',
   generate:'Generate Setlist',
   // instruments
-  guitar:'Guitar', piano:'Piano', winds:'Winds',
+  guitar:'Guitar', piano:'Piano', winds:'Winds', voice:'Voice',
   // api bar
   api_required:'✦ API key required for AI features',
   api_save:'Save', api_what:'What is this?',
@@ -136,7 +136,7 @@ en:{
 es:{
   logo_sub:'// constructor de setlists',
   nav_builder:'Constructor', nav_pool:'Cancionero', nav_export:'Exportar', nav_docs:'Docs',
-  instruments:'Instrumentos esta noche',
+  instruments:'Instrumento principal esta noche',
   instr_hint:'La generación prioriza canciones adecuadas a los instrumentos seleccionados.',
   sets:'Sets', duration:'Duración por set',
   genres_label:'Géneros a incluir', genres_all:'todos', genres_none:'ninguno',
@@ -152,7 +152,7 @@ es:{
   qs_7:'Exporta como HTML, JSON o texto',
   qs_note:'Todos los datos se quedan en tu navegador. Sin cuenta.',
   generate:'Generar Setlist',
-  guitar:'Guitarra', piano:'Piano', winds:'Vientos',
+  guitar:'Guitarra', piano:'Piano', winds:'Vientos', voice:'Voz',
   api_required:'✦ Se requiere API key para funciones IA',
   api_save:'Guardar', api_what:'¿Qué es esto?',
   night_placeholder:'Nombre de la noche…',
@@ -251,7 +251,7 @@ es:{
 pt:{
   logo_sub:'// construtor de setlists',
   nav_builder:'Construtor', nav_pool:'Cancioneiro', nav_export:'Exportar', nav_docs:'Docs',
-  instruments:'Instrumentos esta noite',
+  instruments:'Instrumento principal esta noite',
   instr_hint:'A geração prioriza músicas adequadas aos instrumentos selecionados.',
   sets:'Sets', duration:'Duração por set',
   genres_label:'Gêneros a incluir', genres_all:'todos', genres_none:'nenhum',
@@ -267,7 +267,7 @@ pt:{
   qs_7:'Exporte como HTML, JSON ou texto',
   qs_note:'Todos os dados ficam no seu navegador. Sem conta.',
   generate:'Gerar Setlist',
-  guitar:'Guitarra', piano:'Piano', winds:'Metais/Sopros',
+  guitar:'Guitarra', piano:'Piano', winds:'Metais/Sopros', voice:'Voz',
   api_required:'✦ API key necessária para recursos de IA',
   api_save:'Salvar', api_what:'O que é isso?',
   night_placeholder:'Nome da noite…',
@@ -366,7 +366,7 @@ pt:{
 ru:{
   logo_sub:'// конструктор сетлистов',
   nav_builder:'Конструктор', nav_pool:'Каталог', nav_export:'Экспорт', nav_docs:'Помощь',
-  instruments:'Инструменты сегодня',
+  instruments:'Ведущий инструмент сегодня',
   instr_hint:'Генерация отдаёт приоритет песням, подходящим для выбранных инструментов.',
   sets:'Сеты', duration:'Длительность сета',
   genres_label:'Жанры для включения', genres_all:'все', genres_none:'ничего',
@@ -382,7 +382,7 @@ ru:{
   qs_7:'Экспортируйте как HTML, JSON или текст',
   qs_note:'Все данные хранятся в вашем браузере. Аккаунт не нужен.',
   generate:'Создать сетлист',
-  guitar:'Гитара', piano:'Фортепиано', winds:'Духовые',
+  guitar:'Гитара', piano:'Фортепиано', winds:'Духовые', voice:'Вокал',
   api_required:'✦ API ключ необходим для функций ИИ',
   api_save:'Сохранить', api_what:'Что это такое?',
   night_placeholder:'Название вечера…',
