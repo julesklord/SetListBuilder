@@ -5,7 +5,7 @@ Setlist generator for live musicians — AI-powered, multi-language, no backend 
 ## Project structure
 
 ```
-fmg-setlist/
+setlistbuilder/
 ├── index.html        ← Main app shell (HTML structure only)
 ├── style.css         ← All styles (dark/light theme, layout, components)
 └── js/
