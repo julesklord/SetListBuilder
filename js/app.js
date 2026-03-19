@@ -1,3 +1,9 @@
+// ─── SAFETY FALLBACKS ────────────────────────────────────────────────────────
+if(typeof pool==='undefined'){ window.pool=[];window.nights=[];window.sets=[];window.numSets=3;window.instrs=['g'];window.pf='all';window.selectedGenres=['Blues','Rock','Pop','Soul','R&B','Ballad'];window.editId=null;window.dragSrc=null;window.nextId=91;window.aiTab='lookup';window.apiProvider='claude';window.apiKeys={claude:'',gemini:'',chatgpt:''};window.mustPlay=new Set();window.DEFAULTS=[]; }
+if(typeof mustPlay==='undefined') window.mustPlay=new Set();
+if(typeof tr==='undefined') window.tr=function(k){return k;}
+let _genreTimer; // genre debounce — module-level so all functions can access
+
 // ─── APP ────────────────────────────────────────────────────────────────────
 // Depends on: songs.js → i18n.js → app.js (load order matters)
 
@@ -23,6 +29,107 @@ function persist() {
   localStorage.setItem('fmg-mustPlay', JSON.stringify([...mustPlay]));
 }
 
+// ─── CSV IMPORT / EXPORT ─────────────────────────────────────────────────────
+function downloadCSVTemplate(){
+  var NL = '\n';
+  var header = 'title,artist,genre,key,bpm,prog,energy,instr,effort';
+  var row1 = '"The Thrill Is Gone","B.B. King","Blues","Bm",90,"i-IV-i-V",3,"g,p",2';
+  var row2 = '"Superstition","Stevie Wonder","Funk","Eb",100,"i-VII-i-VII",5,"g,p,v,o",4';
+  var row3 = '"Stand by Me","Ben E. King","Soul","A",116,"I-vi-IV-V",4,"g,p,o",3';
+  var notes = '# INSTRUCTIONS:' + NL + '# genre: Blues|Rock|Pop|Soul|Funk|R&B|Ballad|Reggae|Latin|Jazz|Country' + NL + '# instr: g=guitar,p=piano,v=winds,o=voice (comma-sep, no spaces)' + NL + '# energy: 1=very calm 5=peak energy' + NL + '# effort: 1=very easy 5=exhausting';
+  var csv = notes + NL + header + NL + row1 + NL + row2 + NL + row3 + NL;
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'fmg-songs-template.csv';
+  a.click();
+  toast('Template downloaded');
+}
+
+function importCSV(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const lines = e.target.result.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l=>l.trim()&&!l.startsWith('#'));
+    if(!lines.length){toast(tr('toast_invalid_json'));return;}
+    // Parse header
+    const hdr = lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
+    const required = ['title','artist','genre'];
+    if(!required.every(r=>hdr.includes(r))){
+      toast('CSV missing required columns: title, artist, genre');
+      return;
+    }
+    const VALID_GENRES = ['Blues','Rock','Pop','Soul','Funk','R&B','Ballad','Reggae','Latin','Jazz','Country'];
+    const INSTR_MAP = {g:'g',p:'p',v:'v',o:'o',guitar:'g',piano:'p',winds:'v',voice:'o'};
+    let added = 0, skipped = 0;
+    for(let i=1;i<lines.length;i++){
+      const vals = parseCSVLine(lines[i]);
+      if(vals.length < 3) continue;
+      const row = {};
+      hdr.forEach((h,j)=>row[h]=vals[j]||'');
+      const title  = row.title?.trim();
+      const artist = row.artist?.trim();
+      if(!title||!artist){skipped++;continue;}
+      if(pool.find(x=>x.title.toLowerCase()===title.toLowerCase()&&x.artist.toLowerCase()===artist.toLowerCase())){skipped++;continue;}
+      const instrRaw = (row.instr||'g').split(',').map(x=>x.trim().toLowerCase());
+      const instr = instrRaw.map(x=>INSTR_MAP[x]).filter(Boolean);
+      const genre = VALID_GENRES.includes(row.genre)||VALID_GENRES.map(g=>g.toLowerCase()).includes((row.genre||'').toLowerCase())
+        ? VALID_GENRES.find(g=>g.toLowerCase()===(row.genre||'').toLowerCase())||'Blues'
+        : 'Blues';
+      const song = {
+        id: nextId++,
+        title, artist, genre,
+        key:   row.key?.trim()||'C',
+        bpm:   Math.max(40,Math.min(250,parseInt(row.bpm)||100)),
+        prog:  row.prog?.trim()||'I-IV-V',
+        energy:Math.min(5,Math.max(1,parseInt(row.energy)||3)),
+        instr: instr.length?instr:['g'],
+        effort:Math.min(5,Math.max(1,parseInt(row.effort)||2))
+      };
+      pool.push(song);
+      added++;
+    }
+    persist();
+    renderPool();
+    ev.target.value = '';
+    toast(added+tr('toast_songs_added')+' imported'+(skipped?' ('+skipped+' skipped)':''));
+  };
+  reader.readAsText(file);
+}
+
+function parseCSVLine(line){
+  // Handle quoted fields with commas inside
+  const result = [];
+  let cur = '', inQ = false;
+  for(let i=0;i<line.length;i++){
+    const ch = line[i];
+    if(ch==='"'){inQ=!inQ;}
+    else if(ch===','&&!inQ){result.push(cur.trim());cur='';}
+    else{cur+=ch;}
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+// ─── EFFORT WEIGHTS ──────────────────────────────────────────────────────────
+function saveEffortWeights(){
+  const codes = ['eg','ag','b','dr','k','sx','tp','tb','vo','bv','pc'];
+  const inputs = {};
+  codes.forEach(c=>{
+    inputs[c] = Math.min(5,Math.max(0.5,parseFloat(document.getElementById('ew-'+c)?.value)||1.0));
+  });
+  effortWeights = inputs;
+  localStorage.setItem('fmg-effort-weights', JSON.stringify(effortWeights));
+  toast('Effort weights saved');
+}
+
+function renderEffortWeights(){
+  ['eg','ag','b','dr','k','sx','tp','tb','vo','bv','pc'].forEach(k=>{
+    const el = document.getElementById('ew-'+k);
+    if(el) el.value = effortWeights[k]||1.0;
+  });
+}
+
 // ─── TOAST ──────────────────────────────────────────────────────────────────
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -30,28 +137,53 @@ function toast(msg) {
   setTimeout(()=>t.classList.remove('show'), 2400);
 }
 
+// ─── AI MODELS ───────────────────────────────────────────────────────────────
+const models = {
+  claude: [
+    { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet' },
+    { id: 'claude-3-opus-20250219', name: 'Claude 3 Opus' },
+    { id: 'claude-3-haiku-20250307', name: 'Claude 3 Haiku' }
+  ],
+  gemini: [
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
+    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
+    { id: 'gemini-1.5-flash-001', name: 'Gemini 1.5 Flash' },
+    { id: 'gemini-2.0-flash-thinking-exp-01-21', name: 'Gemini 2.0 Flash Thinking' }
+  ],
+  chatgpt: [
+    { id: 'gpt-4o', name: 'GPT-4o' },
+    { id: 'gpt-4-turbo', name: 'GPT-4 Turbo' },
+    { id: 'gpt-4o-mini', name: 'GPT-4o Mini' }
+  ]
+};
+
+let selectedModel = localStorage.getItem('fmg-ai-model') || 'gemini-2.5-flash';
+
 // ─── API KEY ─────────────────────────────────────────────────────────────────
-function initApiBar() {
-  document.getElementById('api-provider').value = apiProvider;
-  const bar = document.getElementById('api-bar');
-  const status = document.getElementById('api-status');
-  const currentKey = apiKeys[apiProvider];
-  const providerNames = {claude:'Claude',gemini:'Gemini',chatgpt:'ChatGPT'};
-  if (currentKey) {
-    bar.classList.remove('warn');
-    status.className = 'api-status ok';
-    status.textContent = '✦ '+providerNames[apiProvider]+' API key set';
-    document.getElementById('api-key-input').value = '••••••••••••••••';
-  } else {
-    bar.classList.add('warn');
-    status.className = 'api-status missing';
-    status.textContent = '✦ API key required for AI features';
+function initApiBar(){ /* AI disabled in FOSS version */ }
+function updateModelSelector() {
+  const modelSelect = document.getElementById('ai-model');
+  const providerModels = models[apiProvider] || [];
+  const firstModelId = providerModels[0]?.id;
+  // Use saved model if it exists for this provider, otherwise use the first one
+  if(!providerModels.some(m => m.id === selectedModel)) {
+    selectedModel = firstModelId || 'gpt-4o-mini';
+    localStorage.setItem('fmg-ai-model', selectedModel);
   }
+  modelSelect.innerHTML = providerModels.map(m => 
+    `<option value="${m.id}" ${m.id === selectedModel ? 'selected' : ''}>${m.name}</option>`
+  ).join('');
+}
+
+function updateAIModel() {
+  selectedModel = document.getElementById('ai-model').value;
+  localStorage.setItem('fmg-ai-model', selectedModel);
 }
 function updateApiLabel() {
   apiProvider = document.getElementById('api-provider').value;
   localStorage.setItem('fmg-api-provider', apiProvider);
   document.getElementById('api-key-input').value = '';
+  updateModelSelector();
   setTheme(localStorage.getItem('fmg-theme')||'dark');
 setLang(currentLang);
 renderDocs();
@@ -71,23 +203,38 @@ function saveApiKey() {
 function gotoView(v) {
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
-  document.getElementById('view-'+v).classList.add('active');
-  document.querySelectorAll('.nav-btn')[['builder','pool','export','docs'].indexOf(v)].classList.add('active');
-  if(v==='pool') renderPool();
+  const viewEl = document.getElementById('view-'+v);
+  if(viewEl) viewEl.classList.add('active');
+  const navOrder = ['builder','shows','pool','export','docs'];
+  const navIdx = navOrder.indexOf(v);
+  const navBtns = document.querySelectorAll('.nav-btn');
+  if(navIdx >= 0 && navBtns[navIdx]) navBtns[navIdx].classList.add('active');
+  if(v==='pool')   renderPool();
   if(v==='export') renderExport();
-  if(v==='docs') renderDocs();
+  if(v==='docs')   renderDocs();
+  if(v==='shows')  renderShows();
 }
 
 // ─── INSTRUMENTS / SETS ─────────────────────────────────────────────────────
-function toggleInstr(i) {
-  const map = {guitar:'g', piano:'p', wind:'v', voice:'o'};
-  const key = map[i];
-  const chip = document.getElementById('chip-'+i);
-  if(instrs.includes(key)){
+function toggleInstr(name){
+  // name is the chip name (eguitar, bass, drums, etc.)
+  // map to instrument code
+  const NAME_TO_CODE = {eguitar:'eg',aguitar:'ag',bass:'b',drums:'dr',keys:'k',sax:'sx',trumpet:'tp',trombone:'tb',vocal:'vo',backing:'bv',percussion:'pc'};
+  const code = NAME_TO_CODE[name] || name;
+  if(instrs.includes(code)){
     if(instrs.length===1){toast(tr('toast_min_instr'));return;}
-    instrs=instrs.filter(x=>x!==key);chip.classList.remove('on');
-  } else{instrs.push(key);chip.classList.add('on');}
+    instrs = instrs.filter(x=>x!==code);
+  } else {
+    instrs.push(code);
+  }
+  localStorage.setItem('fmg-instrs', JSON.stringify(instrs));
+  // Sync all chips with this name
+  ['chip-'+name, 'chip-'+name+'-m'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.toggle('on', instrs.includes(code));
+  });
 }
+
 function setN(n) {
   numSets=n;
   document.querySelectorAll('.sc-btn').forEach((b,i)=>b.classList.toggle('on',[2,3,4][i]===n));
@@ -95,50 +242,126 @@ function setN(n) {
 
 // ─── GENERATE ────────────────────────────────────────────────────────────────
 function setAllGenres(val){
-  ['blues','rock','pop','soul','funk','rnb','ballad','reggae','latin','jazz','country'].forEach(g=>{
-    const el=document.getElementById('genre-'+g);
-    if(el)el.checked=val;
+  const ids = ['blues','rock','pop','soul','funk','rnb','ballad','reggae','latin','jazz','country','disco','rbmodern','funksoul','rocklatino','cumbia','poplatino','balada','merengue','ranchera','reggaeton','synthpop','raprock','ska'];
+  ids.forEach(g=>{
+    ['genre-'+g, 'genre-'+g+'-m'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.checked=val;
+    });
   });
   generate();
 }
 function updateGenreFilters(){
-  const map={blues:'Blues',rock:'Rock',pop:'Pop',soul:'Soul',funk:'Funk',rnb:'R&B',ballad:'Ballad',reggae:'Reggae',latin:'Latin',jazz:'Jazz',country:'Country'};
-  selectedGenres=['blues','rock','pop','soul','funk','rnb','ballad','reggae','latin','jazz','country']
-    .filter(g=>document.getElementById('genre-'+g)?.checked)
-    .map(g=>map[g]);
+  const ALL_GENRES = ['Blues','Rock','Pop','Soul','Funk','R&B','Ballad','Reggae','Latin','Jazz','Country','Disco','R&B Modern','Funk/Soul','Rock Latino','Cumbia','Pop Latino','Balada','Merengue','Ranchera','Reggaetón','Synth-Pop','Rap Rock','Ska'];
+  const ID_MAP = {Blues:'blues',Rock:'rock',Pop:'pop',Soul:'soul',Funk:'funk','R&B':'rnb',Ballad:'ballad',Reggae:'reggae',Latin:'latin',Jazz:'jazz',Country:'country',Disco:'disco','R&B Modern':'rbmodern','Funk/Soul':'funksoul','Rock Latino':'rocklatino',Cumbia:'cumbia','Pop Latino':'poplatino',Balada:'balada',Merengue:'merengue',Ranchera:'ranchera','Reggaetón':'reggaeton','Synth-Pop':'synthpop','Rap Rock':'raprock',Ska:'ska'};
+  selectedGenres = ALL_GENRES.filter(g=>{
+    const el = document.getElementById('genre-'+ID_MAP[g]);
+    return el ? el.checked : true;
+  });
+  if(!selectedGenres.length) selectedGenres = [...ALL_GENRES];
 }
 function generate(){
+  if(typeof mustPlay==='undefined') mustPlay=new Set();
+  if(!pool||!pool.length){toast('Pool empty — add songs first');return;}
   updateGenreFilters();
-  const dur = parseInt(document.getElementById('dur-sel').value);
-  const sps = Math.round(dur / 4.5);
-  let elig = pool.filter(s=>(s.instr.some(i=>instrs.includes(i))&&selectedGenres.includes(s.genre)));
-  if(elig.length < sps * numSets) elig = [...pool.filter(s=>selectedGenres.includes(s.genre))];
-  if(elig.length < sps * numSets) elig = [...pool];
+  const durEl = document.getElementById('dur-sel');
+  const dur = durEl ? parseInt(durEl.value)||45 : 45;
+  const sps = Math.max(5, Math.round(dur / 4.5));
+
+  // Eligible songs
+  let elig = pool.filter(s=>s.instr.some(i=>instrs.includes(i))&&selectedGenres.includes(s.genre));
+  if(elig.length < sps*numSets) elig = pool.filter(s=>selectedGenres.includes(s.genre));
+  if(elig.length < sps*numSets) elig = [...pool];
+
   const sh = a=>[...a].sort(()=>Math.random()-.5);
-  // Separate mustPlay songs from regular pool
+
+  // Must-play songs (distributed evenly)
   const mpSongs = [...mustPlay].map(id=>pool.find(s=>s.id===id)).filter(Boolean);
   const used = new Set(mpSongs.map(s=>s.id));
   const free = elig.filter(s=>!mustPlay.has(s.id));
-  const low=sh(free.filter(s=>s.energy<=2)), mid=sh(free.filter(s=>s.energy===3)), high=sh(free.filter(s=>s.energy>=4));
-  function pick(arr,n){const o=[];for(const s of arr){if(o.length>=n)break;if(!used.has(s.id)){o.push(s);used.add(s.id);}}return o;}
-  const fallback=sh(free);
-  function pickFB(n){const o=[];for(const s of fallback){if(o.length>=n)break;if(!used.has(s.id)){o.push(s);used.add(s.id);}}return o;}
-  sets=[];
-  // Distribute mustPlay songs evenly across sets
-  const mpPerSet = Math.ceil(mpSongs.length / numSets);
-  for(let i=0;i<numSets;i++){
-    const setMp = mpSongs.slice(i*mpPerSet, (i+1)*mpPerSet);
-    const remaining = sps - setMp.length;
-    const last=i===numSets-1;
-    const lN=Math.max(0,last?Math.floor(remaining*.2):Math.floor(remaining*.35));
-    const hN=Math.max(0,last?Math.floor(remaining*.4):Math.floor(remaining*.25));
-    const mN=Math.max(0,remaining-lN-hN);
-    let arr=[...setMp,...pick(low,lN),...pick(mid,mN),...pick(high,hN)];
-    if(arr.length<sps) arr=[...arr,...pickFB(sps-arr.length)];
-    sets.push(noConsecKey(arr));
+
+  // Effort score for a song given current instrument weights
+  function songEffort(s){
+    const w = s.instr.reduce((max,i)=>Math.max(max, effortWeights[i]||1.0), 1.0);
+    return (s.effort||2) * w;
   }
+
+  // Total effort for a set
+  function setEffort(arr){ return arr.reduce((t,s)=>t+songEffort(s),0); }
+
+  // Energy buckets
+  const low  = sh(free.filter(s=>s.energy<=2));
+  const mid  = sh(free.filter(s=>s.energy===3));
+  const high = sh(free.filter(s=>s.energy>=4));
+  const fb   = sh(free);
+
+  function pick(arr,n,usedSet){
+    const o=[];
+    for(const s of arr){if(o.length>=n)break;if(!usedSet.has(s.id)){o.push(s);usedSet.add(s.id);}}
+    return o;
+  }
+
+  // Build candidate sets
+  const mpPerSet = Math.ceil(mpSongs.length/numSets);
+  let candidates = [];
+  for(let i=0;i<numSets;i++){
+    const setMp = mpSongs.slice(i*mpPerSet,(i+1)*mpPerSet);
+    const rem = sps - setMp.length;
+    const last = i===numSets-1;
+    const lN = Math.max(0,last?Math.floor(rem*.2):Math.floor(rem*.35));
+    const hN = Math.max(0,last?Math.floor(rem*.4):Math.floor(rem*.25));
+    const mN = Math.max(0,rem-lN-hN);
+    let arr = [...setMp,...pick(low,lN,used),...pick(mid,mN,used),...pick(high,hN,used)];
+    if(arr.length<sps) arr=[...arr,...pick(fb,sps-arr.length,used)];
+    candidates.push(noConsecKey(arr));
+  }
+
+  // 50/50 effort balancing: try to redistribute to equalize effort
+  // Target effort per set
+  const totalEffort = candidates.flat().reduce((t,s)=>t+songEffort(s),0);
+  const targetEffort = totalEffort / numSets;
+
+  // Simple swap pass: for each set above target, try to swap a heavy song
+  // with a lighter one from an under-target set (max 3 passes)
+  const poolById = {};
+  pool.forEach(s=>poolById[s.id]=s);
+
+  for(let pass=0;pass<3;pass++){
+    const efforts = candidates.map(setEffort);
+    const avgE = efforts.reduce((a,b)=>a+b,0)/numSets;
+    for(let i=0;i<numSets;i++){
+      if(efforts[i] <= avgE*1.15) continue; // within 15% — ok
+      // Find heaviest non-mustplay song in this set
+      const heavy = [...candidates[i]]
+        .filter(s=>!mustPlay.has(s.id))
+        .sort((a,b)=>songEffort(b)-songEffort(a))[0];
+      if(!heavy) continue;
+      // Find lightest non-mustplay song from a lighter set
+      for(let j=0;j<numSets;j++){
+        if(i===j||efforts[j]>=avgE) continue;
+        const light = [...candidates[j]]
+          .filter(s=>!mustPlay.has(s.id))
+          .sort((a,b)=>songEffort(a)-songEffort(b))[0];
+        if(!light) continue;
+        // Only swap if it improves balance
+        const diffBefore = Math.abs(efforts[i]-efforts[j]);
+        const newI = efforts[i]-songEffort(heavy)+songEffort(light);
+        const newJ = efforts[j]-songEffort(light)+songEffort(heavy);
+        const diffAfter = Math.abs(newI-newJ);
+        if(diffAfter<diffBefore){
+          // Do the swap
+          candidates[i] = candidates[i].map(s=>s.id===heavy.id?light:s);
+          candidates[j] = candidates[j].map(s=>s.id===light.id?heavy:s);
+          break;
+        }
+      }
+    }
+  }
+
+  sets = candidates;
   renderSets();
-  toast(tr('toast_generated')+sets.reduce((a,s)=>a+s.length,0)+tr('toast_songs_added'));
+  const total = sets.reduce((a,s)=>a+s.length,0);
+  toast(tr('toast_generated')+total+tr('toast_songs_added'));
 }
 function noConsecKey(a){
   const r=[...a];
@@ -180,6 +403,7 @@ function renderSets(){
 function sRow(s,i,si){
   const gClass=s.genre==='R&B'?'RnB':s.genre;
   const mpIcon = mustPlay.has(s.id) ? '<span class="mp-icon" title="Must Play">⚑</span>' : '';
+  const effortDots = Array.from({length:5},(_,j)=>`<div class="efd${j<(s.effort||2)?' on':''}"></div>`).join('');
   const noteIndicator = s.note ? '<span style="color:var(--gold);font-size:11px;">✎</span>' : '';
   return `<div class="song-row" draggable="true" data-id="${s.id}" data-si="${si}">
     <span class="dh">⠿</span>
@@ -190,7 +414,7 @@ function sRow(s,i,si){
     </div>
     <span class="skey">${s.key}</span><span class="sbpm">${s.bpm}</span>
     <span class="sbadge b${gClass}">${s.genre}</span>
-    <div class="emini">${Array.from({length:5},(_,j)=>`<div class="ed${j<s.energy?' on':''}${j<s.energy&&s.energy>=4?' hi':''}"></div>`).join('')}</div>
+    <div class="emini" title="Energy">${Array.from({length:5},(_,j)=>`<div class="ed${j<s.energy?' on':''}${j<s.energy&&s.energy>=4?' hi':''}"></div>`).join('')}</div>
     <button class="note-btn" onclick="openNoteModal(${si},${s.id})" title="Add note..." style="padding:4px 8px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:var(--r);cursor:pointer;font-size:12px;transition:all .15s;">${noteIndicator || '+ note'}</button>
     <button class="srem" onclick="remFromSet(${si},${s.id})">×</button>
   </div>`;
@@ -264,6 +488,7 @@ function saveNight(){
   nights.unshift({id:Date.now(),title,date,sets:sets.map(s=>[...s]),instrs:[...instrs]});
   if(nights.length>30)nights.pop();
   persist();renderSaved();toast(tr('toast_saved')+title);
+  renderShows();
 }
 function loadNight(id){
   const n=nights.find(x=>x.id===id);if(!n)return;
@@ -272,7 +497,7 @@ function loadNight(id){
   document.getElementById('night-title').value=n.title;
   // Update instrument chips
   document.querySelectorAll('[id^="chip-"]').forEach(el=>el.classList.remove('on'));
-  const map={'g':'guitar','p':'piano','v':'wind','o':'voice'};
+  const map={'eg':'eguitar','ag':'aguitar','b':'bass','dr':'drums','k':'keys','sx':'sax','tp':'trumpet','tb':'trombone','vo':'vocal','bv':'backing','pc':'percussion'};
   instrs.forEach(i=>{const id=map[i];if(id)document.getElementById('chip-'+id)?.classList.add('on');});
   renderSets();gotoView('builder');
   document.querySelectorAll('.sv-item').forEach(el=>el.classList.toggle('cur',parseInt(el.dataset.id)===id));
@@ -282,6 +507,30 @@ function delNight(id){
   if(n&&!confirm(tr('confirm_del_night')+n.title+tr('confirm_del_night2')))return;
   nights=nights.filter(x=>x.id!==id);persist();renderSaved();
 }
+function renderShows(){
+  const area = document.getElementById('shows-full-list');
+  if(!area) return;
+  if(!nights.length){
+    area.innerHTML = '<div style="color:var(--text3);font-family:var(--font-mono);font-size:12px;padding:1rem 0;">'+tr('no_saved')+'</div>';
+    return;
+  }
+  area.innerHTML = nights.map(n=>{
+    const date = n.date ? new Date(n.date).toLocaleDateString() : '';
+    const setCount = n.sets ? n.sets.length : 0;
+    const songCount = n.sets ? n.sets.reduce((a,s)=>a+s.length,0) : 0;
+    return `<div class="show-card">
+      <div class="show-card-info">
+        <div class="show-card-title">${n.title}</div>
+        <div class="show-card-meta">${date ? date+' · ' : ''}${setCount} sets · ${songCount} songs</div>
+      </div>
+      <div class="show-card-actions">
+        <button class="btn-xs" onclick="loadNight(${n.id})">Load</button>
+        <button class="btn-xs" style="color:var(--text3)" onclick="delNight(${n.id})">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 function renderSaved(){
   const el=document.getElementById('saved-list');
   if(!nights.length){el.innerHTML="<div class=\"sv-empty\">" + tr('no_saved') + "</div>";return;}
@@ -308,7 +557,7 @@ function renderPool(){
       <td style="color:var(--text3);font-family:var(--font-mono);font-size:10px;">${i+1}</td>
       <td class="pt">${x.title}</td><td class="pa">${x.artist}</td>
       <td><span class="sbadge b${gClass}">${x.genre}</span></td>
-      <td class="pk">${x.key}</td><td class="pb">${x.bpm}</td><td class="pp">${x.prog}</td>
+      <td class="pk">${x.key}</td><td class="pb">${x.bpm}</td><td class="pe">${x.effort||2}</td><td class="pp">${x.prog}</td>
       <td><div class="pi">
         ${x.instr.includes('g')?'<div class="id id-g">G</div>':''}
         ${x.instr.includes('p')?'<div class="id id-p">P</div>':''}
@@ -330,7 +579,20 @@ function delSong(id){
 }
 
 // ─── AI PANEL ────────────────────────────────────────────────────────────────
+let aiResults = []; // Almacena resultados de IA
+let aiSongCount = 5; // Default number of songs for AI suggestions
+
+function setAICount(n){
+  aiSongCount = n;
+  document.querySelectorAll('.ai-count-btn').forEach(b=>b.classList.toggle('on', parseInt(b.dataset.n)===n));
+  localStorage.setItem('fmg-ai-count', String(n));
+}
+
 function toggleAIPanel(){
+  // AI features disabled in FOSS version
+  toast('AI features not available in this version');
+  return;
+  // eslint-disable-next-line no-unreachable
   const p=document.getElementById('ai-panel');
   p.classList.toggle('open');
 }
@@ -343,6 +605,47 @@ function setAITab(t){
   document.getElementById('ai-results').innerHTML='';
   document.getElementById('ai-status').textContent='';
 }
+// ─── AI HELPERS (global) ─────────────────────────────────────────────────────
+function cleanJSON(raw) {
+  let clean = raw.trim();
+  
+  // Remove markdown code blocks
+  clean = clean.replace(/^```json\s*/i, '').replace(/```\s*$/, '');
+  clean = clean.replace(/^```\s*/i, '').replace(/```\s*$/, '');
+  
+  // Find and extract JSON array
+  const start = clean.indexOf('[');
+  const end = clean.lastIndexOf(']');
+  if(start !== -1 && end !== -1 && end > start) {
+    clean = clean.substring(start, end + 1);
+  }
+  clean = clean.trim();
+  
+  // Fix common issues without breaking the JSON
+  // Replace smart quotes with regular quotes (outside of JSON strings)
+  clean = clean.replace(/[""]/g, '"').replace(/[']/g, "'");
+  
+  // Remove problematic control characters but keep newlines in context
+  clean = clean.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+  
+  return clean;
+}
+
+
+
+function normalizeInstr(raw) {
+  const MAP={guitar:'g',guitarra:'g',g:'g',piano:'p',keyboards:'p',keys:'p',p:'p',
+    winds:'v',wind:'v',brass:'v',horns:'v',v:'v',
+    voice:'o',vocals:'o',vocal:'o',voz:'o',singing:'o',o:'o'};
+  if(!Array.isArray(raw)) return ['g'];
+  const result=[];
+  for(const item of raw){
+    const code=MAP[String(item).toLowerCase().trim()];
+    if(code&&!result.includes(code)) result.push(code);
+  }
+  return result.length?result:['g'];
+}
+
 async function runAI(){
   const currentKey = apiKeys[apiProvider];
   if(!currentKey){toast(tr('api_set_key'));gotoView('docs');return;}
@@ -351,12 +654,23 @@ async function runAI(){
   const goBtn=document.getElementById(aiTab==='lookup'?'ai-go-btn':'ai-go-btn2');
   const query=document.getElementById(aiTab==='lookup'?'ai-lookup-input':'ai-suggest-input').value.trim();
   if(!query){toast(tr('ai_enter_query'));return;}
-  status.className='ai-status';status.textContent='Asking '+apiProvider+'…';
+  status.className='ai-status loading';status.textContent='Asking '+apiProvider+'…';
   results.innerHTML='';goBtn.disabled=true;
 
+    const EXAMPLE = JSON.stringify([{title:"Song Title",artist:"Artist Name",genre:"Blues",key:"Am",bpm:90,prog:"i-iv-V",energy:3,instr:["g"]}]);
+  const GENRES = "Blues, Rock, Pop, Soul, Funk, R&B, Ballad, Reggae, Latin, Jazz, Country";
+  const INSTR_RULES = "instr: array of codes only: g=guitar p=piano v=winds o=voice. Keep prog under 30 chars.";
   const systemPrompt = aiTab==='lookup'
-    ? `You are a music metadata assistant. Given a song title and artist, return ONLY a JSON array with ONE object containing: title, artist, genre (one of: Blues, Rock, Pop, Soul, Funk, R&B, Ballad, Reggae, Latin, Jazz, Country), key (e.g. Am, E, Bb), bpm (integer), prog (chord progression string), energy (1-5 integer where 1=very slow/quiet 5=high energy), instr (array of "g","p","v" for guitar/piano/winds based on what suits the song). Return ONLY the JSON array, no markdown, no explanation.`
-    : `You are a music expert specializing in multiple genres. Given a mood/style description, suggest exactly 5 classic songs that fit. Return ONLY a JSON array of objects each with: title, artist, genre (one of: Blues, Rock, Pop, Soul, Funk, R&B, Ballad, Reggae, Latin, Jazz, Country), key, bpm (integer), prog (chord progression), energy (1-5), instr (array of "g","p","v"). Only suggest well-known classic songs. Return ONLY the JSON array, no markdown, no explanation.`;
+    ? `You are a music metadata expert. The user gives you a song title and artist.
+Return ONLY a valid JSON array with exactly ONE object. No markdown, no text outside the JSON.
+Fields: title, artist, genre (one of: ${GENRES}), key (e.g. "Am"), bpm (integer), prog (chord progression), energy (integer 1-5), instr (array).
+${INSTR_RULES}
+Exact format: ${EXAMPLE}`
+    : `You are a music expert. The user describes a musical style or mood.
+Return ONLY a valid JSON array of exactly ${aiSongCount} song objects. No markdown, no text outside the JSON.
+Fields: title, artist, genre (one of: ${GENRES}), key (e.g. "Am"), bpm (integer), prog (chord progression), energy (integer 1-5), instr (array).
+${INSTR_RULES}
+Exact format: ${EXAMPLE}`;
 
   try {
     let songs;
@@ -364,44 +678,75 @@ async function runAI(){
       const res=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
         headers:{'Content-Type':'application/json','x-api-key':currentKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:systemPrompt,messages:[{role:'user',content:query}]})
+        body:JSON.stringify({model:selectedModel,max_tokens:2048,temperature:0.3,system:systemPrompt,messages:[{role:'user',content:query}]})
       });
       if(!res.ok){const e=await res.json();throw new Error(e.error?.message||'API error '+res.status);}
       const data=await res.json();
       const raw=data.content.map(c=>c.text||'').join('');
-      const clean=raw.replace(/```json|```/g,'').trim();
-      songs=JSON.parse(clean);
+      const clean=cleanJSON(raw);
+      try {
+        songs=JSON.parse(clean);
+      } catch(e) {
+        console.error('Raw response:', raw);
+        console.error('Cleaned:', clean);
+        throw new Error('Invalid JSON from Claude: ' + e.message);
+      }
     } else if(apiProvider==='gemini'){
-      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentKey}`,{
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${currentKey}`,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({contents:[{parts:[{text:systemPrompt+'\n\nUser query: '+query}]}],generationConfig:{temperature:0.7,maxOutputTokens:1000}})
+        body:JSON.stringify({contents:[{parts:[{text:systemPrompt+'\n\nUser request: '+query}]}],generationConfig:{temperature:0.3,maxOutputTokens:2048,responseMimeType:'application/json'}})
       });
       if(!res.ok){const e=await res.json();throw new Error(e.error?.message||'API error '+res.status);}
       const data=await res.json();
-      const raw=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
-      const clean=raw.replace(/```json|```/g,'').trim();
-      songs=JSON.parse(clean);
+      const candidate=data.candidates?.[0];
+      if(candidate?.finishReason==='MAX_TOKENS') throw new Error('Response truncated — try fewer songs');
+      const raw=candidate?.content?.parts?.[0]?.text||'';
+      const clean=cleanJSON(raw);
+      try {
+        songs=JSON.parse(clean);
+      } catch(e) {
+        console.error('Raw response:', raw);
+        console.error('Cleaned:', clean);
+        throw new Error('Invalid JSON from Gemini: ' + e.message);
+      }
     } else if(apiProvider==='chatgpt'){
       const res=await fetch('https://api.openai.com/v1/chat/completions',{
         method:'POST',
         headers:{'Content-Type':'application/json','Authorization':'Bearer '+currentKey},
-        body:JSON.stringify({model:'gpt-4o-mini',max_tokens:1000,messages:[{role:'system',content:systemPrompt},{role:'user',content:query}]})
+        body:JSON.stringify({model:selectedModel,max_tokens:2048,messages:[{role:'system',content:systemPrompt},{role:'user',content:query}]})
       });
       if(!res.ok){const e=await res.json();throw new Error(e.error?.message||'API error '+res.status);}
       const data=await res.json();
       const raw=data.choices?.[0]?.message?.content||'';
-      const clean=raw.replace(/```json|```/g,'').trim();
-      songs=JSON.parse(clean);
+      const clean=cleanJSON(raw);
+      try {
+        songs=JSON.parse(clean);
+      } catch(e) {
+        console.error('Raw response:', raw);
+        console.error('Cleaned:', clean);
+        throw new Error('Invalid JSON from ChatGPT: ' + e.message);
+      }
     }
-    status.textContent=`${songs.length} song${songs.length!==1?'s':''} found`;
+    songs=songs.filter(s=>s&&s.title&&s.artist).map(s=>({
+      title:String(s.title||'').trim(), artist:String(s.artist||'').trim(),
+      genre:['Blues','Rock','Pop','Soul','Funk','R&B','Ballad','Reggae','Latin','Jazz','Country'].includes(s.genre)?s.genre:'Blues',
+      key:String(s.key||'C').trim(), bpm:Math.max(40,Math.min(220,parseInt(s.bpm)||90)),
+      prog:String(s.prog||'I-IV-V').trim().slice(0,40),
+      energy:Math.min(5,Math.max(1,parseInt(s.energy)||3)),
+      instr:normalizeInstr(s.instr)
+    }));
+    if(!songs.length) throw new Error('No valid songs in response');
+    status.className='ai-status ok';
+    status.textContent=songs.length+' song'+(songs.length!==1?'s':'')+' found';
+    aiResults = songs;
     results.innerHTML=songs.map((s,i)=>`
       <div class="ai-result-item" id="air-${i}">
         <div class="ai-result-info">
           <div class="ai-result-title">${s.title} — ${s.artist}</div>
           <div class="ai-result-sub">${s.genre} · ${s.key} · ${s.bpm} BPM · ${s.prog}</div>
         </div>
-        <button class="ai-add-song-btn" onclick="addAISong(${i},${JSON.stringify(s).replace(/"/g,'&quot;')})">Add to pool</button>
+        <button class="ai-add-song-btn" onclick="addAISong(${i})">Add to pool</button>
       </div>`).join('');
   } catch(e) {
     status.className='ai-status err';
@@ -409,12 +754,14 @@ async function runAI(){
   }
   goBtn.disabled=false;
 }
-function addAISong(i,s){
+function addAISong(i){
+  const s = aiResults[i];
+  if(!s) return;
   if(pool.find(x=>x.title.toLowerCase()===s.title.toLowerCase()&&x.artist.toLowerCase()===s.artist.toLowerCase())){
     toast(tr('toast_already_pool'));return;
   }
-  const song={...s,id:nextId++,instr:Array.isArray(s.instr)?s.instr:['g']};
-  pool.push(song);persist();
+  const song={...s,id:nextId++,instr:normalizeInstr(s.instr),energy:Math.min(5,Math.max(1,parseInt(s.energy)||3)),bpm:Math.max(1,parseInt(s.bpm)||100)};
+  pool.push(song);persist();renderPool();
   const btn=document.querySelector(`#air-${i} .ai-add-song-btn`);
   if(btn){btn.textContent='Added ✓';btn.className='ai-add-song-btn added';btn.disabled=true;}
   toast(tr('toast_added')+s.title);
@@ -441,7 +788,7 @@ function openEdit(id){
   document.getElementById('m-bpm').value=s.bpm;
   document.getElementById('m-prog').value=s.prog;
   document.getElementById('m-energy').value=s.energy;
-  ['g','p','v'].forEach(i=>document.getElementById('mt-'+i).classList.toggle('on',s.instr.includes(i)));
+  ['eg','ag','b','dr','k','sx','tp','tb','vo','bv','pc'].forEach(k=>{const el=document.getElementById('mt-'+k);if(el)el.classList.toggle('on',Array.isArray(s.instr)&&s.instr.includes(k));});
   document.getElementById('song-modal').classList.add('open');
 }
 function closeModal(){document.getElementById('song-modal').classList.remove('open');}
@@ -457,7 +804,8 @@ function saveSong(){
     bpm:parseInt(document.getElementById('m-bpm').value)||72,
     prog:document.getElementById('m-prog').value.trim()||'I–IV–V',
     energy:Math.min(5,Math.max(1,parseInt(document.getElementById('m-energy').value)||3)),
-    instr:['g','p','v'].filter(i=>document.getElementById('mt-'+i).classList.contains('on'))
+    effort:Math.min(5,Math.max(1,parseInt(document.getElementById('m-effort').value)||2)),
+    instr: ['eg','ag','b','dr','k','sx','tp','tb','vo','bv','pc'].filter(c=>document.getElementById('mt-'+c)?.classList.contains('on')),
   };
   if(editId){
     const idx = pool.findIndex(x=>x.id===editId);
@@ -503,7 +851,7 @@ function renderExport(){
   }
   const title=document.getElementById('night-title').value||'Setlist';
   const date=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const iNames=instrs.map(i=>({g:'Guitar',p:'Piano',v:'Winds',o:'Voice'}[i])||'').filter(Boolean).join(', ');
+  const iNames=instrs.map(i=>({'eg':'El.Guitar','ag':'Ac.Guitar','b':'Bass','dr':'Drums','k':'Keys','sx':'Sax','tp':'Trumpet','tb':'Trombone','vo':'Vocal','bv':'BV','pc':'Perc'}[i])||i).join(', ');
   let html=`<div class="exp-night">${title}</div><div class="exp-meta">${date} &nbsp;·&nbsp; ${iNames} &nbsp;·&nbsp; ${numSets} sets</div>`;
   sets.forEach((songs,si)=>{
     html+=`<div class="exp-set"><div class="exp-set-title">Set ${si+1} — ${songs.length} songs · ~${durMin(songs)} min</div>
@@ -519,7 +867,7 @@ function renderExport(){
 function doExportHTML(){
   const title=document.getElementById('night-title').value||'Setlist';
   const date=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const iNames=instrs.map(i=>({g:'Guitar',p:'Piano',v:'Winds',o:'Voice'}[i])||'').filter(Boolean).join(', ');
+  const iNames=instrs.map(i=>({'eg':'El.Guitar','ag':'Ac.Guitar','b':'Bass','dr':'Drums','k':'Keys','sx':'Sax','tp':'Trumpet','tb':'Trombone','vo':'Vocal','bv':'BV','pc':'Perc'}[i])||i).join(', ');
   let rows='';
   sets.forEach((songs,si)=>{
     rows+=`<div class="st">Set ${si+1} — ${songs.length} songs · ~${durMin(songs)} min</div>`;
@@ -561,7 +909,7 @@ function doExportPDF(){
   if(!sets.length){toast(tr('generate')+'...');return;}
   const title=document.getElementById('night-title').value||'Setlist';
   const date=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const iNames=instrs.map(i=>({g:'Guitar',p:'Piano',v:'Winds',o:'Voice'}[i])||'').filter(Boolean).join(', ');
+  const iNames=instrs.map(i=>({'eg':'El.Guitar','ag':'Ac.Guitar','b':'Bass','dr':'Drums','k':'Keys','sx':'Sax','tp':'Trumpet','tb':'Trombone','vo':'Vocal','bv':'BV','pc':'Perc'}[i])||i).join(', ');
   // Build print window
   const w=window.open('','_blank','width=700,height=900');
   if(!w){toast('Pop-up blocked — allow pop-ups for PDF');return;}
@@ -842,19 +1190,27 @@ setTheme(localStorage.getItem('fmg-theme') || 'dark');
 setLang(currentLang);
 renderDocs();
 initApiBar();
+// Initialize aiSongCount from storage
+aiSongCount = parseInt(localStorage.getItem('fmg-ai-count') || '5');
+document.querySelectorAll('.ai-count-btn').forEach(b=>{
+  if(parseInt(b.dataset.n)===aiSongCount) b.classList.add('on');
+});
 // Initialize instrument chips based on selected instrs
-instrs.forEach(i=>{
-  const map={'g':'guitar','p':'piano','v':'wind'};
-  const cid=map[i];
-  if(cid) document.getElementById('chip-'+cid)?.classList.add('on');
+const CODE_TO_NAME={eg:'eguitar',ag:'aguitar',b:'bass',dr:'drums',k:'keys',sx:'sax',tp:'trumpet',tb:'trombone',vo:'vocal',bv:'backing',pc:'percussion'};
+instrs.forEach(code=>{
+  const name=CODE_TO_NAME[code];
+  if(name){
+    document.getElementById('chip-'+name)?.classList.add('on');
+    document.getElementById('chip-'+name+'-m')?.classList.add('on');
+  }
 });
 // Add listeners to genre checkboxes
-let _genreTimer;
-['blues','rock','pop','soul','funk','rnb','ballad','reggae','latin','jazz','country'].forEach(g=>{
+['blues','rock','pop','soul','funk','rnb','ballad','reggae','latin','jazz','country','disco','rbmodern','funksoul','rocklatino','cumbia','poplatino','balada','merengue','ranchera','reggaeton','synthpop','raprock','ska'].forEach(g=>{
   const el=document.getElementById('genre-'+g);
   if(el)el.addEventListener('change',()=>{clearTimeout(_genreTimer);_genreTimer=setTimeout(()=>generate(),150);});
 });
 generate();
+  renderEffortWeights();
 }); // DOMContentLoaded
 
 // ─── MOBILE / RESPONSIVE ─────────────────────────────────────────────────────
@@ -885,25 +1241,24 @@ function setActiveBottomNav(v){
 
 // Keep mobile drawer chip states in sync with desktop sidebar
 function syncMobileDrawer(){
-  const imap = {g:'guitar',p:'piano',v:'wind'};
-  // instrument chips
-  ['g','p','v','o'].forEach(k=>{
-    const mid = 'chip-'+imap[k]+'-m';
-    const el = document.getElementById(mid);
-    if(el) el.classList.toggle('on', instrs.includes(k));
+  const CODE_TO_NAME = {eg:'eguitar',ag:'aguitar',b:'bass',dr:'drums',k:'keys',sx:'sax',tp:'trumpet',tb:'trombone',vo:'vocal',bv:'backing',pc:'percussion'};
+  // Sync instrument chips desktop → mobile
+  Object.entries(CODE_TO_NAME).forEach(([code, name])=>{
+    const mob = document.getElementById('chip-'+name+'-m');
+    if(mob) mob.classList.toggle('on', instrs.includes(code));
   });
-  // genre checkboxes — sync desktop → mobile
-  const genres = ['blues','rock','pop','soul','funk','rnb','ballad','reggae','latin','jazz','country'];
+  // Sync genre checkboxes desktop → mobile
+  const genres = ['blues','rock','pop','soul','funk','rnb','ballad','reggae','latin','jazz','country','disco','rbmodern','funksoul','rocklatino','cumbia','poplatino','balada','merengue','ranchera','reggaeton','synthpop','raprock','ska'];
   genres.forEach(g=>{
     const desktop = document.getElementById('genre-'+g);
     const mobile  = document.getElementById('genre-'+g+'-m');
     if(desktop && mobile) mobile.checked = desktop.checked;
   });
-  // dur-sel
+  // Sync dur-sel
   const desktopDur = document.getElementById('dur-sel');
   const mobileDur  = document.getElementById('dur-sel-m');
   if(desktopDur && mobileDur) mobileDur.value = desktopDur.value;
-  // set count buttons
+  // Sync set count buttons
   [2,3,4].forEach(n=>{
     document.querySelectorAll('.sc-btn').forEach((b,i)=>{
       b.classList.toggle('on',[2,3,4][i]===numSets);
@@ -919,7 +1274,7 @@ function syncDurSel(val){
 
 // Sync mobile genre checkboxes → desktop on change
 function initMobileGenreSync(){
-  const genres = ['blues','rock','pop','soul','funk','rnb','ballad','reggae','latin','jazz','country'];
+  const genres = ['blues','rock','pop','soul','funk','rnb','ballad','reggae','latin','jazz','country','disco','rbmodern','funksoul','rocklatino','cumbia','poplatino','balada','merengue','ranchera','reggaeton','synthpop','raprock','ska'];
   genres.forEach(g=>{
     const mob = document.getElementById('genre-'+g+'-m');
     if(mob){
@@ -942,17 +1297,6 @@ gotoView = function(v){
 };
 
 // Patch toggleInstr to sync mobile drawer chips
-const _origToggleInstr = toggleInstr;
-toggleInstr = function(i){
-  _origToggleInstr(i);
-  // sync mobile chip
-  const map = {guitar:'g',piano:'p',wind:'v'};
-  const k = map[i];
-  const mobileChip = document.getElementById('chip-'+i+'-m');
-  if(mobileChip) mobileChip.classList.toggle('on', instrs.includes(k));
-  const desktopChip = document.getElementById('chip-'+i);
-  if(desktopChip) desktopChip.classList.toggle('on', instrs.includes(k));
-};
 
 // Init mobile on load
 document.addEventListener('DOMContentLoaded', function(){

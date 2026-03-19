@@ -16,6 +16,7 @@
     <div class="logo">Fearlessly Media Group <span class="logo-sub">// setlist builder</span></div>
     <div class="nav">
       <button class="nav-btn active" onclick="gotoView('builder')" data-i18n="nav_builder">Builder</button>
+      <button class="nav-btn" onclick="gotoView('shows')" data-i18n="nav_shows">Shows</button>
       <button class="nav-btn" onclick="gotoView('pool')" data-i18n="nav_pool">Pool</button>
       <button class="nav-btn" onclick="gotoView('export')" data-i18n="nav_export">Export</button>
       <button class="nav-btn" onclick="gotoView('docs')" data-i18n="nav_docs">Docs</button>
@@ -43,102 +44,191 @@
   <div class="app-body">
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="s-section">
-        <div class="s-label" data-i18n="instruments">Instruments tonight</div>
-        <div class="instr-row">
-          <button class="chip" id="chip-guitar" onclick="toggleInstr('guitar')">
-            <div class="chip-dot"></div>Guitar
-          </button>
-          <button class="chip" id="chip-piano" onclick="toggleInstr('piano')">
-            <div class="chip-dot"></div>Piano
-          </button>
-          <button class="chip" id="chip-wind" onclick="toggleInstr('wind')">
-            <div class="chip-dot"></div><span data-i18n="winds">Winds</span>
-          </button>
-          <button class="chip" id="chip-voice" onclick="toggleInstr('voice')">
-            <div class="chip-dot"></div><span data-i18n="voice">Voice</span>
-          </button>
-        </div>
-        <div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.5;font-style:italic;"
-          data-i18n="instr_hint">Generation prioritizes songs suited to the selected instruments.</div>
-      </div>
-      <div class="s-section">
-        <div class="s-label" data-i18n="sets">Sets</div>
-        <div class="sets-row">
-          <button class="sc-btn" onclick="setN(2)">2</button>
-          <button class="sc-btn on" onclick="setN(3)">3</button>
-          <button class="sc-btn" onclick="setN(4)">4</button>
-        </div>
-        <div style="margin-top:7px;">
-          <div class="s-label" data-i18n="duration">Duration per set</div>
-          <select class="sel-input" id="dur-sel">
-            <option value="40">~40 min</option>
-            <option value="45" selected>~45 min</option>
-            <option value="55">~55 min</option>
-            <option value="60">~60 min</option>
-          </select>
-        </div>
-        <div style="margin-top:7px;">
-          <div class="s-label" style="display:flex;align-items:center;justify-content:space-between;"
-            data-i18n="genres_label">Genres to include<span style="display:flex;gap:4px;"><button
-                onclick="setAllGenres(true)" data-i18n="genres_all"
-                style="font-family:var(--font-mono);font-size:8px;padding:1px 6px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:2px;cursor:pointer;">all</button><button
-                onclick="setAllGenres(false)" data-i18n="genres_none"
-                style="font-family:var(--font-mono);font-size:8px;padding:1px 6px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:2px;cursor:pointer;">none</button></span>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:3px;margin-top:3px;">
-            <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-              <input type="checkbox" id="genre-blues" checked style="cursor:pointer;"> Blues
-            </label>
-            <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-              <input type="checkbox" id="genre-rock" checked style="cursor:pointer;"> Rock
-            </label>
-            <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-              <input type="checkbox" id="genre-pop" checked style="cursor:pointer;"> Pop
-            </label>
-            <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-              <input type="checkbox" id="genre-soul" checked style="cursor:pointer;"> Soul
-            </label>
-            <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-              <input type="checkbox" id="genre-funk" style="cursor:pointer;"> Funk
-            </label>
-            <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-              <input type="checkbox" id="genre-rnb" checked style="cursor:pointer;"> R&amp;B
-            </label>
-            <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-              <input type="checkbox" id="genre-ballad" checked style="cursor:pointer;"> Ballad
-            </label>
-            <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-              <input type="checkbox" id="genre-reggae" style="cursor:pointer;"> Reggae
-            </label>
-            <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-              <input type="checkbox" id="genre-latin" style="cursor:pointer;"> Latin
-            </label>
-            <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-              <input type="checkbox" id="genre-jazz" style="cursor:pointer;"> Jazz
-            </label>
-            <label style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;">
-              <input type="checkbox" id="genre-country" style="cursor:pointer;"> Country
-            </label>
-          </div>
-        </div>
-        <button class="gen-btn" data-i18n="generate" onclick="generate()">Generate Setlist</button>
-      </div>
-      <div class="s-section">
-        <div class="s-label" data-i18n="import_export" style="margin-bottom:.5rem;">Import / Export pool</div>
-        <div style="display:flex;gap:4px;">
-          <button class="btn-xs" onclick="exportPoolJSON()" data-i18n="btn_export_json" style="flex:1;">Export
-            JSON</button>
-          <button class="btn-xs" onclick="document.getElementById('import-file').click()" data-i18n="btn_import_json"
-            style="flex:1;">Import JSON</button>
-        </div>
-        <input type="file" id="import-file" accept=".json" style="display:none" onchange="importPoolJSON(event)">
-      </div>
-      <div class="s-section">
-        <div class="s-label" data-i18n="saved_nights">Saved nights</div>
-        <div id="saved-list"></div>
-      </div>
       <div class="sidebar-scroll">
+        <div class="s-section">
+          <div class="s-label" data-i18n="instruments">Instruments tonight</div>
+          <div class="instr-row">
+            <button class="chip on" id="chip-eguitar" onclick="toggleInstr('eguitar')">
+              <div class="chip-dot"></div><span data-i18n="instr_eg">El. Guitar</span>
+            </button>
+            <button class="chip" id="chip-aguitar" onclick="toggleInstr('aguitar')">
+              <div class="chip-dot"></div><span data-i18n="instr_ag">Ac. Guitar</span>
+            </button>
+            <button class="chip on" id="chip-bass" onclick="toggleInstr('bass')">
+              <div class="chip-dot"></div><span data-i18n="instr_b">Bass</span>
+            </button>
+            <button class="chip on" id="chip-drums" onclick="toggleInstr('drums')">
+              <div class="chip-dot"></div><span data-i18n="instr_dr">Drums</span>
+            </button>
+            <button class="chip" id="chip-keys" onclick="toggleInstr('keys')">
+              <div class="chip-dot"></div><span data-i18n="instr_k">Keys</span>
+            </button>
+            <button class="chip" id="chip-sax" onclick="toggleInstr('sax')">
+              <div class="chip-dot"></div><span data-i18n="instr_sx">Sax</span>
+            </button>
+            <button class="chip" id="chip-trumpet" onclick="toggleInstr('trumpet')">
+              <div class="chip-dot"></div><span data-i18n="instr_tp">Trumpet</span>
+            </button>
+            <button class="chip" id="chip-trombone" onclick="toggleInstr('trombone')">
+              <div class="chip-dot"></div><span data-i18n="instr_tb">Trombone</span>
+            </button>
+            <button class="chip on" id="chip-vocal" onclick="toggleInstr('vocal')">
+              <div class="chip-dot"></div><span data-i18n="instr_vo">Lead Vox</span>
+            </button>
+            <button class="chip" id="chip-backing" onclick="toggleInstr('backing')">
+              <div class="chip-dot"></div><span data-i18n="instr_bv">BV</span>
+            </button>
+            <button class="chip" id="chip-percussion" onclick="toggleInstr('percussion')">
+              <div class="chip-dot"></div><span data-i18n="instr_pc">Perc</span>
+            </button>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.5;font-style:italic;"
+            data-i18n="instr_hint">Generation prioritizes songs suited to the selected instruments.</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label" data-i18n="sets">Sets</div>
+          <div class="sets-row">
+            <button class="sc-btn" onclick="setN(2)">2</button>
+            <button class="sc-btn on" onclick="setN(3)">3</button>
+            <button class="sc-btn" onclick="setN(4)">4</button>
+          </div>
+          <div style="margin-top:7px;">
+            <div class="s-label" data-i18n="duration">Duration per set</div>
+            <select class="sel-input" id="dur-sel">
+              <option value="40">~40 min</option>
+              <option value="45" selected>~45 min</option>
+              <option value="55">~55 min</option>
+              <option value="60">~60 min</option>
+            </select>
+          </div>
+          <div style="margin-top:7px;">
+            <div class="s-label" style="display:flex;align-items:center;justify-content:space-between;"
+              data-i18n="genres_label">Genres to include<span style="display:flex;gap:4px;"><button
+                  onclick="setAllGenres(true)" data-i18n="genres_all"
+                  style="font-family:var(--font-mono);font-size:8px;padding:1px 6px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:2px;cursor:pointer;">all</button><button
+                  onclick="setAllGenres(false)" data-i18n="genres_none"
+                  style="font-family:var(--font-mono);font-size:8px;padding:1px 6px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:2px;cursor:pointer;">none</button></span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px;margin-top:3px;">
+              <label class="genre-label">
+                <input type="checkbox" id="genre-blues" checked style="cursor:pointer;"> Blues
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-rock" checked style="cursor:pointer;"> Rock
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-pop" checked style="cursor:pointer;"> Pop
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-soul" checked style="cursor:pointer;"> Soul
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-funk" checked style="cursor:pointer;"> Funk
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-rnb" checked style="cursor:pointer;"> R&amp;B
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-ballad" checked style="cursor:pointer;"> Ballad
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-reggae" checked style="cursor:pointer;"> Reggae
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-latin" checked style="cursor:pointer;"> Latin
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-jazz" checked style="cursor:pointer;"> Jazz
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-country" checked style="cursor:pointer;"> Country
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-disco" checked style="cursor:pointer;"> Disco
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-rbmodern" checked style="cursor:pointer;"> R&amp;B Modern
+              </label>
+              <label class="genre-label">
+                <input type="checkbox" id="genre-funksoul" checked style="cursor:pointer;"> Funk/Soul
+              </label>
+              <label class="genre-label"><input type="checkbox" id="genre-rocklatino" checked style="cursor:pointer;">
+                Rock Latino</label>
+              <label class="genre-label"><input type="checkbox" id="genre-cumbia" checked style="cursor:pointer;">
+                Cumbia</label>
+              <label class="genre-label"><input type="checkbox" id="genre-poplatino" checked style="cursor:pointer;">
+                Pop Latino</label>
+              <label class="genre-label"><input type="checkbox" id="genre-balada" checked style="cursor:pointer;">
+                Balada</label>
+              <label class="genre-label"><input type="checkbox" id="genre-merengue" checked style="cursor:pointer;">
+                Merengue</label>
+              <label class="genre-label"><input type="checkbox" id="genre-ranchera" checked style="cursor:pointer;">
+                Ranchera</label>
+              <label class="genre-label"><input type="checkbox" id="genre-reggaeton" checked style="cursor:pointer;">
+                Reggaetón</label>
+              <label class="genre-label"><input type="checkbox" id="genre-synthpop" checked style="cursor:pointer;">
+                Synth-Pop</label>
+              <label class="genre-label"><input type="checkbox" id="genre-raprock" checked style="cursor:pointer;"> Rap
+                Rock</label>
+              <label class="genre-label"><input type="checkbox" id="genre-ska" checked style="cursor:pointer;">
+                Ska</label>
+            </div>
+          </div>
+          <button class="gen-btn" data-i18n="generate" onclick="generate()">Generate Setlist</button>
+        </div>
+        <div class="s-section">
+          <div class="s-label" data-i18n="import_export" style="margin-bottom:.5rem;">Import / Export pool</div>
+          <div style="font-size:10px;color:var(--text3);line-height:1.5;margin-bottom:6px;"
+            data-i18n="import_export_hint">Import your song list via CSV or JSON. Export to back up or share your pool.
+          </div>
+          <div style="display:flex;gap:4px;">
+            <button class="btn-xs" onclick="exportPoolJSON()" data-i18n="btn_export_json" style="flex:1;">Export
+              JSON</button>
+            <button class="btn-xs" onclick="document.getElementById('import-file').click()" data-i18n="btn_import_json"
+              style="flex:1;">Import JSON</button>
+          </div>
+          <div style="display:flex;gap:4px;margin-top:4px;">
+            <button class="btn-xs" onclick="downloadCSVTemplate()" style="flex:1;">⬇ CSV Template</button>
+            <button class="btn-xs" onclick="document.getElementById('csv-file').click()" style="flex:1;">⬆ Import
+              CSV</button>
+          </div>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importPoolJSON(event)">
+          <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="importCSV(event)">
+        </div>
+
+
+        <div class="s-section">
+          <div class="s-label">Effort weights</div>
+          <div style="font-size:10px;color:var(--text3);line-height:1.6;margin-bottom:6px;">
+            Multiplier per instrument. Higher = more tiring.
+          </div>
+          <div class="effort-grid">
+            <label class="ew-label">El. Guitar</label><input class="ew-input" id="ew-eg" type="number" min="0.5" max="5"
+              step="0.5" value="1.0">
+            <label class="ew-label">Ac. Guitar</label><input class="ew-input" id="ew-ag" type="number" min="0.5" max="5"
+              step="0.5" value="0.8">
+            <label class="ew-label">Bass</label> <input class="ew-input" id="ew-b" type="number" min="0.5" max="5"
+              step="0.5" value="1.2">
+            <label class="ew-label">Drums</label> <input class="ew-input" id="ew-dr" type="number" min="0.5" max="5"
+              step="0.5" value="1.8">
+            <label class="ew-label">Keys</label> <input class="ew-input" id="ew-k" type="number" min="0.5" max="5"
+              step="0.5" value="1.0">
+            <label class="ew-label">Sax</label> <input class="ew-input" id="ew-sx" type="number" min="0.5" max="5"
+              step="0.5" value="1.5">
+            <label class="ew-label">Trumpet</label> <input class="ew-input" id="ew-tp" type="number" min="0.5" max="5"
+              step="0.5" value="1.5">
+            <label class="ew-label">Trombone</label> <input class="ew-input" id="ew-tb" type="number" min="0.5" max="5"
+              step="0.5" value="1.5">
+            <label class="ew-label">Lead Vox</label> <input class="ew-input" id="ew-vo" type="number" min="0.5" max="5"
+              step="0.5" value="2.0">
+            <label class="ew-label">BV</label> <input class="ew-input" id="ew-bv" type="number" min="0.5" max="5"
+              step="0.5" value="1.5">
+            <label class="ew-label">Perc</label> <input class="ew-input" id="ew-pc" type="number" min="0.5" max="5"
+              step="0.5" value="1.2">
+          </div>
+          <button class="gen-btn" style="margin-top:6px;padding:5px 0;font-size:9px;" onclick="saveEffortWeights()">Save
+            weights</button>
+        </div>
         <div class="s-section" style="border-bottom:none;">
           <div class="s-label" data-i18n="quick_start">Quick start guide</div>
           <div style="font-size:11px;color:var(--text2);line-height:1.7;">
@@ -162,19 +252,23 @@
           </div>
         </div>
       </div>
+
     </div>
 
     <!-- MAIN -->
     <div class="main">
 
       <!-- API KEY BAR -->
-      <div class="settings-bar warn" id="api-bar">
+      <div class="settings-bar warn" id="api-bar" style="display:none">
         <span class="api-status missing" id="api-status" data-i18n="api_required">✦ API key required for AI
           features</span>
         <select class="sel-input" id="api-provider" style="max-width:120px;flex-shrink:0;" onchange="updateApiLabel()">
           <option value="claude">Claude (Anthropic)</option>
           <option value="gemini">Gemini (Google)</option>
           <option value="chatgpt">ChatGPT (OpenAI)</option>
+        </select>
+        <select class="sel-input" id="ai-model" style="max-width:160px;flex-shrink:0;" onchange="updateAIModel()">
+          <option value="">Loading models…</option>
         </select>
         <input class="api-key-input" id="api-key-input" type="password" placeholder="sk-ant-… or sk-… or sk-proj-…">
         <button class="api-save-btn" onclick="saveApiKey()">Save</button>
@@ -194,6 +288,15 @@
       </div>
 
       <!-- POOL VIEW -->
+      <div class="view" id="view-shows">
+        <div class="bld-header">
+          <div style="font-family:var(--font-display);font-size:21px;" data-i18n="nav_shows">Shows</div>
+          <button class="btn-xs" onclick="saveNight()" data-i18n="btn_save_night">Save current</button>
+        </div>
+        <div class="sets-area" id="shows-list-area" style="display:block;">
+          <div id="shows-full-list"></div>
+        </div>
+      </div>
       <div class="view" id="view-pool">
         <div class="pool-hdr">
           <div class="pool-title">Song pool</div><span id="pool-count"
@@ -213,6 +316,19 @@
             <button class="pf-btn" onclick="setPF('Latin',this)">Latin</button>
             <button class="pf-btn" onclick="setPF('Jazz',this)">Jazz</button>
             <button class="pf-btn" onclick="setPF('Country',this)">Country</button>
+            <button class="pf-btn" onclick="setPF('Disco',this)">Disco</button>
+            <button class="pf-btn" onclick="setPF('R&B Modern',this)">R&amp;B Mod.</button>
+            <button class="pf-btn" onclick="setPF('Funk/Soul',this)">Funk/Soul</button>
+            <button class="pf-btn" onclick="setPF('Rock Latino',this)">Rock Latino</button>
+            <button class="pf-btn" onclick="setPF('Cumbia',this)">Cumbia</button>
+            <button class="pf-btn" onclick="setPF('Pop Latino',this)">Pop Latino</button>
+            <button class="pf-btn" onclick="setPF('Balada',this)">Balada</button>
+            <button class="pf-btn" onclick="setPF('Merengue',this)">Merengue</button>
+            <button class="pf-btn" onclick="setPF('Ranchera',this)">Ranchera</button>
+            <button class="pf-btn" onclick="setPF('Reggaetón',this)">Reggaetón</button>
+            <button class="pf-btn" onclick="setPF('Synth-Pop',this)">Synth-Pop</button>
+            <button class="pf-btn" onclick="setPF('Rap Rock',this)">Rap Rock</button>
+            <button class="pf-btn" onclick="setPF('Ska',this)">Ska</button>
           </div>
         </div>
         <div class="pool-actions">
@@ -220,6 +336,8 @@
             <span class="ai-spark">✦</span> Add with AI
           </button>
           <button class="manual-add-btn" onclick="openAddModal()">+ Manual</button>
+          <button class="manual-add-btn" onclick="document.getElementById('csv-file').click()"
+            style="margin-left:4px;">⬆ CSV</button>
         </div>
         <!-- AI PANEL -->
         <div class="ai-panel" id="ai-panel">
@@ -242,8 +360,21 @@
                 onkeydown="if(event.key==='Enter')runAI()">
               <button class="ai-go-btn" id="ai-go-btn2" onclick="runAI()">Suggest</button>
             </div>
+
+            <div class="ai-count-row" id="ai-count-row" style="display:none;">
+              <span class="ai-count-label">Songs:</span>
+              <button class="ai-count-btn" data-n="3" onclick="setAICount(3)">3</button>
+              <button class="ai-count-btn" data-n="5" onclick="setAICount(5)">5</button>
+              <button class="ai-count-btn" data-n="8" onclick="setAICount(8)">8</button>
+              <button class="ai-count-btn" data-n="10" onclick="setAICount(10)">10</button>
+              <span class="ai-token-est" id="ai-token-est">~645 tokens</span>
+            </div>
           </div>
-          <div class="ai-status" id="ai-status"></div>
+          <div class="ai-status-row">
+            <div class="ai-status" id="ai-status"></div>
+            <button class="ai-add-all-btn" id="ai-add-all-btn" onclick="addAllAISongs()" style="display:none;">Add
+              all</button>
+          </div>
           <div class="ai-results" id="ai-results"></div>
         </div>
         <div class="pool-wrap">
@@ -258,6 +389,7 @@
                 <th>BPM</th>
                 <th>Progression</th>
                 <th>Instr.</th>
+                <th title="Effort">Eff.</th>
                 <th></th>
               </tr>
             </thead>
@@ -304,12 +436,25 @@
             <option>Pop</option>
             <option>Soul</option>
             <option>Funk</option>
-            <option>R&B</option>
+            <option>R&amp;B</option>
             <option>Ballad</option>
             <option>Reggae</option>
             <option>Latin</option>
             <option>Jazz</option>
             <option>Country</option>
+            <option>Disco</option>
+            <option>R&amp;B Modern</option>
+            <option>Funk/Soul</option>
+            <option>Rock Latino</option>
+            <option>Cumbia</option>
+            <option>Pop Latino</option>
+            <option>Balada</option>
+            <option>Merengue</option>
+            <option>Ranchera</option>
+            <option>Reggaetón</option>
+            <option>Synth-Pop</option>
+            <option>Rap Rock</option>
+            <option>Ska</option>
           </select></div>
         <div><label class="flabel">Key</label><input class="finput" id="m-key" placeholder="Am"></div>
         <div><label class="flabel">BPM</label><input class="finput" id="m-bpm" type="number" placeholder="72"></div>
@@ -321,9 +466,24 @@
       <div class="fl">
         <div><label class="flabel">Energy (1–5)</label><input class="finput" id="m-energy" type="number" min="1" max="5"
             placeholder="3"></div>
+        <div><label class="flabel">Effort (1–5)</label><input class="finput" id="m-effort" type="number" min="1" max="5"
+            placeholder="2" title="Physical effort: 1=easy, 5=exhausting"></div>
       </div>
       <div class="fl">
         <label class="flabel">Best instruments</label>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;">
+          <button class="itoggle on" id="mt-eg" onclick="togMI('eg')">El. Guitar</button>
+          <button class="itoggle" id="mt-ag" onclick="togMI('ag')">Ac. Guitar</button>
+          <button class="itoggle on" id="mt-b" onclick="togMI('b')">Bass</button>
+          <button class="itoggle on" id="mt-dr" onclick="togMI('dr')">Drums</button>
+          <button class="itoggle" id="mt-k" onclick="togMI('k')">Keys</button>
+          <button class="itoggle" id="mt-sx" onclick="togMI('sx')">Sax</button>
+          <button class="itoggle" id="mt-tp" onclick="togMI('tp')">Trumpet</button>
+          <button class="itoggle" id="mt-tb" onclick="togMI('tb')">Trombone</button>
+          <button class="itoggle on" id="mt-vo" onclick="togMI('vo')">Lead Vox</button>
+          <button class="itoggle" id="mt-bv" onclick="togMI('bv')">BV</button>
+          <button class="itoggle" id="mt-pc" onclick="togMI('pc')">Perc</button>
+        </div>
         <div style="display:flex;gap:5px;margin-top:3px;">
           <button class="itoggle on" id="mt-g" onclick="togMI('g')">Guitar</button>
           <button class="itoggle" id="mt-p" onclick="togMI('p')">Piano</button>
@@ -365,6 +525,10 @@
       <div class="bn-icon">☰</div>
       <span data-i18n="nav_pool">Pool</span>
     </button>
+    <button class="bn-item" id="bn-shows" onclick="gotoView('shows');setActiveBottomNav('shows')">
+      <div class="bn-icon">★</div>
+      <span data-i18n="nav_shows">Shows</span>
+    </button>
     <button class="bn-item" id="bn-export" onclick="gotoView('export');setActiveBottomNav('export')">
       <div class="bn-icon">↓</div>
       <span data-i18n="nav_export">Export</span>
@@ -388,17 +552,38 @@
     <div class="s-section">
       <div class="s-label" data-i18n="instruments">Instruments tonight</div>
       <div class="instr-row">
-        <button class="chip" id="chip-guitar-m" onclick="toggleInstr('guitar')">
-          <div class="chip-dot"></div><span data-i18n="guitar">Guitar</span>
+        <button class="chip on" id="chip-eguitar-m" onclick="toggleInstr('eguitar')">
+          <div class="chip-dot"></div><span data-i18n="instr_eg">El. Guitar</span>
         </button>
-        <button class="chip" id="chip-piano-m" onclick="toggleInstr('piano')">
-          <div class="chip-dot"></div><span data-i18n="piano">Piano</span>
+        <button class="chip" id="chip-aguitar-m" onclick="toggleInstr('aguitar')">
+          <div class="chip-dot"></div><span data-i18n="instr_ag">Ac. Guitar</span>
         </button>
-        <button class="chip" id="chip-wind-m" onclick="toggleInstr('wind')">
-          <div class="chip-dot"></div><span data-i18n="winds">Winds</span>
+        <button class="chip on" id="chip-bass-m" onclick="toggleInstr('bass')">
+          <div class="chip-dot"></div><span data-i18n="instr_b">Bass</span>
         </button>
-        <button class="chip" id="chip-voice-m" onclick="toggleInstr('voice')">
-          <div class="chip-dot"></div><span data-i18n="voice">Voice</span>
+        <button class="chip on" id="chip-drums-m" onclick="toggleInstr('drums')">
+          <div class="chip-dot"></div><span data-i18n="instr_dr">Drums</span>
+        </button>
+        <button class="chip" id="chip-keys-m" onclick="toggleInstr('keys')">
+          <div class="chip-dot"></div><span data-i18n="instr_k">Keys</span>
+        </button>
+        <button class="chip" id="chip-sax-m" onclick="toggleInstr('sax')">
+          <div class="chip-dot"></div><span data-i18n="instr_sx">Sax</span>
+        </button>
+        <button class="chip" id="chip-trumpet-m" onclick="toggleInstr('trumpet')">
+          <div class="chip-dot"></div><span data-i18n="instr_tp">Trumpet</span>
+        </button>
+        <button class="chip" id="chip-trombone-m" onclick="toggleInstr('trombone')">
+          <div class="chip-dot"></div><span data-i18n="instr_tb">Trombone</span>
+        </button>
+        <button class="chip on" id="chip-vocal-m" onclick="toggleInstr('vocal')">
+          <div class="chip-dot"></div><span data-i18n="instr_vo">Lead Vox</span>
+        </button>
+        <button class="chip" id="chip-backing-m" onclick="toggleInstr('backing')">
+          <div class="chip-dot"></div><span data-i18n="instr_bv">BV</span>
+        </button>
+        <button class="chip" id="chip-percussion-m" onclick="toggleInstr('percussion')">
+          <div class="chip-dot"></div><span data-i18n="instr_pc">Perc</span>
         </button>
       </div>
     </div>
@@ -421,39 +606,30 @@
       <div style="margin-top:7px;">
         <div class="s-label" data-i18n="genres_label">Genres to include</div>
         <div style="display:flex;flex-direction:column;gap:3px;margin-top:3px;">
-          <label
-            style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
-              type="checkbox" id="genre-blues-m" checked> Blues</label>
-          <label
-            style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
-              type="checkbox" id="genre-rock-m" checked> Rock</label>
-          <label
-            style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
-              type="checkbox" id="genre-pop-m" checked> Pop</label>
-          <label
-            style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
-              type="checkbox" id="genre-soul-m" checked> Soul</label>
-          <label
-            style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
-              type="checkbox" id="genre-funk-m"> Funk</label>
-          <label
-            style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
-              type="checkbox" id="genre-rnb-m" checked> R&amp;B</label>
-          <label
-            style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
-              type="checkbox" id="genre-ballad-m" checked> Ballad</label>
-          <label
-            style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
-              type="checkbox" id="genre-reggae-m"> Reggae</label>
-          <label
-            style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
-              type="checkbox" id="genre-latin-m"> Latin</label>
-          <label
-            style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
-              type="checkbox" id="genre-jazz-m"> Jazz</label>
-          <label
-            style="display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px;cursor:pointer;"><input
-              type="checkbox" id="genre-country-m"> Country</label>
+          <label class="genre-label"><input type="checkbox" id="genre-blues-m" checked> Blues</label>
+          <label class="genre-label"><input type="checkbox" id="genre-rock-m" checked> Rock</label>
+          <label class="genre-label"><input type="checkbox" id="genre-pop-m" checked> Pop</label>
+          <label class="genre-label"><input type="checkbox" id="genre-soul-m" checked> Soul</label>
+          <label class="genre-label"><input type="checkbox" id="genre-funk-m" checked> Funk</label>
+          <label class="genre-label"><input type="checkbox" id="genre-rnb-m" checked> R&amp;B</label>
+          <label class="genre-label"><input type="checkbox" id="genre-ballad-m" checked> Ballad</label>
+          <label class="genre-label"><input type="checkbox" id="genre-reggae-m" checked> Reggae</label>
+          <label class="genre-label"><input type="checkbox" id="genre-latin-m" checked> Latin</label>
+          <label class="genre-label"><input type="checkbox" id="genre-jazz-m" checked> Jazz</label>
+          <label class="genre-label"><input type="checkbox" id="genre-country-m" checked> Country</label>
+          <label class="genre-label"><input type="checkbox" id="genre-disco-m" checked> Disco</label>
+          <label class="genre-label"><input type="checkbox" id="genre-rbmodern-m" checked> R&amp;B Modern</label>
+          <label class="genre-label"><input type="checkbox" id="genre-funksoul-m" checked> Funk/Soul</label>
+          <label class="genre-label"><input type="checkbox" id="genre-rocklatino-m" checked> Rock Latino</label>
+          <label class="genre-label"><input type="checkbox" id="genre-cumbia-m" checked> Cumbia</label>
+          <label class="genre-label"><input type="checkbox" id="genre-poplatino-m" checked> Pop Latino</label>
+          <label class="genre-label"><input type="checkbox" id="genre-balada-m" checked> Balada</label>
+          <label class="genre-label"><input type="checkbox" id="genre-merengue-m" checked> Merengue</label>
+          <label class="genre-label"><input type="checkbox" id="genre-ranchera-m" checked> Ranchera</label>
+          <label class="genre-label"><input type="checkbox" id="genre-reggaeton-m" checked> Reggaetón</label>
+          <label class="genre-label"><input type="checkbox" id="genre-synthpop-m" checked> Synth-Pop</label>
+          <label class="genre-label"><input type="checkbox" id="genre-raprock-m" checked> Rap Rock</label>
+          <label class="genre-label"><input type="checkbox" id="genre-ska-m" checked> Ska</label>
         </div>
       </div>
       <button class="gen-btn" data-i18n="generate" onclick="generate();closeMobileDrawer();">Generate Setlist</button>
