@@ -32,12 +32,13 @@ SetManager/
 │   ├── i18n.js                     ← Translations (EN/ES/PT/RU) + tr() + setLang()
 │   └── app.js                      ← 65+ functions (generation, export, modal handlers)
 │
-├── 📖 Documentation (User Guides)
-├── GUIDE.md                        ← Complete step-by-step tutorial
-├── QUICK_START.md                  ← Fast onboarding for new users
-├── IMPROVEMENTS.md                 ← Future roadmap and enhancement ideas
-├── CHANGELOG_V1.md                 ← Version history and bug fixes
-├── FMG_Setlist_Builder_Docs.md    ← Technical reference (original docs)
+├── 📖 Documentation (in docs/ folder)
+├── docs/
+│   ├── GUIDE.md                    ← Complete step-by-step tutorial
+│   ├── QUICK_START.md              ← Fast onboarding for new users
+│   ├── IMPROVEMENTS.md             ← Future roadmap and enhancement ideas
+│   ├── CHANGELOG_V1.md             ← Version history and bug fixes
+│   └── FMG_Setlist_Builder_Docs.md ← Technical reference (original docs)
 └── README.md                       ← This file
 ```
 
@@ -71,7 +72,7 @@ python -m http.server 8080
 4. **Click "Generate Setlist"** → algorithm runs instantly
 5. **Personalize**: drag songs to reorder, add notes, export to PDF
 
-For complete tutorial, see [GUIDE.md](GUIDE.md) or [QUICK_START.md](QUICK_START.md).
+For complete tutorial, see [GUIDE.md](docs/GUIDE.md) or [QUICK_START.md](docs/QUICK_START.md).
 
 ---
 
@@ -186,6 +187,8 @@ Edit `js/i18n.js` → find language block (`en:{}`, `es:{}`, etc.) → update ke
 2. In `index.html` topbar, add: `<button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>`
 3. Translate all values (keep genre names, "BPM", numbers unchanged)
 
+For detailed instructions, see [docs/GUIDE.md](docs/GUIDE.md) "Adding a new language" section.
+
 ### Change Colors/Theme
 Edit `style.css`:
 - `:root { --color-bg: ... }` for dark mode colors
@@ -227,7 +230,7 @@ Full translations included:
 - **Português** — Brazilian Portuguese
 - **Русский** — Russian (Cyrillic)
 
-Add more: See [GUIDE.md](GUIDE.md) "Adding a new language" section.
+Add more: See [docs/GUIDE.md](docs/GUIDE.md) "Adding a new language" section.
 
 ---
 
@@ -290,11 +293,11 @@ Fully adaptive across all screen sizes:
 
 | Document | Purpose |
 |----------|---------|
-| [GUIDE.md](GUIDE.md) | Complete tutorial + feature guide |
-| [QUICK_START.md](QUICK_START.md) | 5-minute quick start |
-| [IMPROVEMENTS.md](IMPROVEMENTS.md) | Feature roadmap |
-| [CHANGELOG_V1.md](CHANGELOG_V1.md) | Release notes + version history |
-| [FMG_Setlist_Builder_Docs.md](FMG_Setlist_Builder_Docs.md) | Technical reference |
+| [docs/GUIDE.md](docs/GUIDE.md) | Complete tutorial + feature guide |
+| [docs/QUICK_START.md](docs/QUICK_START.md) | 5-minute quick start |
+| [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md) | Feature roadmap |
+| [docs/CHANGELOG_V1.md](docs/CHANGELOG_V1.md) | Release notes + version history |
+| [docs/FMG_Setlist_Builder_Docs.md](docs/FMG_Setlist_Builder_Docs.md) | Technical reference |
 
 ---
 
@@ -343,7 +346,7 @@ Found a bug? Have a suggestion?
 - Update documentation if you add features
 
 ### Recommended Enhancements
-See [IMPROVEMENTS.md](IMPROVEMENTS.md) for a full roadmap:
+See [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md) for a full roadmap:
 - Undo/Redo system
 - Advanced search (BPM ranges, multiple filters)
 - Cloud sync (Firebase)
