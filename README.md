@@ -1,163 +1,211 @@
 # 🎼 FMG Setlist Builder v1.0 - Band Edition
 
-**Fearlessly Media Group · Open Source**
+**Fearlessly Media Group**
 
-Intelligent setlist generator for live musicians—balance energy curves with physical effort, no backend required, 100% offline.
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=flat-square)](https://github.com/julesklord/SetListBuilder)  [![License](https://img.shields.io/badge/license-FOSS-green.svg?style=flat-square)](LICENSE)  [![Status](https://img.shields.io/badge/status-production%20ready-success.svg?style=flat-square)]()  [![JavaScript](https://img.shields.io/badge/javascript-vanilla-yellow.svg?style=flat-square)]()  [![No Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg?style=flat-square)]()
 
----
+**Intelligent setlist generator for live musicians**
 
-## ✨ Key Features
+Balance energy curves with physical effort • No backend • 100% offline • Multi-language
 
-- **335 curated songs** across 24 genres with verified BPM, key, and chord progressions
-- **11 band instruments** (guitar, bass, drums, keys, winds, vocals, percussion) with configurable effort weights
-- **Intelligent generation** algorithm: 50/50 blend of energy curve and effort distribution
-- **Must Play** locking—guarantee songs appear in every setlist
-- **Multiple exports**: PDF, HTML, JSON, plain text
-- **Multiidioma**: Spanish, English, Portuguese, Russian
-- **Fully responsive**: Desktop, tablet, mobile with native bottom nav and slide-out drawer
-- **100% offline**—all data lives in your browser's localStorage
-- **No account needed**—completely anonymous and private
-- **AI-ready** infrastructure (disabled in FOSS version)
+[Quick Start](docs/QUICK_START.md) · [Full Guide](docs/GUIDE.md) · [Docs](docs/GUIDE.md) · [Roadmap](docs/IMPROVEMENTS.md)
 
 ---
 
-## 📁 Project Structure
+## Key Features
+
+- **335 curated songs** — 24 genres with verified BPM, key, chord progressions (Example purposes)
+- **11 band instruments** — guitar, bass, drums, keys, winds, vocals, percussion + configurable effort weights
+- **Intelligent algorithm** — 50/50 balance: energy curve + physical effort distribution
+- **Must Play locking** — guarantee songs in every setlist
+- **Multi-format export** — PDF, HTML, JSON, plain text
+- **Multi-language** — Spanish 🇪🇸, English 🇬🇧, Português 🇧🇷, Русский 🇷🇺
+- **Fully responsive** — desktop, tablet, mobile with native bottom nav
+- **100% offline** — all data in localStorage, no server needed
+- **Private & secure** — no account, no tracking, no cloud
+- **AI-ready** — infrastructure included (disabled in FOSS)
+
+---
+
+## Table of Contents
+
+- [Quick Start](#-quick-start)
+- [Project Structure](#-project-structure)
+- [Algorithm](#-the-algorithm)
+- [Features](#keystrokes)
+- [Data & Persistence](#-data--persistence)
+- [Customization](#-customization)
+- [Documentation](#-documentation)
+- [Troubleshooting](#-troubleshooting)
+- [Performance](#-performance)
+
+---
+
+## Quick Start
+
+### Local Development (Recommended)
+
+```bash
+cd SetListBuilder
+python -m http.server 8080
+```
+
+Then open **<http://localhost:8080>** in your browser.
+
+### Direct File
+
+Double-click `index.html`
+> Note: `localStorage` may be restricted with `file://` protocol in some browsers
+
+### Deploy to GitHub Pages
+
+1. Create a public repository
+2. Push all files (keep folder structure)
+3. Go to **Settings → Pages → Source** → select `main` branch
+4. Your app goes live at `yourusername.github.io/SetManager`
+
+---
+
+## Project Structure
 
 ```
 SetManager/
-├── index.html                      ← App shell (complete HTML)
-├── style.css                       ← All styles (responsive, dark/light, components)
+├── index.html                          # App shell (complete HTML)
+├── style.css                           # All styles (responsive, dark/light)
 ├── js/
-│   ├── songs.js                    ← 335 songs + global state + effort weights
-│   ├── i18n.js                     ← Translations (EN/ES/PT/RU) + tr() + setLang()
-│   └── app.js                      ← 65+ functions (generation, export, modal handlers)
+│   ├── songs.js                        # 335 songs + global state
+│   ├── i18n.js                         # Translations (EN/ES/PT/RU)
+│   └── app.js                          # 65+ functions
 │
-├── 📖 Documentation (in docs/ folder)
-├── docs/
-│   ├── GUIDE.md                    ← Complete step-by-step tutorial
-│   ├── QUICK_START.md              ← Fast onboarding for new users
-│   ├── IMPROVEMENTS.md             ← Future roadmap and enhancement ideas
-│   ├── CHANGELOG_V1.md             ← Version history and bug fixes
-│   └── FMG_Setlist_Builder_Docs.md ← Technical reference (original docs)
-└── README.md                       ← This file
+├── docs/                               # Documentation
+│   ├── GUIDE.md                        # Complete tutorial
+│   ├── QUICK_START.md                  # 5-minute onboarding
+│   ├── IMPROVEMENTS.md                 # Roadmap
+│   ├── CHANGELOG_V1.md                 # Version history
+│   └── FMG_Setlist_Builder_Docs.md     # Technical reference
+│
+└── README.md                           # This file
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started (5 Steps)
 
-### Local Development (Recommended)
-```bash
-cd SetManager
-python -m http.server 8080
-# Open http://localhost:8080
-```
+1. **Select instruments** → Pick what your band has tonight (Guitar, Bass, Drums, Vocals, etc.)
+2. **Choose # of sets** → 2, 3, or 4 sets
+3. **Pick duration** → Time per set (minutes)
+4. **Select genres** → Pick from 24 available
+5. **Generate** → Click "Generate Setlist"
+6. **Customize** → Drag songs, add notes, export to PDF
 
-### Direct File
-- Double-click `index.html` (some browsers may restrict localStorage with `file://`)
-
-### GitHub Pages
-1. Create a public repository
-2. Push all files (keep this folder structure)
-3. Settings → Pages → Source: `main` / `(root)`
-4. App live at `yourusername.github.io/SetManager`
+**Full tutorial:** [GUIDE.md](docs/GUIDE.md)
 
 ---
 
-## 🎯 Quick Tutorial
-
-1. **Select instruments** present tonight (Guitar, Bass, Drums, Vocals, etc.)
-2. **Choose # of sets** (2, 3, or 4) and duration per set
-3. **Pick genres** to include (24 available)
-4. **Click "Generate Setlist"** → algorithm runs instantly
-5. **Personalize**: drag songs to reorder, add notes, export to PDF
-
-For complete tutorial, see [GUIDE.md](docs/GUIDE.md) or [QUICK_START.md](docs/QUICK_START.md).
-
----
-
-## 🎵 The Algorithm
+## Algorithm
 
 ### Phase 1: Song Eligibility
-- Filters songs matching your selected instruments AND genres
-- Fallback 1: Only genres (if not enough instrument-matches)
-- Fallback 2: Entire pool (worst-case)
+
+- **Level 1** (preferred): Songs matching instruments AND genres
+- **Level 2** (fallback): Only genres if not enough matches
+- **Level 3** (last resort): Full pool
 
 ### Phase 2: Must-Play Distribution
-- If you've locked songs (⚑), they're distributed evenly across sets
+
+- Locked songs are distributed evenly across sets
 - Guaranteed to appear in every generated setlist
 
 ### Phase 3: Energy Curve
-- Early sets: Start low/mellow, build to mid-energy (35% low, 40% mid, 25% high)
-- Final set: Climb higher, peak finish (20% low, 40% mid, 40% high)
-- Maintains audience engagement and natural performance arc
+
+```
+Early Sets:   LOW (35%) → MID (40%) → HIGH (25%)
+Final Set:    LOW (20%) → MID (40%) → HIGH (40%)  ← Peak finish
+```
+
+Creates natural audience engagement arc
 
 ### Phase 4: Effort Balancing
-- Evens out physical effort across sets (drummer fatigue, vocalist strain, etc.)
-- Conservative swaps: only reorders if it reduces imbalance
-- Never sacrifices energy curve for effort balance
+
+- Evens physical effort across sets (drummer fatigue, vocalist strain, etc.)
+- Conservative swaps: only reorders if it improves balance
+- Never sacrifices energy curve for effort
 
 ---
 
-## 📊 Song Pool (335 Songs)
+## Song Pool (335 Songs)
 
-Curated across 24 genres with verified metadata:
+### Curated Music Library
 
-**Classic/Blues**: Blues (41), Soul (30), Ballad (14), Jazz (14)  
-**Rock**: Rock (49), Rock Latino (20), R&B (12), R&B Modern (12)  
-**Pop/Dance**: Pop (31), Funk (17), Disco (14), Funk/Soul (13)  
-**World**: Reggae (13), Latin (15), Cumbia (10)  
-**Other**: Country (10), Pop Latino (4), Balada (4), Merengue (1), Ranchera (1), Reggaetón (1), Synth-Pop (1), Rap Rock (1), Ska (1)
+**Song Metadata per Track**:
 
-Every song includes: title, artist, genre, key, BPM, chord progression, energy level (1–5), and instrument tags.
+- Title & Artist
+- Genre classification (24 genres)
+- Musical key (A–B, sharps/flats)
+- BPM (beats per minute)
+- Chord progression (Roman numeral notation)
+- Energy level (1–5 scale)
+- Instrument requirements
+- Effort estimation
 
----
+**Genre Distribution**:
 
-## 🎛️ Band Instruments (11 Total)
-
-| Code | Instrument | Default Weight | Notes |
-|------|------------|-----------------|-------|
-| `eg` | Electric Guitar | 1.0 | Lead/rhythm primary |
-| `ag` | Acoustic Guitar | 0.8 | Lower effort—fingerpicking |
-| `b` | Bass | 1.2 | Standing + low-end focus |
-| `dr` | Drums | 1.8 | Full-body exertion |
-| `k` | Keys/Piano | 1.0 | Seated—moderate effort |
-| `sx` | Saxophone | 1.5 | Breath control + stamina |
-| `tp` | Trumpet | 1.5 | Embouchure fatigue |
-| `tb` | Trombone | 1.5 | Breath + slide movement |
-| `vo` | Lead Vocals | 2.0 | Highest fatigue—vocal strain |
-| `bv` | Backing Vocals | 1.5 | Less intense than lead |
-| `pc` | Latin Percussion | 1.2 | Congas, bongos, timbales |
-
-Weights are **configurable** per band—adjust to match your musicians' physical demands.
+| Category | Count | Details |
+|----------|-------|---------|
+| **Classic/Blues** | 99 | Blues, Soul, Ballad, Jazz |
+| **Rock** | 93 | Rock, Rock Latino, R&B, Modern |
+| **Pop/Dance** | 75 | Pop, Funk, Disco, Funk/Soul |
+| **World Music** | 38 | Reggae, Latin, Cumbia |
+| **Other** | 30 | Country, Ranchera, Ska, Merengue, etc. |
 
 ---
 
-## 💾 Data & Persistence
+### Band Instruments (11 Total)
 
-All data stored in browser `localStorage`:
+| Instrument | Weight | Effort Level | Notes |
+|---|:---:|:---:|---|
+| Electric Guitar | 1.0 | ⭐⭐ | Lead/rhythm primary |
+| Acoustic Guitar | 0.8 | ⭐ | Fingerpicking |
+| Bass | 1.2 | ⭐⭐ | Standing + focus |
+| **Drums** | **1.8** | **⭐⭐⭐⭐** | Full-body exertion |
+| Keys/Piano | 1.0 | ⭐⭐ | Seated play |
+| Saxophone | 1.5 | ⭐⭐⭐ | Breath + stamina |
+| Trumpet | 1.5 | ⭐⭐⭐ | Embouchure focus |
+| Trombone | 1.5 | ⭐⭐⭐ | Breath + movement |
+| **Lead Vocals** | **2.0** | **⭐⭐⭐⭐⭐** | Highest vocal strain |
+| Backing Vocals | 1.5 | ⭐⭐⭐ | Less intensive |
+| Latin Percussion | 1.2 | ⭐⭐ | Congas, bongos |
+
+**All weights are fully configurable**—adjust to match your band's physical conditioning and performance style.
+
+---
+
+### Data & Persistence
+
+**100% Browser-Based** — All data stored locally in `localStorage`
 
 ```javascript
 {
   'fmg-pool': JSON.stringify(pool),           // Your song library
-  'fmg-nights': JSON.stringify(nights),       // Saved setlists
+  'fmg-nights': JSON.stringify(nights),       // Saved setlists & shows
   'fmg-mustPlay': JSON.stringify([...ids]),   // Locked songs
   'fmg-instrs': JSON.stringify(codes),        // Active instruments
   'fmg-effort-weights': JSON.stringify(obj),  // Effort multipliers
   'fmg-lang': 'en|es|pt|ru',                  // Active language
   'fmg-theme': 'dark|light',                  // Theme preference
-  'fmg-ai-count': '3|5|8|10'                  // AI song suggestion count
+  'fmg-ai-count': '3|5|8|10'                  // AI suggestion count
 }
 ```
 
-**No server, no cloud sync, no account**—data never leaves your device.
+**Privacy First**: No backend server · No cloud accounts · No tracking · Data never leaves your device
 
 ---
 
-## 🛠️ Customization
+### Customization & Extension
 
-### Add or Edit a Song
-Edit `js/songs.js` → modify `DEFAULTS` array. Example:
+**Add or Edit a Song**
+
+Edit `js/songs.js` and modify the `DEFAULTS` array:
+
 ```javascript
 {
   id: 336,
@@ -166,207 +214,242 @@ Edit `js/songs.js` → modify `DEFAULTS` array. Example:
   genre: "Blues",
   key: "Am",
   bpm: 100,
-  prog: "i–IV–i–V",
-  energy: 3,
+  prog: "i–IV–i–V",           // Roman numeral chord progression
+  energy: 3,                    // 1 (chill) to 5 (explosive)
   instr: ['eg', 'b', 'dr', 'vo'],
-  effort: 2
+  effort: 2                      // Estimated effort level
 }
 ```
 
-### Import Songs via CSV
-1. In **Pool** tab, click **"⬇ CSV Template"**
-2. Fill out template with your songs
-3. Upload via **"Import"** button
-4. New songs merge with existing pool
+**Import Songs via CSV**
 
-### Fix Translation
-Edit `js/i18n.js` → find language block (`en:{}`, `es:{}`, etc.) → update key-value pairs.
+1. Open **Pool** tab → click **"CSV Template"**
+2. Fill template with your songs (title, artist, BPM, key, etc.)
+3. Click **"Import"** and select file
+4. Songs automatically merge with existing pool
 
-### Add New Language
-1. Copy `en:{...}` block in `i18n.js`, rename key (e.g., `fr`)
-2. In `index.html` topbar, add: `<button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>`
-3. Translate all values (keep genre names, "BPM", numbers unchanged)
+**Add a New Language**
 
-For detailed instructions, see [docs/GUIDE.md](docs/GUIDE.md) "Adding a new language" section.
+1. Edit `js/i18n.js` → Copy `en:{...}` block as new language (e.g., `fr:{...}`)
+2. In `index.html` topbar, add button: `<button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>`
+3. Translate all UI strings (keep genre names and numbers)
+4. See [docs/GUIDE.md](docs/GUIDE.md) for complete instructions
 
-### Change Colors/Theme
-Edit `style.css`:
-- `:root { --color-bg: ... }` for dark mode colors
-- `html.light { --color-bg: ... }` for light mode colors
-- CSS variables in comments show all available customizations
+**Change Colors & Theme**
+
+Edit `style.css` CSS variables:
+
+- `:root { --color-bg: ...; --color-text: ...; }` for dark theme
+- `html.light { --color-bg: ...; --color-text: ...; }` for light theme
+- Detailed variable list provided in stylesheet comments
+
+**Fix or Update Translations**
+
+Edit `js/i18n.js` → Find language block → Update any key-value pair
 
 ---
 
-## 📤 Export Formats
+### Export Formats
 
 | Format | Use Case | Output |
-|--------|----------|--------|
-| **PDF** | Print-friendly | Browser print dialog → save as PDF |
-| **HTML** | Email to bandmates | Self-contained `.html` file (no internet needed) |
-| **Text** | Quick share (WhatsApp, email) | Clipboard text—plain, clean format |
-| **JSON** | Archive/backup | Raw data in JSON format |
-| **Pool Export** | Share song library | Entire pool as JSON (import on other device) |
+|---|---|---|
+| PDF | Print-ready setlist | Browser print dialog → save as PDF |
+| HTML | Email to bandmates | Self-contained file (no internet needed) |
+| Text | Quick copy-paste | Plain text for WhatsApp, email, chat |
+| JSON | Data backup/archive | Raw JSON format for safe storage |
+| Pool Export | Share song library | Entire database as JSON (import elsewhere) |
 
 ---
 
-## 🤖 AI Features (Optional)
+### AI Features (Optional)
 
-Infrastructure for AI-powered song lookup and suggestions is present but **disabled in FOSS version**.
+Infrastructure for **AI-powered song suggestions** is present but **disabled by default** in the FOSS version.
 
-To activate (requires API key):
-1. Remove `return;` early exit in `toggleAIPanel()`
-2. Show API bar: change `display:none` to `display:flex`
-3. Provide API key from [Anthropic](https://console.anthropic.com), [Google](https://aistudio.google.com/apikey), or [OpenAI](https://platform.openai.com/api-keys)
+**To Activate** (requires API key from service of choice):
 
-Keys **stay in your browser**—never transmitted to FMG servers.
+1. Open `js/app.js` → Find & remove `return;` in `toggleAIPanel()` function
+2. In `index.css`, change `.ai-panel { display: none }` to `display: flex`
+3. Provide API key from:
+   - [Anthropic Claude](https://console.anthropic.com)
+   - [Google Gemini](https://aistudio.google.com/apikey)
+   - [OpenAI GPT](https://platform.openai.com/api-keys)
 
----
-
-## 🌐 Multiidioma
-
-Full translations included:
-- **Español** — Spanish (primary development language)
-- **English** — Complete UI + documentation
-- **Português** — Brazilian Portuguese
-- **Русский** — Russian (Cyrillic)
-
-Add more: See [docs/GUIDE.md](docs/GUIDE.md) "Adding a new language" section.
+**Security**: API keys stored **locally in your browser**—never sent to FMG servers
 
 ---
 
-## 📱 Responsive Design
+### Multi-Language Support (4 Languages)
 
-Fully adaptive across all screen sizes:
+**Español** 🇪🇸 ━ **English** 🇬🇧 ━ **Português** 🇧🇷 ━ **Русский** 🇷🇺
+
+Complete translations for all UI elements, menus, and settings. Add more languages easily—see [docs/GUIDE.md](docs/GUIDE.md) for instructions.
+
+---
+
+### Responsive Design
 
 | Device | Features |
-|--------|----------|
-| **Desktop** (1024px+) | Sidebar, full navigation, drag-to-reorder |
-| **Tablet** (768–1024px) | Sidebar + responsive layout |
-| **Mobile** (<768px) | Bottom nav bar + slide-up settings drawer, touch-optimized |
+|---|---|
+| Desktop (1024px+) | Sidebar navigation, drag-drop reordering, full controls |
+| Tablet (768–1024px) | Responsive sidebar, optimized touch controls |
+| Mobile (<768px) | Bottom nav bar, slide-up drawer, fully touch-optimized |
+
+**Seamless Experience** across all devices with optimized layouts
 
 ---
 
-## ✅ Verification Checklist
+### Feature Verification Checklist
 
-- [x] 335 songs pre-loaded ✓
-- [x] 11 instruments with weights ✓
-- [x] 24 genres supported ✓
-- [x] Energy + Effort algorithm ✓
-- [x] Must Play system ✓
-- [x] Drag-to-reorder ✓
-- [x] Multiple exports ✓
-- [x] CSV import ✓
-- [x] JSON backup/restore ✓
-- [x] Multi-language (4 complete) ✓
-- [x] Dark/Light theme ✓
-- [x] Responsive mobile ✓
-- [x] localStorage persistence ✓
-- [x] Zero dependencies ✓
-- [x] 100% offline capability ✓
+| Feature | Status |
+|---|:---:|
+| 335 curated songs | ✅ |
+| 11 instruments + weights | ✅ |
+| 24 genre categories | ✅ |
+| Energy + Effort balancing | ✅ |
+| Must-Play locking system | ✅ |
+| Drag-to-reorder setlists | ✅ |
+| Multi-format export (5 types) | ✅ |
+| CSV import/export | ✅ |
+| JSON backup/restore | ✅ |
+| 4 complete languages | ✅ |
+| Dark/Light theme toggle | ✅ |
+| Fully responsive design | ✅ |
+| localStorage persistence | ✅ |
+| **Zero NPM dependencies** | ✅ |
+| **100% offline capability** | ✅ |
 
 ---
 
-## 🆘 Troubleshooting
+### Troubleshooting
 
 | Issue | Solution |
-|-------|----------|
-| Data not saving | Use HTTP server (not `file://`); check localStorage enabled |
-| Modal stuck/broken | Reload page; check console for JS errors |
-| Drag-drop not working on mobile | Use "Add/Remove" buttons instead (drag is desktop-only) |
-| App renders incorrectly | Reset browser zoom: Ctrl+0 (Windows) or Cmd+0 (Mac) |
-| Missing songs in pool | Scroll down—table shows 50 per page |
-| Setlist seems short | Reduce duration/sets or enable more genres |
+|---|---|
+| **Data not saving** | Use `http://localhost:8080` (not `file://`); check localStorage enabled in browser |
+| **Modal stuck/broken** | Reload page (F5); open console (F12) to check for JS errors |
+| **Drag-drop not on mobile** | Use "Add/Remove" buttons instead (drag is desktop-only for safety) |
+| **App layout broken** | Reset zoom: `Ctrl+0` (Windows) or `Cmd+0` (Mac) |
+| **Missing/fewer songs** | Scroll down in Pool tab—table displays 50 per page |
+| **Setlist too short** | Reduce event duration or enable more genres in filters |
 
 ---
 
-## 📈 Performance
+### Performance
 
-- ⚡ **App load**: < 1 second
-- ⚡ **Setlist generation**: Instant (< 100ms)
-- ⚡ **Drag-drop**: Smooth 60fps
-- ⚡ **PDF export**: < 2 seconds
-- ⚡ **Pool search**: < 10ms
+| Operation | Speed |
+|---|:---:|
+| App load | < 1 sec |
+| Setlist generation | < 100ms |
+| Drag-drop animation | 60fps |
+| PDF export | < 2 sec |
+| Pool search/filter | < 10ms |
+
+**Lightning-fast** performance on all devices—no lag, no waiting
 
 ---
 
-## 📚 Documentation
+### Documentation
 
 | Document | Purpose |
-|----------|---------|
-| [docs/GUIDE.md](docs/GUIDE.md) | Complete tutorial + feature guide |
-| [docs/QUICK_START.md](docs/QUICK_START.md) | 5-minute quick start |
-| [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md) | Feature roadmap |
-| [docs/CHANGELOG_V1.md](docs/CHANGELOG_V1.md) | Release notes + version history |
-| [docs/FMG_Setlist_Builder_Docs.md](docs/FMG_Setlist_Builder_Docs.md) | Technical reference |
+|---|---|
+| [GUIDE.md](docs/GUIDE.md) | Step-by-step tutorial + complete feature guide |
+| [QUICK_START.md](docs/QUICK_START.md) | 5-minute beginner's guide |
+| [IMPROVEMENTS.md](docs/IMPROVEMENTS.md) | Feature roadmap + future enhancements |
+| [CHANGELOG_V1.md](docs/CHANGELOG_V1.md) | Release notes + version history |
+| [FMG_Setlist_Builder_Docs.md](docs/FMG_Setlist_Builder_Docs.md) | Technical reference + architecture |
 
 ---
 
-## 🔐 Privacy & Security
+### Privacy & Security
 
-✅ **No backend server**—all processing happens in your browser  
-✅ **No user accounts**—completely anonymous  
-✅ **No tracking**—zero analytics or cookies  
-✅ **API keys stay local**—encrypted in localStorage, never sent to third parties  
-✅ **Open source**—code fully auditable  
-
----
-
-## 📦 Version History
-
-### v1.0 - Band Edition (Current)
-- 335 songs (from 90)
-- 11 instruments with effort weights (from 4 generic)
-- 24 genres (from 11)
-- Energy + effort balancing algorithm
-- Must Play locking system
-- PDF/HTML/Text/JSON export
-- Full ES/EN/PT/RU support
-- Responsive mobile + desktop
-- Fixed bug: `_genreTimer` scope (was global, conflicted)
-- Fixed bug: duplicate CSS classes removed
-- Added: `aiSongCount` variable + `setAICount()` function
+- **No backend server** — All processing in your browser
+- **No user accounts** — Completely anonymous & free
+- **No tracking** — Zero analytics, cookies, or data collection
+- **API keys encrypted** — Stored locally, never sent to 3rd parties
+- **Open source** — Code fully auditable on GitHub
+- **100% offline** — Works without internet connection  
 
 ---
 
-## 🎉 Next Steps
+### Version History
 
-1. **Try it**: Open http://localhost:8080 (or double-click `index.html`)
-2. **Generate**: Create your first setlist in 2 minutes
-3. **Customize**: Add your own songs to the pool
-4. **Share**: Export to PDF and send to your band
-5. **Save**: Store favorite setlists in the Shows tab
+#### v1.0 - Band Edition (Current)
+
+**Content Expansion**
+
+- 335 songs (↑ from 90) with full metadata
+- 11 instruments (↑ from 4) with individual effort weights
+- 24 genres (↑ from 11) spanning all musical styles
+
+**Core Features**
+
+- Energy + Effort balancing algorithm
+- Must-Play song locking system
+- Multi-format export (PDF, HTML, Text, JSON)
+- Complete translation (ES/EN/PT/RU)
+- Responsive design (mobile, tablet, desktop)
+
+**Bugs Fixed**
+
+- Fixed `_genreTimer` global scope conflict
+- Removed duplicate CSS classes
+
+**New Features**
+
+- Added `aiSongCount` variable for AI suggestions
+- Implemented `setAICount()` function with persistence
+- localStorage auto-recovery for corrupted data
 
 ---
 
-## 🤝 Contributing
+### Getting Started in 5 Steps
 
-Found a bug? Have a suggestion?  
-- Edit files directly in this repo
-- Test thoroughly before pushing
+1. **Open App** → <http://localhost:8080> (or double-click `index.html`)
+2. **Generate** → Create first setlist in 60 seconds
+3. **Customize** → Add your band's songs to pool
+4. **Share** → Export to PDF and send to bandmates
+5. **Save** → Store favorited setlists in Shows tab
+
+[Full Tutorial → docs/QUICK_START.md](docs/QUICK_START.md)
+
+---
+
+### Contributing & Roadmap
+
+**Want to Contribute?**
+
+- Fork this repo or edit files directly
+- Test thoroughly before pushing changes
 - Update documentation if you add features
+- Follow existing code style (ES6+, vanilla JS)
 
-### Recommended Enhancements
-See [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md) for a full roadmap:
-- Undo/Redo system
+**Planned Enhancements** (See [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md) for details)
+
+- Undo/Redo system for edits
 - Advanced search (BPM ranges, multiple filters)
-- Cloud sync (Firebase)
+- Cloud sync (Firebase/Supabase)
 - Real-time band collaboration
-- Spotify BPM integration
+- Spotify API integration for BPM lookup
+- Analytics dashboard (local)
+- Vocal range filtering for singers
 
 ---
 
-## 📄 License
+### License & Attribution
 
-Open Source · Free to use, modify, and distribute  
+**Open Source · Free to Use · Fully Modifiable**
+
 Built for musicians, by musicians
 
 ---
 
-## 👥 Built By
+#### Built By
 
 **Fearlessly Media Group**  
-*Making music creation tools for live performers*
+*Creating music tools for live performers worldwide*
 
 ---
 
-**Happy setlist building! 🎵**
+**Questions? Ideas? Bug reports?**  
+Open an issue or contact us directly.
+
+**Made with care for musicians**
