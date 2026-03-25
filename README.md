@@ -1,102 +1,96 @@
-# 🎼 FMG Setlist Builder v1.0 - Band Edition
+# 🎼 FMG Setlist Builder v2.0 - Band Edition
 
 **Fearlessly Media Group**
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=flat-square)](https://github.com/julesklord/SetListBuilder)  [![License](https://img.shields.io/badge/license-FOSS-green.svg?style=flat-square)](LICENSE)  [![Status](https://img.shields.io/badge/status-production%20ready-success.svg?style=flat-square)]()  [![JavaScript](https://img.shields.io/badge/javascript-vanilla-yellow.svg?style=flat-square)]()  [![No Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg?style=flat-square)]()
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg?style=flat-square)](https://github.com/julesklord/SetListBuilder)  [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](LICENSE)  [![Status](https://img.shields.io/badge/status-production%20ready-success.svg?style=flat-square)]()  [![JavaScript](https://img.shields.io/badge/javascript-vanilla-yellow.svg?style=flat-square)]()  [![No Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg?style=flat-square)]()
 
 **Intelligent setlist generator for live musicians**
 
-Balance energy curves with physical effort • No backend • 100% offline • Multi-language
+Balance energy curves with physical effort • No backend • 100% offline • Multi-language • Production hardened
 
-[Quick Start](docs/QUICK_START.md) · [Full Guide](docs/GUIDE.md) · [Docs](docs/GUIDE.md) · [Roadmap](docs/IMPROVEMENTS.md)
+[Quick Start](#quick-start) · [Features](#key-features) · [Release Notes](RELEASE_NOTES.md) · [Testing](TESTING_GUIDE.md) · [Docs](docs/GUIDE.md)
+
+---
+
+## ✨ What's New in v2.0
+
+**Major Quality Release** — Data integrity, reliability, and performance optimizations.
+
+- ✅ **Schema Validation** — Automatic recovery from corrupted data
+- ✅ **Storage Management** — Intelligent quota monitoring with auto-cleanup
+- ✅ **Advanced Algorithm** — 3-pass energy optimization + 10-iteration balancing
+- ✅ **Memory Efficient** — Event delegation (95% listener reduction)
+- ✅ **Robust Modals** — Dataset-based state management (no corruption)
+- ✅ **Zero Breaking Changes** — Fully compatible with v1.0 data
+
+[See Full Release Notes →](RELEASE_NOTES.md)
 
 ---
 
 ## Key Features
 
-- **335 curated songs** — 24 genres with verified BPM, key, chord progressions (Example purposes)
-- **11 band instruments** — guitar, bass, drums, keys, winds, vocals, percussion + configurable effort weights
-- **Intelligent algorithm** — 50/50 balance: energy curve + physical effort distribution
-- **Must Play locking** — guarantee songs in every setlist
+- **336 curated songs** — 24 genres with verified BPM, key, chord progressions
+- **11 band instruments** — guitar, bass, drums, keys, winds, vocals, percussion + effort weights
+- **Intelligent algorithm** — 50/50 balance: energy curves + physical effort distribution
+- **Must Play locking** — guarantee specific songs in every setlist
 - **Multi-format export** — PDF, HTML, JSON, plain text
 - **Multi-language** — Spanish 🇪🇸, English 🇬🇧, Português 🇧🇷, Русский 🇷🇺
 - **Fully responsive** — desktop, tablet, mobile with native bottom nav
 - **100% offline** — all data in localStorage, no server needed
 - **Private & secure** — no account, no tracking, no cloud
-- **AI-ready** — infrastructure included (disabled in FOSS)
-
----
-
-## Table of Contents
-
-- [Quick Start](#-quick-start)
-- [Project Structure](#-project-structure)
-- [Algorithm](#-the-algorithm)
-- [Features](#keystrokes)
-- [Data & Persistence](#-data--persistence)
-- [Customization](#-customization)
-- [Documentation](#-documentation)
-- [Troubleshooting](#-troubleshooting)
-- [Performance](#-performance)
+- **Production Hardened** — comprehensive error handling and logging
 
 ---
 
 ## Quick Start
 
-### Local Development (Recommended)
+### Online (No Installation)
+[**→ Launch App (Coming Soon)**](https://julesklord.github.io/SetListBuilder)
+
+### Local Development
 
 ```bash
+git clone https://github.com/julesklord/SetListBuilder.git
 cd SetListBuilder
-python -m http.server 8080
+python -m http.server 8000
 ```
-
-Then open **<http://localhost:8080>** in your browser.
+Then open **http://localhost:8000**
 
 ### Direct File
-
-Double-click `index.html`
-> Note: `localStorage` may be restricted with `file://` protocol in some browsers
-
-### Deploy to GitHub Pages
-
-1. Create a public repository
-2. Push all files (keep folder structure)
-3. Go to **Settings → Pages → Source** → select `main` branch
-4. Your app goes live at `yourusername.github.io/SetManager`
+Double-click `index.html` (some features may be limited with `file://`)
 
 ---
 
 ## Project Structure
 
 ```
-SetManager/
-├── index.html                          # App shell (complete HTML)
-├── style.css                           # All styles (responsive, dark/light)
-├── js/
-│   ├── songs.js                        # 335 songs + global state
-│   ├── i18n.js                         # Translations (EN/ES/PT/RU)
-│   └── app.js                          # 65+ functions
+SetListBuilder/
+├── src/                                # Source code
+│   ├── index.html                      # App shell
+│   ├── style.css                       # All styles (dark/light theme)
+│   └── js/
+│       ├── songs.js                    # 336 songs database + validation
+│       ├── i18n.js                     # Translations (EN/ES/PT/RU)
+│       └── app.js                      # Core app logic (65+ functions)
 │
 ├── docs/                               # Documentation
-│   ├── GUIDE.md                        # Complete tutorial
 │   ├── QUICK_START.md                  # 5-minute onboarding
-│   ├── IMPROVEMENTS.md                 # Roadmap
-│   ├── CHANGELOG_V1.md                 # Version history
-│   └── FMG_Setlist_Builder_Docs.md     # Technical reference
+│   ├── GUIDE.md                        # Complete user guide
+│   ├── FMG_Setlist_Builder_Docs.md     # Technical reference
+│   ├── CHANGELOG_V1.md                 # v1.0 changelog
+│   └── Other guides
 │
-└── README.md                           # This file
-```
-
----
-
-## Getting Started (5 Steps)
-
-1. **Select instruments** → Pick what your band has tonight (Guitar, Bass, Drums, Vocals, etc.)
-2. **Choose # of sets** → 2, 3, or 4 sets
-3. **Pick duration** → Time per set (minutes)
-4. **Select genres** → Pick from 24 available
-5. **Generate** → Click "Generate Setlist"
-6. **Customize** → Drag songs, add notes, export to PDF
+├── tests/                              # Testing resources
+│   ├── TESTING_GUIDE.md                # Manual test procedures (7 tests)
+│   ├── TEST_RESULTS.md                 # Verification details
+│   ├── TESTING_REPORT.md               # Executive summary
+│   └── validation-script.js            # Automated validation tool
+│
+├── CHANGELOG.md                        # v2.0 changelog + history
+├── RELEASE_NOTES.md                    # v2.0 release information
+├── LICENSE                             # MIT License
+├── README.md                           # This file
+└── .github/                            # GitHub configuration
 
 **Full tutorial:** [GUIDE.md](docs/GUIDE.md)
 

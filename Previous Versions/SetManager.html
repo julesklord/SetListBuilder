@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FMG Setlist Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0908;--bg2:#111009;--surface:#161410;--surface2:#1e1b16;--surface3:#252118;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);--border3:rgba(255,255,255,0.18);
+  --text:#f2ede4;--text2:#9e9889;--text3:#5c5850;
+  --amber:#c8922e;--amber2:#e6ad55;--amber-bg:rgba(200,146,46,0.1);--amber-border:rgba(200,146,46,0.3);
+  --blue:#3d7aad;--blue-bg:rgba(61,122,173,0.1);
+  --coral:#a04838;--coral-bg:rgba(160,72,56,0.1);
+  --purple:#6b5a9e;--purple-bg:rgba(107,90,158,0.1);
+  --green:#3d7a52;--green-bg:rgba(61,122,82,0.1);
+  --red:#a03030;--red-bg:rgba(160,48,48,0.1);
+  --font-display:'Instrument Serif',serif;--font-body:'IBM Plex Sans',sans-serif;--font-mono:'IBM Plex Mono',monospace;
+  --radius:4px;--radius-lg:8px;
+}
+
+html.light {
+  --bg:#f5f4f1;--bg2:#ede9e3;--surface:#e8e4de;--surface2:#e0dbd4;--surface3:#d8d3cc;
+  --border:rgba(0,0,0,0.06);--border2:rgba(0,0,0,0.12);--border3:rgba(0,0,0,0.18);
+  --text:#2d2a27;--text2:#5d5955;--text3:#8a8480;
+  --amber:#8b7355;--amber2:#9d8468;--amber-bg:rgba(139,115,85,0.08);--amber-border:rgba(139,115,85,0.22);
+  --blue:#5a6d7f;--blue-bg:rgba(90,109,127,0.08);
+  --coral:#7a5a52;--coral-bg:rgba(122,90,82,0.08);
+  --purple:#6d6080;--purple-bg:rgba(109,96,128,0.08);
+  --green:#5a7066;--green-bg:rgba(90,112,102,0.08);
+  --red:#745a55;--red-bg:rgba(116,90,85,0.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6;}
+body{height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+button{cursor:pointer;font-family:var(--font-body);}
+input,select,textarea{font-family:var(--font-body);}
+
+/* LAYOUT — fixed viewport, no body scroll */
+.topbar{background:var(--bg2);border-bottom:0.5px solid var(--border2);padding:0 1.5rem;display:flex;align-items:center;gap:1.5rem;height:52px;flex-shrink:0;}
+.logo{font-family:var(--font-display);font-size:18px;color:var(--amber2);white-space:nowrap;}
+.logo span{color:var(--text3);font-size:13px;font-family:var(--font-mono);margin-left:8px;}
+.nav{display:flex;gap:2px;margin-left:auto;}
+.nav-btn{font-family:var(--font-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:5px 14px;border:0.5px solid transparent;background:transparent;color:var(--text3);border-radius:var(--radius);transition:all .15s;}
+.nav-btn.active{color:var(--amber2);border-color:var(--amber-border);background:var(--amber-bg);}
+.nav-btn:hover:not(.active){color:var(--text);background:var(--surface2);}
+.theme-toggle{display:flex;gap:4px;margin-left:1.5rem;padding-left:1.5rem;border-left:0.5px solid var(--border2);}
+.theme-btn{padding:4px 10px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--radius);font-size:10px;font-family:var(--font-mono);letter-spacing:0.05em;text-transform:uppercase;transition:all .15s;cursor:pointer;}
+.theme-btn:hover{border-color:var(--border3);color:var(--text);}
+.theme-btn.active{border-color:var(--amber-border);background:var(--amber-bg);color:var(--amber2);}
+
+/* content fills remaining height */
+.content{display:grid;grid-template-columns:280px 1fr;flex:1;min-height:0;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{background:var(--surface);border-right:0.5px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
+.sidebar-section{padding:1rem;border-bottom:0.5px solid var(--border);flex-shrink:0;}
+.sidebar-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;}
+.instrument-row{display:flex;gap:6px;flex-wrap:wrap;}
+.instr-chip{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--radius);border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;transition:all .15s;}
+.instr-chip.active{border-color:var(--amber-border);background:var(--amber-bg);color:var(--amber2);}
+.instr-chip.locked{border-color:var(--amber-border);background:var(--amber-bg);color:var(--amber2);opacity:.6;cursor:not-allowed;}
+.instr-chip:hover:not(.locked):not(.active){border-color:var(--border3);color:var(--text);}
+.instr-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.sets-config{display:flex;gap:6px;}
+.set-count-btn{flex:1;padding:6px;border-radius:var(--radius);border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--font-mono);font-size:11px;transition:all .15s;}
+.set-count-btn.active{border-color:var(--amber-border);background:var(--amber-bg);color:var(--amber2);}
+.set-count-btn:hover:not(.active){border-color:var(--border3);color:var(--text);}
+.generate-btn{width:100%;padding:10px;background:var(--amber);color:var(--bg);border:none;border-radius:var(--radius);font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;transition:all .15s;margin-top:.5rem;}
+.generate-btn:hover{background:var(--amber2);}
+.generate-btn:active{transform:scale(.98);}
+.saved-list{display:flex;flex-direction:column;gap:4px;}
+.saved-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius);border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .15s;}
+.saved-item:hover{border-color:var(--border2);background:var(--surface3);}
+.saved-item.active-saved{border-color:var(--amber-border);background:var(--amber-bg);}
+.saved-date{font-family:var(--font-mono);font-size:10px;color:var(--text3);}
+.saved-name{font-size:12px;color:var(--text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.saved-item.active-saved .saved-name{color:var(--amber2);}
+.del-saved{background:transparent;border:none;color:var(--text3);font-size:14px;padding:0 2px;line-height:1;}
+.del-saved:hover{color:var(--red);}
+.empty-saved{font-size:12px;color:var(--text3);font-style:italic;padding:4px 0;}
+
+/* INSTRUCTIONS */
+.instructions-section{padding:1rem;border-top:0.5px solid var(--border);background:var(--surface2);font-size:11px;line-height:1.7;color:var(--text2);}
+.instructions-section .sidebar-label{margin-bottom:.8rem;}
+.instructions-list{display:flex;flex-direction:column;gap:.6rem;}
+.instruction-item{display:flex;gap:8px;}
+.instruction-num{flex-shrink:0;width:18px;height:18px;display:flex;align-items:center;justify-content:center;background:var(--amber-bg);color:var(--amber2);border-radius:50%;font-family:var(--font-mono);font-size:9px;font-weight:500;}
+.instruction-text{flex:1;color:var(--text2);}
+
+/* MAIN — each view fills full height and scrolls internally */
+.main{display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+.view{display:none;flex-direction:column;height:100%;overflow:hidden;}
+.view.active{display:flex;}
+
+/* BUILDER */
+.builder-header{padding:1.25rem 1.5rem .75rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex-shrink:0;}
+.night-title-wrapper{display:flex;align-items:center;gap:8px;flex:1;min-width:160px;}
+.night-title-input{font-family:var(--font-display);font-size:22px;background:transparent;border:none;color:var(--text);outline:none;flex:1;min-width:160px;padding:4px 8px;border-radius:var(--radius);transition:all .15s;}
+.night-title-input:hover{background:var(--surface2);}
+.night-title-input:focus{background:var(--surface);border:0.5px solid var(--amber-border);}
+.night-title-input::placeholder{color:var(--text3);}
+.header-actions{display:flex;gap:6px;margin-left:auto;}
+.btn-sm{padding:5px 12px;border-radius:var(--radius);border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-size:11px;font-family:var(--font-mono);letter-spacing:.05em;text-transform:uppercase;transition:all .15s;}
+.btn-sm:hover{border-color:var(--border3);color:var(--text);background:var(--surface2);}
+.btn-sm.accent{border-color:var(--amber-border);color:var(--amber);background:var(--amber-bg);}
+
+/* THE KEY FIX: sets-area must have min-height:0 to actually scroll inside flex */
+.sets-area{flex:1;min-height:0;padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:1.5rem;overflow-y:auto;}
+
+.set-card{background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;flex-shrink:0;}
+.set-card-header{padding:10px 14px;background:var(--surface2);display:flex;align-items:center;gap:10px;border-bottom:0.5px solid var(--border);}
+.set-card-title{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber2);}
+.set-card-meta{font-size:11px;color:var(--text3);font-family:var(--font-mono);}
+.set-energy-bar{flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.set-energy-fill{height:100%;border-radius:2px;background:var(--amber);transition:width .4s;}
+.song-row{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:0.5px solid var(--border);transition:background .1s;cursor:grab;position:relative;}
+.song-row:last-child{border-bottom:none;}
+.song-row:hover{background:var(--surface2);}
+.song-row.dragging{opacity:.4;}
+.song-row.drag-over{background:var(--amber-bg);border-top:1px solid var(--amber-border);}
+.drag-handle{color:var(--text3);font-size:12px;cursor:grab;user-select:none;padding:0 2px;}
+.song-num{font-family:var(--font-mono);font-size:10px;color:var(--text3);width:18px;text-align:right;flex-shrink:0;}
+.song-info{flex:1;min-width:0;}
+.song-title{font-weight:500;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.song-artist{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.song-key{font-family:var(--font-mono);font-size:11px;color:var(--amber);width:32px;flex-shrink:0;}
+.song-bpm{font-family:var(--font-mono);font-size:11px;color:var(--text3);width:36px;flex-shrink:0;}
+.song-badge{font-size:10px;padding:1px 6px;border-radius:3px;flex-shrink:0;}
+.badge-Blues{background:var(--blue-bg);color:var(--blue);}
+.badge-RnB{background:var(--purple-bg);color:var(--purple);}
+.badge-Ballad{background:var(--coral-bg);color:var(--coral);}
+.energy-mini{display:flex;gap:2px;align-items:center;flex-shrink:0;}
+.edot{width:5px;height:5px;border-radius:50%;background:var(--border2);}
+.edot.on{background:var(--blue);}
+.edot.hi{background:#185FA5;}
+.song-remove{background:transparent;border:none;color:var(--text3);font-size:14px;padding:0 3px;line-height:1;opacity:0;transition:opacity .15s;}
+.song-row:hover .song-remove{opacity:1;}
+.song-remove:hover{color:var(--red);}
+.add-song-row{padding:8px 14px;display:flex;align-items:center;gap:8px;}
+.add-song-select{flex:1;background:var(--surface2);border:0.5px solid var(--border2);color:var(--text2);padding:5px 8px;border-radius:var(--radius);font-size:12px;outline:none;}
+.add-song-select:focus{border-color:var(--amber-border);}
+.add-btn{padding:5px 12px;background:transparent;border:0.5px solid var(--border2);color:var(--text2);border-radius:var(--radius);font-size:11px;font-family:var(--font-mono);transition:all .15s;}
+.add-btn:hover{border-color:var(--amber-border);color:var(--amber);background:var(--amber-bg);}
+
+/* POOL */
+.pool-header{padding:1.25rem 1.5rem .75rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex-shrink:0;}
+.pool-title{font-family:var(--font-display);font-size:22px;color:var(--text);}
+.pool-search{flex:1;min-width:160px;background:var(--surface2);border:0.5px solid var(--border2);color:var(--text);padding:6px 10px;border-radius:var(--radius);font-size:12px;outline:none;}
+.pool-search:focus{border-color:var(--amber-border);}
+.pool-search::placeholder{color:var(--text3);}
+.pool-filters{display:flex;gap:5px;}
+.pool-filter-btn{font-size:11px;padding:4px 10px;border-radius:var(--radius);border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--font-mono);transition:all .15s;}
+.pool-filter-btn.active{border-color:var(--amber-border);background:var(--amber-bg);color:var(--amber2);}
+.pool-filter-btn:hover:not(.active){border-color:var(--border3);color:var(--text);}
+.add-new-song-btn{margin:.75rem 1.5rem;padding:9px 16px;background:transparent;border:0.5px dashed var(--border2);color:var(--text2);border-radius:var(--radius);font-size:12px;font-family:var(--font-mono);transition:all .15s;text-align:left;flex-shrink:0;}
+.add-new-song-btn:hover{border-color:var(--amber-border);color:var(--amber);background:var(--amber-bg);}
+/* pool table wrapper scrolls independently */
+.pool-table-wrap{flex:1;min-height:0;overflow-y:auto;padding:0 1.5rem 1.5rem;}
+.pool-table{width:100%;border-collapse:collapse;margin-top:.5rem;}
+.pool-table thead th{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);text-align:left;padding:6px 8px;border-bottom:0.5px solid var(--border2);font-weight:400;}
+.pool-table tbody tr{border-bottom:0.5px solid var(--border);transition:background .1s;}
+.pool-table tbody tr:hover{background:var(--surface2);}
+.pool-table td{padding:9px 8px;}
+.pool-table td.pt{font-weight:500;font-size:13px;}
+.pool-table td.pa{color:var(--text2);font-size:12px;}
+.pool-table td.pk{font-family:var(--font-mono);font-size:12px;color:var(--amber);}
+.pool-table td.pb{font-family:var(--font-mono);font-size:12px;color:var(--text3);}
+.pool-table td.pp{font-family:var(--font-mono);font-size:11px;color:var(--text3);}
+.pool-instr{display:flex;gap:4px;}
+.instr-dot-sm{width:14px;height:14px;border-radius:2px;font-size:8px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:500;}
+.id-g{background:var(--amber-bg);color:var(--amber);}
+.id-p{background:var(--blue-bg);color:var(--blue);}
+.id-v{background:var(--green-bg);color:var(--green);}
+.edit-song-btn{background:transparent;border:0.5px solid var(--border);color:var(--text3);padding:3px 8px;border-radius:var(--radius);font-size:10px;font-family:var(--font-mono);transition:all .15s;}
+.edit-song-btn:hover{border-color:var(--border2);color:var(--text);}
+.del-song-btn{background:transparent;border:0.5px solid var(--border);color:var(--text3);padding:3px 8px;border-radius:var(--radius);font-size:10px;font-family:var(--font-mono);transition:all .15s;margin-left:4px;}
+.del-song-btn:hover{border-color:rgba(160,48,48,.4);color:var(--red);background:var(--red-bg);}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:0.5px solid var(--border3);border-radius:var(--radius-lg);padding:1.5rem;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-family:var(--font-display);font-size:20px;margin-bottom:1.25rem;color:var(--text);}
+.form-row{margin-bottom:1rem;}
+.form-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:5px;}
+.form-input{width:100%;background:var(--surface2);border:0.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:var(--radius);font-size:13px;outline:none;transition:border-color .15s;}
+.form-input:focus{border-color:var(--amber-border);}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1rem;}
+.instr-toggle{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:var(--radius);border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;transition:all .15s;}
+.instr-toggle.on{border-color:var(--amber-border);background:var(--amber-bg);color:var(--amber2);}
+.instr-toggle:hover:not(.on){border-color:var(--border3);}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;}
+.btn-cancel{padding:7px 16px;background:transparent;border:0.5px solid var(--border2);color:var(--text2);border-radius:var(--radius);font-size:12px;font-family:var(--font-mono);transition:all .15s;}
+.btn-cancel:hover{border-color:var(--border3);color:var(--text);}
+.btn-save{padding:7px 16px;background:var(--amber);border:none;color:var(--bg);border-radius:var(--radius);font-size:12px;font-family:var(--font-mono);font-weight:500;transition:all .15s;}
+.btn-save:hover{background:var(--amber2);}
+
+/* EXPORT */
+.export-area{flex:1;min-height:0;padding:1.5rem;overflow-y:auto;}
+.export-title{font-family:var(--font-display);font-size:22px;margin-bottom:1.5rem;}
+.export-preview{background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem;}
+.export-night-title{font-family:var(--font-display);font-size:28px;color:var(--amber2);margin-bottom:4px;}
+.export-meta{font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-bottom:1.5rem;}
+.export-set{margin-bottom:1.5rem;}
+.export-set-title{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:.5rem;padding-bottom:5px;border-bottom:0.5px solid var(--border2);}
+.export-song-row{display:flex;gap:12px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:12px;}
+.export-song-row:last-child{border-bottom:none;}
+.en{color:var(--text3);font-family:var(--font-mono);width:16px;flex-shrink:0;}
+.et{flex:1;font-weight:500;}
+.ea{color:var(--text2);}
+.ek{font-family:var(--font-mono);color:var(--amber);}
+.eb{font-family:var(--font-mono);color:var(--text3);}
+.export-btn{display:block;width:100%;padding:10px;background:var(--surface2);border:0.5px solid var(--border2);color:var(--text2);border-radius:var(--radius);font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;transition:all .15s;text-align:center;}
+.export-btn:hover{border-color:var(--amber-border);color:var(--amber);background:var(--amber-bg);}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--surface3);border:0.5px solid var(--border2);color:var(--text2);padding:9px 16px;border-radius:var(--radius);font-size:12px;font-family:var(--font-mono);z-index:300;opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">Fearlessly Media Group <span>// setlist builder</span></div>
+  <div class="nav">
+    <button class="nav-btn active" onclick="switchView('builder')">Builder</button>
+    <button class="nav-btn" onclick="switchView('pool')">Pool</button>
+    <button class="nav-btn" onclick="switchView('export')">Export</button>
+  </div>
+  <div class="theme-toggle">
+    <button class="theme-btn active" id="theme-dark-btn" onclick="setTheme('dark')">🌙 Oscuro</button>
+    <button class="theme-btn" id="theme-light-btn" onclick="setTheme('light')">☀️ Claro</button>
+  </div>
+</div>
+<div class="content">
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Instrumentos esta noche</div>
+      <div class="instrument-row">
+        <div class="instr-chip locked"><div class="instr-dot"></div>Guitarra</div>
+        <button class="instr-chip" id="chip-piano" onclick="toggleInstr('piano')"><div class="instr-dot"></div>Piano</button>
+        <button class="instr-chip" id="chip-viento" onclick="toggleInstr('viento')"><div class="instr-dot"></div>Vientos</button>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Sets</div>
+      <div class="sets-config">
+        <button class="set-count-btn" onclick="setNumSets(2)">2</button>
+        <button class="set-count-btn active" onclick="setNumSets(3)">3</button>
+        <button class="set-count-btn" onclick="setNumSets(4)">4</button>
+      </div>
+      <div style="margin-top:8px;">
+        <div class="sidebar-label">Duración por set</div>
+        <select class="add-song-select" id="set-duration" style="width:100%;">
+          <option value="40">~40 min</option>
+          <option value="45" selected>~45 min</option>
+          <option value="55">~55 min</option>
+          <option value="60">~60 min</option>
+        </select>
+      </div>
+      <button class="generate-btn" onclick="generateSetlist()">Generar Setlist</button>
+    </div>
+    <div class="sidebar-section" style="flex:1;overflow-y:auto;">
+      <div class="sidebar-label">Noches guardadas</div>
+      <div class="saved-list" id="saved-list"></div>
+    </div>
+    <div class="instructions-section">
+      <div class="sidebar-label">Cómo usar</div>
+      <div class="instructions-list">
+        <div class="instruction-item">
+          <div class="instruction-num">1</div>
+          <div class="instruction-text">Selecciona instrumentos y cantidad de sets</div>
+        </div>
+        <div class="instruction-item">
+          <div class="instruction-num">2</div>
+          <div class="instruction-text">Haz clic en "Generar Setlist"</div>
+        </div>
+        <div class="instruction-item">
+          <div class="instruction-num">3</div>
+          <div class="instruction-text">Personaliza Sets y songs en la vista Builder</div>
+        </div>
+        <div class="instruction-item">
+          <div class="instruction-num">4</div>
+          <div class="instruction-text">Cambia el nombre de la noche</div>
+        </div>
+        <div class="instruction-item">
+          <div class="instruction-num">5</div>
+          <div class="instruction-text">Haz clic en "Guardar" para guardar</div>
+        </div>
+        <div class="instruction-item">
+          <div class="instruction-num">6</div>
+          <div class="instruction-text">Exporta tu setlist en la vista Export</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- BUILDER -->
+    <div class="view active" id="view-builder">
+      <div class="builder-header">
+        <div class="night-title-wrapper">
+          <input class="night-title-input" id="night-title" placeholder="Ej: Noche 1, Sábado, Octubre 15..." value="Noche 1">
+        </div>
+        <div class="header-actions">
+          <button class="btn-sm" onclick="saveCurrentNight()">Guardar</button>
+          <button class="btn-sm accent" onclick="switchView('export')">Exportar</button>
+        </div>
+      </div>
+      <div class="sets-area" id="sets-area"></div>
+    </div>
+
+    <!-- POOL -->
+    <div class="view" id="view-pool">
+      <div class="pool-header">
+        <div class="pool-title">Pool de canciones</div>
+        <input class="pool-search" id="pool-search" placeholder="Buscar…" oninput="renderPool()">
+        <div class="pool-filters">
+          <button class="pool-filter-btn active" onclick="setPoolFilter('all',this)">Todas</button>
+          <button class="pool-filter-btn" onclick="setPoolFilter('Blues',this)">Blues</button>
+          <button class="pool-filter-btn" onclick="setPoolFilter('R&B',this)">R&B</button>
+          <button class="pool-filter-btn" onclick="setPoolFilter('Ballad',this)">Ballad</button>
+        </div>
+      </div>
+      <button class="add-new-song-btn" onclick="openAddModal()">+ Agregar canción al pool</button>
+      <div class="pool-table-wrap">
+        <table class="pool-table">
+          <thead><tr><th>#</th><th>Canción</th><th>Artista</th><th>Género</th><th>Tono</th><th>BPM</th><th>Prog.</th><th>Instr.</th><th></th></tr></thead>
+          <tbody id="pool-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EXPORT -->
+    <div class="view" id="view-export">
+      <div class="export-area">
+        <div class="export-title">Exportar setlist</div>
+        <div class="export-preview" id="export-preview"></div>
+        <button class="export-btn" onclick="exportHTML()">Descargar HTML</button>
+        <button class="export-btn" onclick="exportText()">Copiar como texto</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="song-modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Nueva canción</div>
+    <div class="form-row-2">
+      <div><label class="form-label">Título</label><input class="form-input" id="m-title" placeholder="The Thrill Is Gone"></div>
+      <div><label class="form-label">Artista</label><input class="form-input" id="m-artist" placeholder="B.B. King"></div>
+    </div>
+    <div class="form-row-3">
+      <div><label class="form-label">Género</label><select class="form-input" id="m-genre"><option>Blues</option><option>R&B</option><option>Ballad</option></select></div>
+      <div><label class="form-label">Tonalidad</label><input class="form-input" id="m-key" placeholder="Am"></div>
+      <div><label class="form-label">BPM</label><input class="form-input" id="m-bpm" type="number" placeholder="72"></div>
+    </div>
+    <div class="form-row"><label class="form-label">Progresión</label><input class="form-input" id="m-prog" placeholder="I–IV–I–V–IV–I"></div>
+    <div class="form-row"><label class="form-label">Energía (1–5)</label><input class="form-input" id="m-energy" type="number" min="1" max="5" placeholder="3"></div>
+    <div class="form-row">
+      <label class="form-label">Instrumentos que favorece</label>
+      <div style="display:flex;gap:6px;margin-top:4px;">
+        <button class="instr-toggle on" id="mt-g" onclick="toggleModalInstr('g')">Guitarra</button>
+        <button class="instr-toggle" id="mt-p" onclick="toggleModalInstr('p')">Piano</button>
+        <button class="instr-toggle" id="mt-v" onclick="toggleModalInstr('v')">Vientos</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveSong()">Guardar</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const POOL_DEFAULT = [
+  {id:1,title:"The Thrill Is Gone",artist:"B.B. King",genre:"Blues",key:"Bm",bpm:60,prog:"i–IV–i–V–IV–i",energy:3,instr:['g','p','v']},
+  {id:2,title:"Stormy Monday",artist:"T-Bone Walker",genre:"Blues",key:"G",bpm:55,prog:"I–IV–I–V–IV–I",energy:2,instr:['g','p','v']},
+  {id:3,title:"Ain't No Sunshine",artist:"Bill Withers",genre:"R&B",key:"Am",bpm:76,prog:"i–III–VII–i",energy:3,instr:['g','p']},
+  {id:4,title:"Further On Up the Road",artist:"E. Clapton / B. Bland",genre:"Blues",key:"Em",bpm:58,prog:"I–IV–I–V–IV–I",energy:2,instr:['g']},
+  {id:5,title:"Tears in Heaven",artist:"Eric Clapton",genre:"Ballad",key:"A",bpm:64,prog:"I–V–vi–IV",energy:2,instr:['g']},
+  {id:6,title:"Sweet Home Chicago",artist:"Robert Johnson",genre:"Blues",key:"E",bpm:90,prog:"I–IV–I–V–IV–I",energy:4,instr:['g','p','v']},
+  {id:7,title:"I Put a Spell on You",artist:"Jay Hawkins",genre:"Blues",key:"Cm",bpm:68,prog:"i–i7–iv–V7",energy:3,instr:['g','p','v']},
+  {id:8,title:"Stand by Me",artist:"Ben E. King",genre:"R&B",key:"A",bpm:114,prog:"I–vi–IV–V",energy:4,instr:['g','p','v']},
+  {id:9,title:"Wonderful Tonight",artist:"Eric Clapton",genre:"Ballad",key:"G",bpm:62,prog:"I–V–IV–V",energy:2,instr:['g']},
+  {id:10,title:"House of the Rising Sun",artist:"The Animals",genre:"Ballad",key:"Am",bpm:52,prog:"i–III–IV–VI–i",energy:1,instr:['g','p']},
+  {id:11,title:"Pride and Joy",artist:"SRV",genre:"Blues",key:"E",bpm:120,prog:"I–IV–I–V–IV–I",energy:5,instr:['g']},
+  {id:12,title:"Killing Me Softly",artist:"Roberta Flack",genre:"Ballad",key:"Dm",bpm:72,prog:"ii–V–I–IV",energy:2,instr:['g','p','v']},
+  {id:13,title:"Lonely Avenue",artist:"Ray Charles",genre:"Blues",key:"Bb",bpm:84,prog:"I–IV–V–IV",energy:3,instr:['g','p','v']},
+  {id:14,title:"Mustang Sally",artist:"Wilson Pickett",genre:"R&B",key:"C",bpm:96,prog:"I–IV–I–V",energy:4,instr:['g','p','v']},
+  {id:15,title:"Let the Good Times Roll",artist:"BB King",genre:"Blues",key:"C",bpm:100,prog:"I–IV–I–V–IV–I",energy:4,instr:['g','p','v']},
+  {id:16,title:"Midnight Hour",artist:"Wilson Pickett",genre:"R&B",key:"D",bpm:108,prog:"I–IV–V",energy:4,instr:['g','p','v']},
+  {id:17,title:"Sitting on the Dock",artist:"Otis Redding",genre:"R&B",key:"G",bpm:68,prog:"I–IV–I–IV",energy:3,instr:['g','p','v']},
+  {id:18,title:"Have You Ever Loved a Woman",artist:"Freddie King",genre:"Blues",key:"F#",bpm:62,prog:"I–IV–I–V–IV–I",energy:3,instr:['g']},
+  {id:19,title:"Love in Vain",artist:"Robert Johnson",genre:"Blues",key:"Em",bpm:58,prog:"I–IV–I–V–IV–I",energy:2,instr:['g']},
+  {id:20,title:"Drift Away",artist:"Dobie Gray",genre:"R&B",key:"D",bpm:96,prog:"I–V–vi–IV",energy:3,instr:['g','p']},
+  {id:21,title:"The Sky Is Crying",artist:"Elmore James",genre:"Blues",key:"A",bpm:56,prog:"I–IV–I–V–IV–I",energy:2,instr:['g']},
+  {id:22,title:"Since I've Been Loving You",artist:"Led Zeppelin",genre:"Blues",key:"Cm",bpm:56,prog:"i–iv–i–V–iv–i",energy:2,instr:['g','p','v']},
+  {id:23,title:"Nobody Knows You (Down and Out)",artist:"Eric Clapton",genre:"Blues",key:"G",bpm:58,prog:"I–III–IV–iv–I–V",energy:2,instr:['g']},
+  {id:24,title:"Little Wing",artist:"Jimi Hendrix",genre:"Ballad",key:"Em",bpm:68,prog:"i–VII–VI–V–IV",energy:2,instr:['g']},
+  {id:25,title:"Superstition",artist:"Stevie Wonder",genre:"R&B",key:"Eb",bpm:100,prog:"i–VII–i–VII",energy:5,instr:['g','p','v']},
+  {id:26,title:"Every Day I Have the Blues",artist:"BB King",genre:"Blues",key:"Bb",bpm:112,prog:"I–IV–I–V–IV–I",energy:5,instr:['g','p','v']},
+  {id:27,title:"If I Ain't Got You",artist:"Alicia Keys",genre:"R&B",key:"Dbm",bpm:74,prog:"i–VI–III–VII",energy:3,instr:['g','p']},
+  {id:28,title:"I'd Rather Go Blind",artist:"Etta James",genre:"Blues",key:"A",bpm:60,prog:"I–IV–I–V",energy:2,instr:['g','p','v']},
+  {id:29,title:"The Weight",artist:"The Band",genre:"Ballad",key:"A",bpm:73,prog:"I–III–IV–I",energy:2,instr:['g']},
+  {id:30,title:"Cry to Me",artist:"Solomon Burke",genre:"R&B",key:"G",bpm:65,prog:"I–IV–V–I",energy:3,instr:['g','p','v']},
+  {id:31,title:"Key to the Highway",artist:"Big Bill Broonzy",genre:"Blues",key:"E",bpm:78,prog:"I–IV–I–V–IV–I",energy:3,instr:['g']},
+  // 10 nuevas
+  {id:32,title:"Green Onions",artist:"Booker T. & the MGs",genre:"R&B",key:"F",bpm:92,prog:"I–IV–V (12-bar)",energy:4,instr:['g','p','v']},
+  {id:33,title:"All Your Love",artist:"Otis Rush",genre:"Blues",key:"Am",bpm:62,prog:"i7–iv7–v7",energy:3,instr:['g']},
+  {id:34,title:"Things That I Used to Do",artist:"Guitar Slim",genre:"Blues",key:"E",bpm:84,prog:"I–IV–V7",energy:3,instr:['g','p','v']},
+  {id:35,title:"Smokestack Lightning",artist:"Howlin' Wolf",genre:"Blues",key:"E",bpm:72,prog:"I–I–I–I (vamp)",energy:3,instr:['g','v']},
+  {id:36,title:"Rock Me Baby",artist:"B.B. King",genre:"Blues",key:"G",bpm:88,prog:"I–IV–V (12-bar)",energy:4,instr:['g','p','v']},
+  {id:37,title:"I've Got a Woman",artist:"Ray Charles",genre:"R&B",key:"A",bpm:100,prog:"I6–V7–I6–IV7–I6",energy:4,instr:['g','p','v']},
+  {id:38,title:"Just the Two of Us",artist:"Bill Withers",genre:"Ballad",key:"Db",bpm:68,prog:"Dbmaj7–C7–Fm7–Ebm7",energy:2,instr:['g','p','v']},
+  {id:39,title:"I'm Tore Down",artist:"Freddie King",genre:"Blues",key:"F",bpm:108,prog:"I–IV–I–V–IV–I",energy:5,instr:['g']},
+  {id:40,title:"The Sky Is Crying",artist:"Albert King",genre:"Blues",key:"Bb",bpm:58,prog:"i–IV–i–V–IV–i",energy:2,instr:['g','v']},
+  {id:41,title:"Reconsider Baby",artist:"Lowell Fulson",genre:"Blues",key:"Bb",bpm:80,prog:"I–IV–I–V–IV–I",energy:3,instr:['g','p','v']},
+];
+
+let pool = JSON.parse(localStorage.getItem('fmg-pool') || 'null') || POOL_DEFAULT;
+let savedNights = JSON.parse(localStorage.getItem('fmg-nights') || '[]');
+let currentSets = [];
+let numSets = 3;
+let activeInstrs = ['g'];
+let poolFilter = 'all';
+let editingId = null;
+let dragSrc = null;
+let nextId = Math.max(...pool.map(s=>s.id)) + 1;
+
+function save() {
+  localStorage.setItem('fmg-pool', JSON.stringify(pool));
+  localStorage.setItem('fmg-nights', JSON.stringify(savedNights));
+}
+
+function setTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.classList.add('light');
+  } else {
+    document.documentElement.classList.remove('light');
+  }
+  localStorage.setItem('fmg-theme', theme);
+  document.getElementById('theme-dark-btn').classList.toggle('active', theme === 'dark');
+  document.getElementById('theme-light-btn').classList.toggle('active', theme === 'light');
+}
+
+function initTheme() {
+  const savedTheme = localStorage.getItem('fmg-theme') || 'dark';
+  setTheme(savedTheme);
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+function switchView(v) {
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.nav-btn')[['builder','pool','export'].indexOf(v)].classList.add('active');
+  if(v==='pool') renderPool();
+  if(v==='export') renderExport();
+}
+
+function toggleInstr(i) {
+  const chip = document.getElementById('chip-'+i);
+  const key = i==='piano'?'p':'v';
+  if(activeInstrs.includes(key)){activeInstrs=activeInstrs.filter(x=>x!==key);chip.classList.remove('active');}
+  else{activeInstrs.push(key);chip.classList.add('active');}
+}
+
+function setNumSets(n) {
+  numSets=n;
+  document.querySelectorAll('.set-count-btn').forEach((b,i)=>b.classList.toggle('active',[2,3,4][i]===n));
+}
+
+function generateSetlist() {
+  const dur = parseInt(document.getElementById('set-duration').value);
+  const songsPerSet = Math.round(dur / 4.5);
+
+  let eligible = pool.filter(s=>s.instr.some(i=>activeInstrs.includes(i)));
+  if(eligible.length < songsPerSet * numSets) eligible = [...pool];
+
+  const shuffle = a=>[...a].sort(()=>Math.random()-.5);
+  const low = shuffle(eligible.filter(s=>s.energy<=2));
+  const mid = shuffle(eligible.filter(s=>s.energy===3));
+  const high = shuffle(eligible.filter(s=>s.energy>=4));
+
+  const usedIds = new Set();
+  function pick(arr, n) {
+    const out=[];
+    for(const s of arr){if(out.length>=n)break;if(!usedIds.has(s.id)){out.push(s);usedIds.add(s.id);}}
+    return out;
+  }
+  // fallback pool for when buckets run dry
+  const allShuffled = shuffle(eligible);
+  function pickFallback(n) {
+    const out=[];
+    for(const s of allShuffled){if(out.length>=n)break;if(!usedIds.has(s.id)){out.push(s);usedIds.add(s.id);}}
+    return out;
+  }
+
+  currentSets = [];
+  for(let i=0;i<numSets;i++){
+    const isLast = i===numSets-1;
+    const lowN = isLast ? Math.floor(songsPerSet*.2) : Math.floor(songsPerSet*.35);
+    const highN = isLast ? Math.floor(songsPerSet*.4) : Math.floor(songsPerSet*.25);
+    const midN = songsPerSet - lowN - highN;
+
+    let setLow = pick(low, lowN);
+    let setMid = pick(mid, midN);
+    let setHigh = pick(high, highN);
+
+    // FIX: fill gaps with fallback so every set reaches songsPerSet
+    let arranged = [...setLow, ...setMid, ...setHigh];
+    if(arranged.length < songsPerSet) {
+      const extras = pickFallback(songsPerSet - arranged.length);
+      arranged = [...arranged, ...extras];
+    }
+
+    arranged = avoidConsecutiveKey(arranged);
+    currentSets.push(arranged);
+  }
+
+  renderSets();
+  toast('Setlist generado — ' + currentSets.reduce((a,s)=>a+s.length,0) + ' canciones');
+}
+
+function avoidConsecutiveKey(arr) {
+  const r=[...arr];
+  for(let i=1;i<r.length;i++){
+    if(r[i].key===r[i-1].key&&i+1<r.length){const t=r[i];r[i]=r[i+1];r[i+1]=t;}
+  }
+  return r;
+}
+
+function renderSets() {
+  const area = document.getElementById('sets-area');
+  area.innerHTML='';
+  currentSets.forEach((songs,si)=>{
+    const avgE = songs.length ? songs.reduce((a,s)=>a+s.energy,0)/songs.length : 0;
+    const ePct = Math.round((avgE/5)*100);
+    const totalMin = Math.round(songs.reduce((a,s)=>a+(s.bpm>90?3.5:s.bpm>70?4.5:5.5),0));
+    const card = document.createElement('div');
+    card.className='set-card';
+    card.innerHTML=`
+      <div class="set-card-header">
+        <span class="set-card-title">Set ${si+1}</span>
+        <span class="set-card-meta">${songs.length} canciones · ~${totalMin} min</span>
+        <div class="set-energy-bar"><div class="set-energy-fill" style="width:${ePct}%"></div></div>
+      </div>
+      <div id="set-songs-${si}">${songs.map((s,i)=>songRowHTML(s,i,si)).join('')}</div>
+      <div class="add-song-row">
+        <select class="add-song-select" id="add-sel-${si}">
+          <option value="">+ Agregar canción…</option>
+          ${pool.map(s=>`<option value="${s.id}">${s.title} — ${s.artist}</option>`).join('')}
+        </select>
+        <button class="add-btn" onclick="addSongToSet(${si})">Add</button>
+      </div>`;
+    area.appendChild(card);
+  });
+  attachDragHandlers();
+}
+
+function songRowHTML(s,i,si){
+  return `<div class="song-row" draggable="true" data-id="${s.id}" data-si="${si}" data-i="${i}">
+    <span class="drag-handle">⠿</span>
+    <span class="song-num">${i+1}</span>
+    <div class="song-info"><div class="song-title">${s.title}</div><div class="song-artist">${s.artist}</div></div>
+    <span class="song-key">${s.key}</span>
+    <span class="song-bpm">${s.bpm}</span>
+    <span class="song-badge badge-${s.genre==='R&B'?'RnB':s.genre}">${s.genre}</span>
+    <div class="energy-mini">${Array.from({length:5},(_,j)=>`<div class="edot${j<s.energy?' on':''}${j<s.energy&&s.energy>=4?' hi':''}"></div>`).join('')}</div>
+    <button class="song-remove" onclick="removeSongFromSet(${si},${s.id})" title="Quitar">×</button>
+  </div>`;
+}
+
+function attachDragHandlers(){
+  document.querySelectorAll('.song-row').forEach(row=>{
+    row.addEventListener('dragstart',e=>{dragSrc=row;row.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+    row.addEventListener('dragend',()=>{row.classList.remove('dragging');document.querySelectorAll('.song-row').forEach(r=>r.classList.remove('drag-over'));});
+    row.addEventListener('dragover',e=>{e.preventDefault();if(row!==dragSrc)row.classList.add('drag-over');});
+    row.addEventListener('dragleave',()=>row.classList.remove('drag-over'));
+    row.addEventListener('drop',e=>{
+      e.preventDefault();row.classList.remove('drag-over');
+      if(!dragSrc||dragSrc===row)return;
+      const srcSi=parseInt(dragSrc.dataset.si),srcId=parseInt(dragSrc.dataset.id);
+      const dstSi=parseInt(row.dataset.si),dstId=parseInt(row.dataset.id);
+      if(srcSi!==dstSi)return;
+      const set=currentSets[srcSi];
+      const si=set.findIndex(s=>s.id===srcId),di=set.findIndex(s=>s.id===dstId);
+      const[moved]=set.splice(si,1);set.splice(di,0,moved);
+      renderSets();
+    });
+  });
+}
+
+function removeSongFromSet(si,id){currentSets[si]=currentSets[si].filter(s=>s.id!==id);renderSets();}
+
+function addSongToSet(si){
+  const sel=document.getElementById('add-sel-'+si);
+  const id=parseInt(sel.value);if(!id)return;
+  if(currentSets[si].find(s=>s.id===id)){toast('Ya está en este set');return;}
+  const song=pool.find(s=>s.id===id);
+  if(song){currentSets[si].push(song);renderSets();}
+}
+
+function saveCurrentNight(){
+  const title=document.getElementById('night-title').value.trim()||'Sin título';
+  const date=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short'});
+  savedNights.unshift({id:Date.now(),title,date,sets:currentSets.map(s=>[...s]),instrs:[...activeInstrs]});
+  if(savedNights.length>20)savedNights.pop();
+  save();renderSavedList();toast('Guardado: '+title);
+}
+
+function loadNight(id){
+  const n=savedNights.find(x=>x.id===id);if(!n)return;
+  currentSets=n.sets.map(s=>s.map(song=>pool.find(p=>p.id===song.id)||song));
+  document.getElementById('night-title').value=n.title;
+  renderSets();switchView('builder');
+  document.querySelectorAll('.saved-item').forEach(el=>el.classList.toggle('active-saved',parseInt(el.dataset.id)===id));
+}
+
+function deleteNight(id){savedNights=savedNights.filter(x=>x.id!==id);save();renderSavedList();}
+
+function renderSavedList(){
+  const el=document.getElementById('saved-list');
+  if(!savedNights.length){el.innerHTML='<div class="empty-saved">Sin noches guardadas</div>';return;}
+  el.innerHTML=savedNights.map(n=>`
+    <div class="saved-item" data-id="${n.id}" onclick="loadNight(${n.id})">
+      <span class="saved-date">${n.date}</span>
+      <span class="saved-name">${n.title}</span>
+      <button class="del-saved" onclick="event.stopPropagation();deleteNight(${n.id})">×</button>
+    </div>`).join('');
+}
+
+function setPoolFilter(f,btn){
+  poolFilter=f;
+  document.querySelectorAll('.pool-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderPool();
+}
+
+function renderPool(){
+  const q=(document.getElementById('pool-search')?.value||'').toLowerCase();
+  let songs=pool;
+  if(poolFilter!=='all')songs=songs.filter(s=>s.genre===poolFilter);
+  if(q)songs=songs.filter(s=>s.title.toLowerCase().includes(q)||s.artist.toLowerCase().includes(q));
+  document.getElementById('pool-tbody').innerHTML=songs.map((s,i)=>`
+    <tr>
+      <td style="color:var(--text3);font-family:var(--font-mono);font-size:11px;">${i+1}</td>
+      <td class="pt">${s.title}</td><td class="pa">${s.artist}</td>
+      <td><span class="song-badge badge-${s.genre==='R&B'?'RnB':s.genre}">${s.genre}</span></td>
+      <td class="pk">${s.key}</td><td class="pb">${s.bpm}</td><td class="pp">${s.prog}</td>
+      <td><div class="pool-instr">
+        ${s.instr.includes('g')?'<div class="instr-dot-sm id-g">G</div>':''}
+        ${s.instr.includes('p')?'<div class="instr-dot-sm id-p">P</div>':''}
+        ${s.instr.includes('v')?'<div class="instr-dot-sm id-v">V</div>':''}
+      </div></td>
+      <td style="white-space:nowrap;">
+        <button class="edit-song-btn" onclick="openEditModal(${s.id})">Editar</button>
+        <button class="del-song-btn" onclick="deleteSong(${s.id})">×</button>
+      </td>
+    </tr>`).join('');
+}
+
+function deleteSong(id){pool=pool.filter(s=>s.id!==id);save();renderPool();}
+
+function openAddModal(){
+  editingId=null;
+  document.getElementById('modal-title').textContent='Nueva canción';
+  ['m-title','m-artist','m-key','m-bpm','m-prog'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('m-genre').value='Blues';
+  document.getElementById('m-energy').value='3';
+  ['g','p','v'].forEach(i=>document.getElementById('mt-'+i).classList.toggle('on',i==='g'));
+  document.getElementById('song-modal').classList.add('open');
+}
+
+function openEditModal(id){
+  editingId=id;
+  const s=pool.find(x=>x.id===id);
+  document.getElementById('modal-title').textContent='Editar canción';
+  document.getElementById('m-title').value=s.title;
+  document.getElementById('m-artist').value=s.artist;
+  document.getElementById('m-genre').value=s.genre;
+  document.getElementById('m-key').value=s.key;
+  document.getElementById('m-bpm').value=s.bpm;
+  document.getElementById('m-prog').value=s.prog;
+  document.getElementById('m-energy').value=s.energy;
+  ['g','p','v'].forEach(i=>document.getElementById('mt-'+i).classList.toggle('on',s.instr.includes(i)));
+  document.getElementById('song-modal').classList.add('open');
+}
+
+function closeModal(){document.getElementById('song-modal').classList.remove('open');}
+function toggleModalInstr(i){if(i==='g')return;document.getElementById('mt-'+i).classList.toggle('on');}
+
+function saveSong(){
+  const title=document.getElementById('m-title').value.trim();
+  const artist=document.getElementById('m-artist').value.trim();
+  if(!title||!artist){toast('Título y artista requeridos');return;}
+  const instr=['g','p','v'].filter(i=>document.getElementById('mt-'+i).classList.contains('on'));
+  const song={
+    id:editingId||nextId++,title,artist,
+    genre:document.getElementById('m-genre').value,
+    key:document.getElementById('m-key').value.trim()||'C',
+    bpm:parseInt(document.getElementById('m-bpm').value)||72,
+    prog:document.getElementById('m-prog').value.trim()||'I–IV–V',
+    energy:Math.min(5,Math.max(1,parseInt(document.getElementById('m-energy').value)||3)),
+    instr
+  };
+  if(editingId){pool[pool.findIndex(s=>s.id===editingId)]=song;}
+  else{pool.push(song);}
+  save();closeModal();renderPool();
+  toast(editingId?'Canción actualizada':'Canción agregada');
+}
+
+function renderExport(){
+  const title=document.getElementById('night-title').value||'Setlist';
+  const date=new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const instrNames=activeInstrs.map(i=>({g:'Guitarra',p:'Piano',v:'Vientos'}[i])).join(', ');
+  let html=`<div class="export-night-title">${title}</div><div class="export-meta">${date} &nbsp;·&nbsp; ${instrNames} &nbsp;·&nbsp; ${numSets} sets</div>`;
+  currentSets.forEach((songs,si)=>{
+    const totalMin=Math.round(songs.reduce((a,s)=>a+(s.bpm>90?3.5:s.bpm>70?4.5:5.5),0));
+    html+=`<div class="export-set"><div class="export-set-title">Set ${si+1} — ${songs.length} canciones · ~${totalMin} min</div>
+      ${songs.map((s,i)=>`<div class="export-song-row"><span class="en">${i+1}</span><span class="et">${s.title}</span><span class="ea">${s.artist}</span><span class="ek">${s.key}</span><span class="eb">${s.bpm}</span></div>`).join('')}
+    </div>`;
+  });
+  document.getElementById('export-preview').innerHTML=html;
+}
+
+function exportHTML(){
+  const title=document.getElementById('night-title').value||'Setlist';
+  const date=new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  let c=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${title}</title>
+  <style>body{font-family:monospace;background:#0a0908;color:#f2ede4;padding:2rem;max-width:700px;margin:0 auto;}
+  h1{color:#e6ad55;font-size:2rem;margin-bottom:4px;}.meta{color:#5c5850;font-size:12px;margin-bottom:2rem;}
+  .st{color:#c8922e;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid #222;padding-bottom:4px;margin:1.5rem 0 .5rem;}
+  .r{display:flex;gap:12px;padding:5px 0;border-bottom:1px solid #1a1a1a;font-size:13px;}
+  .n{color:#5c5850;width:20px;}.t{flex:1;font-weight:bold;}.a{color:#9e9889;}.k{color:#c8922e;}</style>
+  </head><body><h1>${title}</h1><div class="meta">${date} · ${numSets} sets</div>`;
+  currentSets.forEach((songs,si)=>{
+    const totalMin=Math.round(songs.reduce((a,s)=>a+(s.bpm>90?3.5:s.bpm>70?4.5:5.5),0));
+    c+=`<div class="st">Set ${si+1} — ${songs.length} canciones · ~${totalMin} min</div>`;
+    songs.forEach((s,i)=>{c+=`<div class="r"><span class="n">${i+1}</span><span class="t">${s.title}</span><span class="a">${s.artist}</span><span class="k">${s.key}</span><span class="k" style="color:#5c5850">${s.bpm}</span></div>`;});
+  });
+  c+=`</body></html>`;
+  const a=document.createElement('a');
+  a.href='data:text/html;charset=utf-8,'+encodeURIComponent(c);
+  a.download=title.replace(/\s+/g,'-').toLowerCase()+'.html';
+  a.click();toast('HTML descargado');
+}
+
+function exportText(){
+  const title=document.getElementById('night-title').value||'Setlist';
+  let t=title.toUpperCase()+'\n'+'='.repeat(title.length)+'\n\n';
+  currentSets.forEach((songs,si)=>{
+    t+=`SET ${si+1}\n${'-'.repeat(20)}\n`;
+    songs.forEach((s,i)=>{t+=`${i+1}. ${s.title} — ${s.artist} (${s.key}, ${s.bpm} BPM)\n`;});
+    t+='\n';
+  });
+  navigator.clipboard.writeText(t).then(()=>toast('Copiado al clipboard'));
+}
+
+renderSavedList();
+initTheme();
+generateSetlist();
+</script>
+</body>
+</html>

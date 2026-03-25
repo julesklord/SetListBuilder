@@ -1,0 +1,132 @@
+{
+  "name": "setmanager",
+  "version": "2.0.0",
+  "description": "Intelligent setlist generator for live musicians - Band Edition",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/julesklord/SetListBuilder.git"
+  },
+  "homepage": "https://github.com/julesklord/SetListBuilder#readme",
+  "keywords": [
+    "setlist",
+    "music",
+    "band",
+    "generator",
+    "algorithm",
+    "javascript",
+    "offline"
+  ],
+  "author": "Fearlessly Media Group",
+  "contributors": [
+    {
+      "name": "GitHub Copilot",
+      "role": "v2.0 implementation & testing"
+    }
+  ],
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "test": "echo \"See tests/README.md for testing instructions\"",
+    "validate": "echo \"Paste tests/validation-script.js content into browser DevTools console\""
+  },
+  "browserslist": [
+    ">= 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "features": {
+    "songs": 336,
+    "genres": 24,
+    "instruments": 11,
+    "languages": 4,
+    "exportFormats": [
+      "PDF",
+      "HTML",
+      "JSON",
+      "CSV",
+      "Plain Text"
+    ]
+  },
+  "specifications": {
+    "type": "Vanilla JavaScript (No Dependencies)",
+    "framework": "None (Plain JS + HTML + CSS)",
+    "storage": "localStorage (100% offline)",
+    "persistence": "Browser-based",
+    "accessibility": "WCAG 2.1 AA target",
+    "responsiveness": "Mobile-first design"
+  },
+  "releases": {
+    "v2.0.0": {
+      "date": "2026-03-24",
+      "status": "stable",
+      "breaking_changes": false,
+      "major_features": [
+        "Schema validation system",
+        "Storage quota management",
+        "3-pass energy algorithm",
+        "Event delegation pattern",
+        "Modal state management"
+      ],
+      "bug_fixes": 12,
+      "performance_improvements": 3
+    },
+    "v1.0.0": {
+      "date": "2026-01-15",
+      "status": "legacy",
+      "deprecated": false
+    }
+  },
+  "documentation": {
+    "quick_start": "docs/QUICK_START.md",
+    "user_guide": "docs/GUIDE.md",
+    "technical_reference": "docs/FMG_Setlist_Builder_Docs.md",
+    "changelog": "CHANGELOG.md",
+    "release_notes": "RELEASE_NOTES.md",
+    "testing_guide": "tests/TESTING_GUIDE.md",
+    "testing_results": "tests/TEST_RESULTS.md"
+  },
+  "testing": {
+    "automated": "tests/validation-script.js",
+    "manual": "tests/TESTING_GUIDE.md",
+    "coverage": 12,
+    "unit_tests": "Integrated in validation-script.js",
+    "e2e_tests": "See TESTING_GUIDE.md (7 scenarios)"
+  },
+  "deployment": {
+    "local_dev": "python -m http.server 8000",
+    "github_pages": "Push to main branch, enable in Settings → Pages",
+    "supported_browsers": [
+      "Chrome 90+",
+      "Firefox 88+",
+      "Safari 14+",
+      "Edge 90+"
+    ]
+  },
+  "contributing": {
+    "guidelines": "See CONTRIBUTING.md (if created)",
+    "code_style": "Vanilla JS, ES6+, 80-100 char lines",
+    "commit_format": "Conventional Commits",
+    "pull_requests": "Welcome - create issue first"
+  },
+  "dependencies": {
+    "runtime": "None (zero dependencies)",
+    "development": "None (zero dependencies)"
+  },
+  "devDependencies": {},
+  "keywords_related": [
+    "music-generation",
+    "live-performance",
+    "band-management",
+    "setlist-creator",
+    "music-algorithm",
+    "offline-first",
+    "progressive-web-app"
+  ],
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/setmanager"
+  }
+}

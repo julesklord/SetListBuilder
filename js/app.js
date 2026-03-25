@@ -3,6 +3,7 @@ if(typeof pool==='undefined'){ window.pool=[];window.nights=[];window.sets=[];wi
 if(typeof mustPlay==='undefined') window.mustPlay=new Set();
 if(typeof tr==='undefined') window.tr=function(k){return k;}
 let _genreTimer; // genre debounce — module-level so all functions can access
+let _poolSearchTimer; // pool search debounce to avoid excessive rendering
 
 // ─── APP ────────────────────────────────────────────────────────────────────
 // Depends on: songs.js → i18n.js → app.js (load order matters)
@@ -23,10 +24,55 @@ function toggleMustPlay(id){
 }
 
 // ─── PERSIST ────────────────────────────────────────────────────────────────
+// Check storage quota before persisting
+function checkStorageQuota() {
+  try {
+    const estimate = {
+      poolSize: JSON.stringify(pool).length,
+      nightsSize: JSON.stringify(nights).length,
+      mustPlaySize: JSON.stringify([...mustPlay]).length
+    };
+    const totalBytes = estimate.poolSize + estimate.nightsSize + estimate.mustPlaySize;
+    // Warn if approaching 4MB (typical limit is 5MB)
+    if(totalBytes > 4 * 1024 * 1024) {
+      console.warn('localStorage near quota:', Math.round(totalBytes / 1024) + 'KB / 5MB');
+      return false;
+    }
+    return true;
+  } catch(e) {
+    console.error('checkStorageQuota error:', e);
+    return true; // optimistic - try to save anyway
+  }
+}
+
 function persist() {
-  localStorage.setItem('fmg-pool', JSON.stringify(pool));
-  localStorage.setItem('fmg-nights', JSON.stringify(nights));
-  localStorage.setItem('fmg-mustPlay', JSON.stringify([...mustPlay]));
+  if(!checkStorageQuota()) {
+    toast('Storage near limit. Delete old shows or reduce pool size.');
+  }
+  try {
+    localStorage.setItem('fmg-pool', JSON.stringify(pool));
+    localStorage.setItem('fmg-nights', JSON.stringify(nights));
+    localStorage.setItem('fmg-mustPlay', JSON.stringify([...mustPlay]));
+  } catch(e) {
+    if(e.name === 'QuotaExceededError') {
+      toast('Storage quota exceeded. Clearing old shows...');
+      // Try clearing old nights to free space
+      if(nights.length > 20) {
+        nights = nights.slice(0, 15);
+        try {
+          localStorage.setItem('fmg-nights', JSON.stringify(nights));
+          localStorage.setItem('fmg-pool', JSON.stringify(pool));
+          toast('Cleared old shows. Retrying save...');
+        } catch(e2) {
+          toast('CRITICAL: Storage full. Please clear browser data.');
+        }
+      } else {
+        toast('CRITICAL: Storage full. Please clear browser data.');
+      }
+    } else {
+      console.error('persist() error:', e);
+    }
+  }
 }
 
 // ─── CSV IMPORT / EXPORT ─────────────────────────────────────────────────────
@@ -316,45 +362,68 @@ function generate(){
     candidates.push(noConsecKey(arr));
   }
 
-  // 50/50 effort balancing: try to redistribute to equalize effort
+  // Improved effort balancing: iterate until distribution stabilizes or max iterations
   // Target effort per set
   const totalEffort = candidates.flat().reduce((t,s)=>t+songEffort(s),0);
   const targetEffort = totalEffort / numSets;
 
-  // Simple swap pass: for each set above target, try to swap a heavy song
-  // with a lighter one from an under-target set (max 3 passes)
-  const poolById = {};
-  pool.forEach(s=>poolById[s.id]=s);
-
-  for(let pass=0;pass<3;pass++){
+  // Swap pass: for each set above target, try to swap with lighter sets
+  // Continue until: (1) all sets within ±15% of target, or (2) max 10 iterations
+  let lastImprovement = 0;
+  const MAX_ITERATIONS = 10;
+  const TOLERANCE = 0.15; // 15% variance acceptable
+  
+  for(let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
     const efforts = candidates.map(setEffort);
-    const avgE = efforts.reduce((a,b)=>a+b,0)/numSets;
-    for(let i=0;i<numSets;i++){
-      if(efforts[i] <= avgE*1.15) continue; // within 15% — ok
-      // Find heaviest non-mustplay song in this set
+    const avgE = efforts.reduce((a,b)=>a+b,0) / numSets;
+    const maxVar = Math.max(...efforts.map(e => Math.abs(e - avgE) / (avgE || 1)));
+    
+    // Check if converged
+    if(maxVar <= TOLERANCE) {
+      console.debug(`Effort balanced at iteration ${iteration}, variance: ${(maxVar * 100).toFixed(1)}%`);
+      break;
+    }
+    
+    let swapped = false;
+    
+    // Try swaps from heavy → light sets
+    for(let i = 0; i < numSets; i++) {
+      if(efforts[i] <= avgE * (1 + TOLERANCE)) continue; // Within tolerance
+      
       const heavy = [...candidates[i]]
-        .filter(s=>!mustPlay.has(s.id))
-        .sort((a,b)=>songEffort(b)-songEffort(a))[0];
+        .filter(s => !mustPlay.has(s.id))
+        .sort((a,b) => songEffort(b) - songEffort(a))[0];
       if(!heavy) continue;
-      // Find lightest non-mustplay song from a lighter set
-      for(let j=0;j<numSets;j++){
-        if(i===j||efforts[j]>=avgE) continue;
+      
+      // Find best light set to trade with
+      for(let j = 0; j < numSets; j++) {
+        if(i === j || efforts[j] >= avgE * (1 - TOLERANCE)) continue;
+        
         const light = [...candidates[j]]
-          .filter(s=>!mustPlay.has(s.id))
-          .sort((a,b)=>songEffort(a)-songEffort(b))[0];
+          .filter(s => !mustPlay.has(s.id))
+          .sort((a,b) => songEffort(a) - songEffort(b))[0];
         if(!light) continue;
-        // Only swap if it improves balance
-        const diffBefore = Math.abs(efforts[i]-efforts[j]);
-        const newI = efforts[i]-songEffort(heavy)+songEffort(light);
-        const newJ = efforts[j]-songEffort(light)+songEffort(heavy);
-        const diffAfter = Math.abs(newI-newJ);
-        if(diffAfter<diffBefore){
-          // Do the swap
-          candidates[i] = candidates[i].map(s=>s.id===heavy.id?light:s);
-          candidates[j] = candidates[j].map(s=>s.id===light.id?heavy:s);
+        
+        // Swap if it improves variance
+        const varBefore = Math.abs(efforts[i] - avgE) + Math.abs(efforts[j] - avgE);
+        const newI = efforts[i] - songEffort(heavy) + songEffort(light);
+        const newJ = efforts[j] - songEffort(light) + songEffort(heavy);
+        const varAfter = Math.abs(newI - avgE) + Math.abs(newJ - avgE);
+        
+        if(varAfter < varBefore) {
+          candidates[i] = candidates[i].map(s => s.id === heavy.id ? light : s);
+          candidates[j] = candidates[j].map(s => s.id === light.id ? heavy : s);
+          swapped = true;
+          lastImprovement = iteration;
           break;
         }
       }
+    }
+    
+    // If no swaps were made, we've likely converged
+    if(!swapped) {
+      console.debug(`Effort balancing stable at iteration ${iteration}`);
+      break;
     }
   }
 
@@ -363,9 +432,58 @@ function generate(){
   const total = sets.reduce((a,s)=>a+s.length,0);
   toast(tr('toast_generated')+total+tr('toast_songs_added'));
 }
+
+// ─── ENERGY CURVE OPTIMIZATION ──────────────────────────────────────────────
 function noConsecKey(a){
-  const r=[...a];
-  for(let i=1;i<r.length;i++){if(r[i].key===r[i-1].key&&i+1<r.length){const t=r[i];r[i]=r[i+1];r[i+1]=t;}}
+  // Better energy curve optimization: balance keys AND energy
+  const r = [...a];
+  const n = r.length;
+  if(n < 3) return r; // Too short to optimize
+  
+  // Pass 1: Avoid same key consecutively
+  for(let i=1; i<n; i++) {
+    if(r[i].key === r[i-1].key && i+1 < n) {
+      const t = r[i];
+      r[i] = r[i+1];
+      r[i+1] = t;
+    }
+  }
+  
+  // Pass 2: Avoid high-energy (>=4) songs consecutively
+  for(let i=1; i<n-1; i++) {
+    const curr = r[i].energy || 3;
+    const prev = r[i-1].energy || 3;
+    const next = r[i+1].energy || 3;
+    
+    // If current and next are both high energy, try to swap
+    if(curr >= 4 && next >= 4 && (i+2 < n || prev < 3)) {
+      // Find a lower energy song to swap with
+      for(let j = i+2; j < n; j++) {
+        if((r[j].energy || 3) < 4 && r[j].key !== r[i].key) {
+          [r[i+1], r[j]] = [r[j], r[i+1]];
+          break;
+        }
+      }
+    }
+  }
+  
+  // Pass 3: Build ascending energy curve toward end
+  // Final set should peak, penultimate should build to it
+  const finalIdx = n - 1;
+  const penultIdx = n - 2;
+  const anteIdx = n - 3;
+  
+  if(anteIdx >= 0 && penultIdx >= anteIdx) {
+    const energies = [r[anteIdx].energy || 3, r[penultIdx].energy || 3, r[finalIdx].energy || 3];
+    // Ideal: ante < penult < final
+    if(!(energies[0] < energies[1] && energies[1] < energies[2])) {
+      // Try small rotations to fix
+      if(energies[2] < energies[1] && energies[1] > energies[0]) {
+        [r[penultIdx], r[finalIdx]] = [r[finalIdx], r[penultIdx]];
+      }
+    }
+  }
+  
   return r;
 }
 
@@ -419,55 +537,145 @@ function sRow(s,i,si){
     <button class="srem" onclick="remFromSet(${si},${s.id})">×</button>
   </div>`;
 }
+// Event delegation for drag-drop: single listener on container instead of per-element
+// Prevents memory leak from attachDrag() being called on every render
 function attachDrag(){
-  document.querySelectorAll('.song-row').forEach(r=>{
-    r.addEventListener('dragstart',e=>{dragSrc=r;r.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
-    r.addEventListener('dragend',()=>{r.classList.remove('dragging');dragSrc=null;document.querySelectorAll('.song-row').forEach(x=>x.classList.remove('drag-over'));});
-    r.addEventListener('dragover',e=>{e.preventDefault();if(r!==dragSrc)r.classList.add('drag-over');});
-    r.addEventListener('dragleave',()=>r.classList.remove('drag-over'));
-    r.addEventListener('drop',e=>{
-      e.preventDefault();r.classList.remove('drag-over');
-      if(!dragSrc||dragSrc===r)return;
-      const ss=parseInt(dragSrc.dataset.si),si=parseInt(r.dataset.si);
-      if(ss!==si)return;
-      const set=sets[ss];
-      const fi=set.findIndex(s=>s.id===parseInt(dragSrc.dataset.id));
-      const ti=set.findIndex(s=>s.id===parseInt(r.dataset.id));
-      const[m]=set.splice(fi,1);set.splice(ti,0,m);
-      renderSets();
-    });
-  });
+  const area = document.getElementById('sets-area');
+  if(!area) return;
+  
+  // Use event delegation: handle bubbled events from song-row elements
+  const handleDragStart = (e) => {
+    if(!e.target.closest('.song-row')) return;
+    const row = e.target.closest('.song-row');
+    dragSrc = row;
+    row.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  };
+  
+  const handleDragEnd = (e) => {
+    if(dragSrc) dragSrc.classList.remove('dragging');
+    dragSrc = null;
+    document.querySelectorAll('.song-row').forEach(x => x.classList.remove('drag-over'));
+  };
+  
+  const handleDragOver = (e) => {
+    if(!e.target.closest('.song-row')) return;
+    e.preventDefault();
+    const row = e.target.closest('.song-row');
+    if(row !== dragSrc) row.classList.add('drag-over');
+  };
+  
+  const handleDragLeave = (e) => {
+    if(!e.target.closest('.song-row')) return;
+    const row = e.target.closest('.song-row');
+    row.classList.remove('drag-over');
+  };
+  
+  const handleDrop = (e) => {
+    if(!e.target.closest('.song-row')) return;
+    e.preventDefault();
+    const row = e.target.closest('.song-row');
+    row.classList.remove('drag-over');
+    
+    if(!dragSrc || dragSrc === row) return;
+    const ss = parseInt(dragSrc.dataset.si);
+    const si = parseInt(row.dataset.si);
+    if(ss !== si) return;
+    
+    const set = sets[ss];
+    const fi = set.findIndex(s => s.id === parseInt(dragSrc.dataset.id));
+    const ti = set.findIndex(s => s.id === parseInt(row.dataset.id));
+    const [m] = set.splice(fi, 1);
+    set.splice(ti, 0, m);
+    renderSets();
+  };
+  
+  // Remove old listeners (cleanup to prevent accumulation)
+  area.removeEventListener('dragstart', area._dragStart);
+  area.removeEventListener('dragend', area._dragEnd);
+  area.removeEventListener('dragover', area._dragOver);
+  area.removeEventListener('dragleave', area._dragLeave);
+  area.removeEventListener('drop', area._dragDrop);
+  
+  // Attach delegation listeners
+  area.addEventListener('dragstart', handleDragStart);
+  area.addEventListener('dragend', handleDragEnd);
+  area.addEventListener('dragover', handleDragOver);
+  area.addEventListener('dragleave', handleDragLeave);
+  area.addEventListener('drop', handleDrop);
+  
+  // Store references for cleanup on next render
+  area._dragStart = handleDragStart;
+  area._dragEnd = handleDragEnd;
+  area._dragOver = handleDragOver;
+  area._dragLeave = handleDragLeave;
+  area._dragDrop = handleDrop;
 }
 function remFromSet(si,id){sets[si]=sets[si].filter(s=>s.id!==id);renderSets();}
 
 // ─── NOTE MODAL ────────────────────────────────────────────────────────────
+// Use dataset attributes instead of global state to prevent corruption
 function openNoteModal(si, id){
-  noteModalContext = {si, id};
-  const song = sets[si]?.find(x=>x.id===id);
-  if(!song) return;
-  document.getElementById('m-note').value = song.note || '';
-  document.getElementById('note-modal').classList.add('open');
-}
-function closeNoteModal(){
-  document.getElementById('note-modal').classList.remove('open');
-  noteModalContext = {si: null, id: null};
-}
-function saveNote(){
-  const {si, id} = noteModalContext;
-  if(si === null || id === null) return;
-  if(!sets[si]) return;
-  const song = sets[si].find(x=>x.id===id);
-  if(song) {
-    song.note = document.getElementById('m-note').value.trim();
-    persist();
-    renderSets();
+  const song = sets[si]?.find(x => x.id === id);
+  if(!song) {
+    toast('Song not found in setlist');
+    return;
   }
+  
+  const modal = document.getElementById('note-modal');
+  if(!modal) return;
+  
+  // Store context in dataset (prevents stale state from previous opens)
+  modal.dataset.setIndex = si;
+  modal.dataset.songId = id;
+  
+  document.getElementById('m-note').value = song.note || '';
+  modal.classList.add('open');
+}
+
+function closeNoteModal(){
+  const modal = document.getElementById('note-modal');
+  if(!modal) return;
+  
+  modal.classList.remove('open');
+  // Clear dataset to prevent saveNote() from using stale data
+  delete modal.dataset.setIndex;
+  delete modal.dataset.songId;
+  document.getElementById('m-note').value = '';
+}
+
+function saveNote(){
+  const modal = document.getElementById('note-modal');
+  if(!modal) return;
+  
+  const si = parseInt(modal.dataset.setIndex);
+  const id = parseInt(modal.dataset.songId);
+  
+  // Validate state before proceeding
+  if(isNaN(si) || isNaN(id) || !sets[si]) {
+    toast('Invalid modal state: cannot save note');
+    closeNoteModal();
+    return;
+  }
+  
+  const song = sets[si].find(x => x.id === id);
+  if(!song) {
+    toast('Song no longer in setlist');
+    closeNoteModal();
+    return;
+  }
+  
+  const noteVal = document.getElementById('m-note').value.trim();
+  song.note = noteVal;
+  persist();
+  renderSets();
   closeNoteModal();
   toast('Note saved');
 }
+
 function setSongNote(si, id, val){
   if(!sets[si]) return;
-  const s = sets[si].find(x=>x.id===id);
+  const s = sets[si].find(x => x.id === id);
   if(s) s.note = val.trim();
 }
 
@@ -491,16 +699,42 @@ function saveNight(){
   renderShows();
 }
 function loadNight(id){
-  const n=nights.find(x=>x.id===id);if(!n)return;
-  sets=n.sets.map(s=>s.filter(song=>song&&song.id).map(song=>pool.find(p=>p.id===song.id)||song));
-  instrs=(Array.isArray(n.instrs)&&n.instrs.length>0)?n.instrs:['g'];
-  document.getElementById('night-title').value=n.title;
+  const n = nights.find(x=>x.id===id);
+  if(!n) {
+    toast('Saved night not found');
+    return;
+  }
+  
+  // Validate and reconstruct sets with proper error handling
+  const poolIdMap = {};
+  pool.forEach(s => { poolIdMap[s.id] = s; });
+  
+  sets = (n.sets || []).map(savedSet => {
+    return (savedSet || [])
+      .filter(song => song && song.id && poolIdMap[song.id])  // Only keep valid references
+      .map(song => poolIdMap[song.id]);
+  }).filter(set => set.length > 0);  // Remove empty sets
+  
+  if(sets.length === 0) {
+    toast('Could not reconstruct setlist (songs missing from pool)');
+    sets = [];
+    return;
+  }
+  
+  instrs = (Array.isArray(n.instrs) && n.instrs.length > 0) ? n.instrs : ['eg','b','dr','vo'];
+  document.getElementById('night-title').value = n.title;
+  
   // Update instrument chips
-  document.querySelectorAll('[id^="chip-"]').forEach(el=>el.classList.remove('on'));
-  const map={'eg':'eguitar','ag':'aguitar','b':'bass','dr':'drums','k':'keys','sx':'sax','tp':'trumpet','tb':'trombone','vo':'vocal','bv':'backing','pc':'percussion'};
-  instrs.forEach(i=>{const id=map[i];if(id)document.getElementById('chip-'+id)?.classList.add('on');});
-  renderSets();gotoView('builder');
-  document.querySelectorAll('.sv-item').forEach(el=>el.classList.toggle('cur',parseInt(el.dataset.id)===id));
+  document.querySelectorAll('[id^="chip-"]').forEach(el => el.classList.remove('on'));
+  const map = {'eg':'eguitar','ag':'aguitar','b':'bass','dr':'drums','k':'keys','sx':'sax','tp':'trumpet','tb':'trombone','vo':'vocal','bv':'backing','pc':'percussion'};
+  instrs.forEach(code => {
+    const chipId = map[code];
+    if(chipId) document.getElementById('chip-'+chipId)?.classList.add('on');
+  });
+  
+  renderSets();
+  gotoView('builder');
+  document.querySelectorAll('.sv-item').forEach(el => el.classList.toggle('cur', parseInt(el.dataset.id)===id));
 }
 function delNight(id){
   const n=nights.find(x=>x.id===id);
@@ -1209,6 +1443,16 @@ instrs.forEach(code=>{
   const el=document.getElementById('genre-'+g);
   if(el)el.addEventListener('change',()=>{clearTimeout(_genreTimer);_genreTimer=setTimeout(()=>generate(),150);});
 });
+
+// Add debounced event listener for pool search input
+const poolSearch = document.getElementById('pool-search');
+if(poolSearch){
+  poolSearch.addEventListener('input', () => {
+    clearTimeout(_poolSearchTimer);
+    _poolSearchTimer = setTimeout(() => renderPool(), 200); // 200ms debounce
+  });
+}
+
 generate();
   renderEffortWeights();
 }); // DOMContentLoaded

@@ -97,7 +97,7 @@ const DEFAULTS = [
   {id:87,title:"Girl from Ipanema",artist:"João Gilberto",genre:"Latin",key:"Dm",bpm:96,prog:"i–VI–III–VII",energy:2,instr:['eg','b','dr','k','sx'],effort:3},
   {id:88,title:"Man of Constant Sorrow",artist:"Old Crow Medicine Show",genre:"Country",key:"Am",bpm:100,prog:"i–III–VII–i",energy:3,instr:['eg','b','dr'],effort:2},
   {id:89,title:"Tell Me I'm Not Dreaming",artist:"Ray Parker Jr.",genre:"R&B",key:"G",bpm:100,prog:"I–IV–I–V",energy:4,instr:['eg','b','dr','k','sx'],effort:3},
-  {id:90,title:"Sexual Healing",artist:"Marvin Gaye",genre:"R&B",key:"Em",bpm:96,prog:"i–VI–III–VII",energy:3,instr:['eg','b','dr','k','sx'],effort:3},,
+  {id:90,title:"Sexual Healing",artist:"Marvin Gaye",genre:"R&B",key:"Em",bpm:96,prog:"i–VI–III–VII",energy:3,instr:['eg','b','dr','k','sx'],effort:3},
   {id:91,title:"Born Under a Bad Sign",artist:"Albert King",genre:"Blues",key:"C#m",bpm:92,prog:"i–IV–i–V",energy:4,instr:['eg','b','dr','k','sx','vo'],effort:3},
   {id:92,title:"Red House",artist:"Jimi Hendrix",genre:"Blues",key:"Bb",bpm:68,prog:"I–IV–V (12-bar)",energy:3,instr:['eg','b','dr','vo'],effort:3},
   {id:93,title:"The Sky Is Crying",artist:"Elmore James",genre:"Blues",key:"A",bpm:56,prog:"I–IV–I–V–IV–I",energy:2,instr:['eg','b','dr','vo'],effort:2},
@@ -308,7 +308,7 @@ const DEFAULTS = [
   {id:298,title:"El Rey",artist:"Vicente Fernández",genre:"Ranchera",key:"C",bpm:88,prog:"I–IV–V",energy:4,instr:['ag','b','tp','tb','vo'],effort:3},
   {id:299,title:"Payaso de Rodeo",artist:"Caballo Dorado",genre:"Ranchera",key:"G",bpm:130,prog:"I–IV–V",energy:4,instr:['eg','b','dr','k','vo','bv'],effort:4},
   {id:300,title:"Danza Kuduro",artist:"Don Omar",genre:"Reggaetón",key:"Gm",bpm:115,prog:"i–VII–VI–V",energy:5,instr:['b','dr','k','vo','bv'],effort:4},
-  {id:301,title:"Despacito",artist:"Luis Fonsi ft. Daddy Yankee",genre:"Reggaetón",key:"Bm",bpm:89,prog:"i–VI–III–VII",energy:4,instr:['ag','b','dr','k','pc','vo','bv'],effort:3},
+  {id:336,title:"Despacito (Reggaetón Version)",artist:"Luis Fonsi ft. Daddy Yankee",genre:"Reggaetón",key:"Bm",bpm:89,prog:"i–VI–III–VII",energy:4,instr:['ag','b','dr','k','pc','vo','bv'],effort:3},
   {id:302,title:"Tren al Sur",artist:"Los Prisioneros",genre:"Synth-Pop",key:"G",bpm:120,prog:"I–V–vi–IV",energy:3,instr:['k','b','dr','vo'],effort:2},
   {id:303,title:"Ni Tú Ni Nadie",artist:"Alaska y Dinarama",genre:"Synth-Pop",key:"Am",bpm:126,prog:"i–VII–VI–V",energy:3,instr:['k','b','dr','vo','bv'],effort:3},
   {id:304,title:"Matador",artist:"Los Fabulosos Cadillacs",genre:"Ska",key:"G",bpm:168,prog:"I–IV–V",energy:5,instr:['eg','b','dr','k','sx','tp','tb','vo','bv','pc'],effort:5},
@@ -346,11 +346,40 @@ const DEFAULTS = [
 ];
 
 
+// ─── SCHEMA VALIDATION ──────────────────────────────────────────────────────
+function validateSong(s) {
+  // Ensure all required fields exist with correct types
+  if(!s || typeof s !== 'object') return null;
+  return {
+    id: parseInt(s.id) || Math.random() * 10000,
+    title: String(s.title || '').trim() || 'Untitled',
+    artist: String(s.artist || '').trim() || 'Unknown',
+    genre: String(s.genre || 'Blues').trim(),
+    key: String(s.key || 'C').trim(),
+    bpm: Math.max(40, Math.min(250, parseInt(s.bpm) || 100)),
+    prog: String(s.prog || 'I-IV-V').trim().slice(0, 40),
+    energy: Math.min(5, Math.max(1, parseInt(s.energy) || 3)),
+    effort: Math.min(5, Math.max(1, parseInt(s.effort) || 2)),
+    instr: Array.isArray(s.instr) && s.instr.length 
+      ? s.instr.filter(i => ['eg','ag','b','dr','k','sx','tp','tb','vo','bv','pc'].includes(i))
+      : ['g'],
+    note: String(s.note || '').trim()
+  };
+}
+
 let pool = (()=>{
   try {
     const p = JSON.parse(localStorage.getItem('fmg-pool'));
-    return (Array.isArray(p) && p.length > 0) ? p : DEFAULTS;
-  } catch(e) { return DEFAULTS; }
+    if(Array.isArray(p) && p.length > 0) {
+      // Validate each song in loaded pool
+      const validated = p.map(s => validateSong(s)).filter(s => s && s.title !== 'Untitled');
+      return validated.length > 0 ? validated : DEFAULTS.map(validateSong);
+    }
+    return DEFAULTS.map(validateSong);
+  } catch(e) { 
+    console.warn('Pool load error, using DEFAULTS:', e);
+    return DEFAULTS.map(validateSong);
+  }
 })();
 let nights = (()=>{
   try {
@@ -372,7 +401,19 @@ let pf = 'all';
 let selectedGenres = ['Blues', 'Rock', 'Pop', 'Soul', 'Funk', 'R&B', 'Ballad', 'Reggae', 'Latin', 'Jazz', 'Country', 'Disco', 'R&B Modern', 'Funk/Soul', 'Rock Latino', 'Cumbia', 'Pop Latino', 'Balada', 'Merengue', 'Ranchera', 'Reggaetón', 'Synth-Pop', 'Rap Rock', 'Ska'];
 let editId = null;
 let dragSrc = null;
-let nextId = (pool.length ? Math.max(...pool.map(s=>s.id)) : 90) + 1;
+// Safe nextId calculation - ensures auto-increment avoids collisions with DEFAULTS (max id:336)
+let nextId = (() => {
+  try {
+    const maxId = pool.length ? Math.max(...pool.map(s => {
+      const id = parseInt(s.id);
+      return isFinite(id) ? id : 0;
+    })) : 90;
+    return Math.max(maxId + 1, 337); // 337 because last DEFAULTS id is 336
+  } catch(e) { 
+    console.warn('nextId calculation error:', e);
+    return 337; 
+  }
+})();
 let aiTab = 'lookup';
 let apiProvider = localStorage.getItem('fmg-api-provider') || 'claude';
 let apiKeys = {
