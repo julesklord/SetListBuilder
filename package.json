@@ -1,6 +1,6 @@
 {
   "name": "setmanager",
-  "version": "2.1.0",
+  "version": "1.0.0",
   "description": "Intelligent setlist generator for live musicians - Band Edition",
   "license": "MIT",
   "repository": {
@@ -59,25 +59,20 @@
     "responsiveness": "Mobile-first design"
   },
   "releases": {
-    "v2.1.0": {
+    "v1.0.0": {
       "date": "2026-03-29",
-      "status": "release-ready",
+      "status": "official-release",
       "breaking_changes": false,
       "major_features": [
-        "PWA Support (Offline-first)",
-        "Service Worker Caching",
-        "SEO & Metadata optimization",
-        "Schema validation system",
-        "Storage quota management",
-        "3-pass energy algorithm"
+        "First Stable Release",
+        "PWA Support & Offline-first",
+        "SEO & Metadata Optimized",
+        "3-pass Energy Balancing Algorithm",
+        "Storage Quota/Overflow System",
+        "Schema Validation (Songs)"
       ],
-      "bug_fixes": 12,
-      "performance_improvements": 5
-    },
-    "v1.0.0": {
-      "date": "2026-01-15",
-      "status": "legacy",
-      "deprecated": false
+      "bug_fixes": 25,
+      "performance_improvements": 10
     }
   },
   "documentation": {

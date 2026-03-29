@@ -1,7 +1,7 @@
 {
-  "name": "SetManager: Pro Setlist Builder",
+  "name": "SetManager: Pro Setlist Builder (v1.0.0)",
   "short_name": "SetManager",
-  "description": "Intelligent setlist generator for live musicians and bands.",
+  "description": "The official v1.0.0 release of the intelligent setlist generator for live musicians.",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#080706",
