@@ -40,3 +40,4 @@ yarn-debug.log*
 !README.md
 !CHANGELOG.md
 !RELEASE_NOTES.md
+.vscode/sessions.json
