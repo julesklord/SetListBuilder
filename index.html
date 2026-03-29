@@ -4,11 +4,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>FMG Setlist Builder</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.anthropic.com https://generativelanguage.googleapis.com https://api.openai.com; shadow-realm-src 'none';">
+  <title>SetManager // Setlist Builder for Professionals</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Professional setlist generator for live musicians and bands. Smart energy curve balancing, offline-first reliability, AI-assisted song lookup, and zero-dependency performance.">
+  <meta name="keywords" content="setlist, band, live music, musician, gig, setlist generator, song library, music management, digital setlist">
+  <meta name="author" content="Fearlessly Media Group">
+  <meta name="theme-color" content="#c49a3c">
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:title" content="SetManager Pro // Setlist Builder">
+  <meta property="og:description" content="Intelligent setlist balancing for live bands. Secure, offline-first, and professional-grade.">
+  <meta property="og:image" content="icons/icon.png">
+  <meta property="og:url" content="https://github.com/julesklord/SetListBuilder">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SetManager Pro // Setlist Builder">
+  <meta name="twitter:description" content="Optimize your live performance setlists with smart energy curve algorithms and offline-first reliability.">
+  <meta name="twitter:image" content="icons/icon.png">
+
+  <!-- PWA & Assets -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icons/icon.png">
+  <link rel="apple-touch-icon" href="icons/icon.png">
+
+  <!-- Fonts & Core Styles -->
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+      });
+    }
+  </script>
 </head>
 
 <body>
@@ -24,10 +59,10 @@
     <div style="display:flex;gap:3px;padding-left:1rem;border-left:0.5px solid var(--border2);">
       <button id="btn-dark" onclick="setTheme('dark')"
         style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-size:11px;cursor:pointer;transition:all .15s;"
-        title="Dark mode">🌙</button>
+        title="Dark mode" aria-label="Switch to dark theme">🌙</button>
       <button id="btn-light" onclick="setTheme('light')"
         style="padding:4px 8px;border:0.5px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--r);font-size:11px;cursor:pointer;transition:all .15s;"
-        title="Light mode">☀️</button>
+        title="Light mode" aria-label="Switch to light theme">☀️</button>
     </div>
     <div style="display:flex;gap:3px;padding-left:1rem;border-left:0.5px solid var(--border2);">
       <button class="lang-btn" data-lang="en" onclick="setLang('en')"
@@ -516,27 +551,27 @@
 
   <!-- Mobile: bottom navigation bar -->
   <div class="bottom-nav" id="bottom-nav">
-    <button class="bn-item active" id="bn-builder" onclick="gotoView('builder');setActiveBottomNav('builder')">
+    <button class="bn-item active" id="bn-builder" onclick="gotoView('builder');setActiveBottomNav('builder')" aria-label="Setlist Builder">
       <div class="bn-icon">♪</div>
       <span data-i18n="nav_builder">Builder</span>
     </button>
-    <button class="bn-item" id="bn-pool" onclick="gotoView('pool');setActiveBottomNav('pool')">
+    <button class="bn-item" id="bn-pool" onclick="gotoView('pool');setActiveBottomNav('pool')" aria-label="Song Pool">
       <div class="bn-icon">☰</div>
       <span data-i18n="nav_pool">Pool</span>
     </button>
-    <button class="bn-item" id="bn-shows" onclick="gotoView('shows');setActiveBottomNav('shows')">
+    <button class="bn-item" id="bn-shows" onclick="gotoView('shows');setActiveBottomNav('shows')" aria-label="Saved Shows">
       <div class="bn-icon">★</div>
       <span data-i18n="nav_shows">Shows</span>
     </button>
-    <button class="bn-item" id="bn-export" onclick="gotoView('export');setActiveBottomNav('export')">
+    <button class="bn-item" id="bn-export" onclick="gotoView('export');setActiveBottomNav('export')" aria-label="Export Setlist">
       <div class="bn-icon">↓</div>
       <span data-i18n="nav_export">Export</span>
     </button>
-    <button class="bn-item" id="bn-docs" onclick="gotoView('docs');setActiveBottomNav('docs')">
+    <button class="bn-item" id="bn-docs" onclick="gotoView('docs');setActiveBottomNav('docs')" aria-label="Documentation">
       <div class="bn-icon">?</div>
       <span data-i18n="nav_docs">Docs</span>
     </button>
-    <button class="bn-settings-btn" id="bn-settings" onclick="toggleMobileDrawer()">
+    <button class="bn-settings-btn" id="bn-settings" onclick="toggleMobileDrawer()" aria-label="Settings and Filters">
       <div class="bn-icon">⚙</div>
       <span>Settings</span>
     </button>

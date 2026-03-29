@@ -1,43 +1,53 @@
 
 # IDE & Editor
-.vscode/launch.json
-.vscode/settings.json
+.vscode/
 .idea/
+.gemini/
 *.swp
 *.swo
 *~
 .DS_Store
 Thumbs.db
 
-# Temporary Files
-DEBUG_REPORT.md
-CORRECTION_PLAN.md
-IMPROVEMENTS.md
-*.bak
-*.backup
+# Temporary & Internal
 temp/
 tmp/
-
-# Development
-node_modules/
-package-lock.json
-yarn.lock
-.env
-.env.local
-
-# Logs
+*.bak
+*.backup
 *.log
 npm-debug.log*
 yarn-debug.log*
+node_modules/
+package-lock.json
+yarn.lock
 
-# Archives
-/Previous Versions (will be archived separately)
+# Data & Validation (Hidden from Public)
+tests/
+validation-script.js
+"Previous Versions/"
 
-# Keep these
-!.git
-!.github/
+# Documentation Cleanup (Internal)
+docs/CORRECTION_PLAN.md
+docs/DEBUG_REPORT.md
+docs/IMPROVEMENTS.md
+docs/ORGANIZATION_COMPLETE.md
+docs/RELEASE_READY.txt
+docs/CHANGELOG_V1.md
+
+# Web Browser & System
+.env
+.env.local
+
+# Public Assets (Must keep)
 !LICENSE
 !README.md
 !CHANGELOG.md
 !RELEASE_NOTES.md
-.vscode/sessions.json
+!index.html
+!style.css
+!js/
+!icons/
+!manifest.json
+!sw.js
+!robots.txt
+!sitemap.xml

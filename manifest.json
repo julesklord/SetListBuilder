@@ -1,0 +1,19 @@
+{
+  "name": "SetManager: Pro Setlist Builder",
+  "short_name": "SetManager",
+  "description": "Intelligent setlist generator for live musicians and bands.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#080706",
+  "theme_color": "#c49a3c",
+  "icons": [
+    {
+      "src": "icons/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "orientation": "any",
+  "categories": ["music", "productivity"]
+}
