@@ -825,10 +825,6 @@ function setAICount(n){
 function toggleAIPanel(){
   // AI features disabled in FOSS version
   toast('AI features not available in this version');
-  return;
-  // eslint-disable-next-line no-unreachable
-  const p=document.getElementById('ai-panel');
-  p.classList.toggle('open');
 }
 function setAITab(t){
   aiTab=t;
