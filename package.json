@@ -29,8 +29,8 @@
   },
   "scripts": {
     "dev": "python -m http.server 8000",
-    "test": "echo \"See tests/README.md for testing instructions\"",
-    "validate": "echo \"Paste tests/validation-script.js content into browser DevTools console\""
+    "test": "node tests/run-tests.js",
+    "validate": "node tests/run-tests.js"
   },
   "browserslist": [
     ">= 1%",
