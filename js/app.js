@@ -2,6 +2,15 @@
 if(typeof pool==='undefined'){ window.pool=[];window.nights=[];window.sets=[];window.numSets=3;window.instrs=['g'];window.pf='all';window.selectedGenres=['Blues','Rock','Pop','Soul','R&B','Ballad'];window.editId=null;window.dragSrc=null;window.nextId=91;window.aiTab='lookup';window.apiProvider='claude';window.apiKeys={claude:'',gemini:'',chatgpt:''};window.mustPlay=new Set();window.DEFAULTS=[]; }
 if(typeof mustPlay==='undefined') window.mustPlay=new Set();
 if(typeof tr==='undefined') window.tr=function(k){return k;}
+function esc(str){
+  if(!str)return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 let _genreTimer; // genre debounce — module-level so all functions can access
 let _poolSearchTimer; // pool search debounce to avoid excessive rendering
 
@@ -510,7 +519,7 @@ function renderSets(){
       <div class="add-row">
         <select class="add-sel" id="as-${si}">
           <option value="">+ Add song…</option>
-          ${pool.map(s=>`<option value="${s.id}">${s.title} — ${s.artist}</option>`).join('')}
+          ${pool.map(s=>`<option value="${s.id}">${esc(s.title)} — ${esc(s.artist)}</option>`).join('')}
         </select>
         <button class="add-btn" onclick="addToSet(${si})">Add</button>
       </div>`;
@@ -527,11 +536,11 @@ function sRow(s,i,si){
     <span class="dh">⠿</span>
     <span class="snum">${i+1}</span>
     <div class="sinfo">
-      <div class="stitle">${mpIcon}${s.title}</div>
-      <div class="sartist">${s.artist}</div>
+      <div class="stitle">${mpIcon}${esc(s.title)}</div>
+      <div class="sartist">${esc(s.artist)}</div>
     </div>
-    <span class="skey">${s.key}</span><span class="sbpm">${s.bpm}</span>
-    <span class="sbadge b${gClass}">${s.genre}</span>
+    <span class="skey">${esc(s.key)}</span><span class="sbpm">${s.bpm}</span>
+    <span class="sbadge b${gClass}">${esc(s.genre)}</span>
     <div class="emini" title="Energy">${Array.from({length:5},(_,j)=>`<div class="ed${j<s.energy?' on':''}${j<s.energy&&s.energy>=4?' hi':''}"></div>`).join('')}</div>
     <button class="note-btn" onclick="openNoteModal(${si},${s.id})" title="Add note..." style="padding:4px 8px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:var(--r);cursor:pointer;font-size:12px;transition:all .15s;">${noteIndicator || '+ note'}</button>
     <button class="srem" onclick="remFromSet(${si},${s.id})">×</button>
@@ -754,8 +763,8 @@ function renderShows(){
     const songCount = n.sets ? n.sets.reduce((a,s)=>a+s.length,0) : 0;
     return `<div class="show-card">
       <div class="show-card-info">
-        <div class="show-card-title">${n.title}</div>
-        <div class="show-card-meta">${date ? date+' · ' : ''}${setCount} sets · ${songCount} songs</div>
+        <div class="show-card-title">${esc(n.title)}</div>
+        <div class="show-card-meta">${date ? esc(date)+' · ' : ''}${setCount} sets · ${songCount} songs</div>
       </div>
       <div class="show-card-actions">
         <button class="btn-xs" onclick="loadNight(${n.id})">Load</button>
@@ -770,8 +779,8 @@ function renderSaved(){
   if(!nights.length){el.innerHTML="<div class=\"sv-empty\">" + tr('no_saved') + "</div>";return;}
   el.innerHTML=nights.map(n=>`
     <div class="sv-item" data-id="${n.id}" onclick="loadNight(${n.id})">
-      <span class="sv-date">${n.date}</span>
-      <span class="sv-name">${n.title}</span>
+      <span class="sv-date">${esc(n.date)}</span>
+      <span class="sv-name">${esc(n.title)}</span>
       <button class="sv-del" onclick="event.stopPropagation();delNight(${n.id})">×</button>
     </div>`).join('');
 }
@@ -789,9 +798,9 @@ function renderPool(){
     const gClass=x.genre==='R&B'?'RnB':x.genre;
     return `<tr>
       <td style="color:var(--text3);font-family:var(--font-mono);font-size:10px;">${i+1}</td>
-      <td class="pt">${x.title}</td><td class="pa">${x.artist}</td>
-      <td><span class="sbadge b${gClass}">${x.genre}</span></td>
-      <td class="pk">${x.key}</td><td class="pb">${x.bpm}</td><td class="pe">${x.effort||2}</td><td class="pp">${x.prog}</td>
+      <td class="pt">${esc(x.title)}</td><td class="pa">${esc(x.artist)}</td>
+      <td><span class="sbadge b${gClass}">${esc(x.genre)}</span></td>
+      <td class="pk">${esc(x.key)}</td><td class="pb">${x.bpm}</td><td class="pe">${x.effort||2}</td><td class="pp">${esc(x.prog)}</td>
       <td><div class="pi">
         ${x.instr.includes('g')?'<div class="id id-g">G</div>':''}
         ${x.instr.includes('p')?'<div class="id id-p">P</div>':''}
@@ -977,8 +986,8 @@ Exact format: ${EXAMPLE}`;
     results.innerHTML=songs.map((s,i)=>`
       <div class="ai-result-item" id="air-${i}">
         <div class="ai-result-info">
-          <div class="ai-result-title">${s.title} — ${s.artist}</div>
-          <div class="ai-result-sub">${s.genre} · ${s.key} · ${s.bpm} BPM · ${s.prog}</div>
+          <div class="ai-result-title">${esc(s.title)} — ${esc(s.artist)}</div>
+          <div class="ai-result-sub">${esc(s.genre)} · ${esc(s.key)} · ${s.bpm} BPM · ${esc(s.prog)}</div>
         </div>
         <button class="ai-add-song-btn" onclick="addAISong(${i})">Add to pool</button>
       </div>`).join('');
@@ -1086,13 +1095,13 @@ function renderExport(){
   const title=document.getElementById('night-title').value||'Setlist';
   const date=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   const iNames=instrs.map(i=>({'eg':'El.Guitar','ag':'Ac.Guitar','b':'Bass','dr':'Drums','k':'Keys','sx':'Sax','tp':'Trumpet','tb':'Trombone','vo':'Vocal','bv':'BV','pc':'Perc'}[i])||i).join(', ');
-  let html=`<div class="exp-night">${title}</div><div class="exp-meta">${date} &nbsp;·&nbsp; ${iNames} &nbsp;·&nbsp; ${numSets} sets</div>`;
+  let html=`<div class="exp-night">${esc(title)}</div><div class="exp-meta">${esc(date)} &nbsp;·&nbsp; ${esc(iNames)} &nbsp;·&nbsp; ${numSets} sets</div>`;
   sets.forEach((songs,si)=>{
     html+=`<div class="exp-set"><div class="exp-set-title">Set ${si+1} — ${songs.length} songs · ~${durMin(songs)} min</div>
       ${songs.map((s,i)=>{
         const mp = mustPlay.has(s.id) ? '<span style="color:var(--gold);margin-right:3px;font-size:9px;">⚑</span>' : '';
-        const note = s.note ? `<div class="exp-note">${s.note}</div>` : '';
-        return `<div class="exp-row"><span class="en">${i+1}</span><span class="et">${mp}${s.title}</span><span class="ea">${s.artist}</span><span class="ek">${s.key}</span><span class="eb">${s.bpm}</span></div>${note}`;
+        const note = s.note ? `<div class="exp-note">${esc(s.note)}</div>` : '';
+        return `<div class="exp-row"><span class="en">${i+1}</span><span class="et">${mp}${esc(s.title)}</span><span class="ea">${esc(s.artist)}</span><span class="ek">${esc(s.key)}</span><span class="eb">${s.bpm}</span></div>${note}`;
       }).join('')}
     </div>`;
   });
@@ -1106,12 +1115,12 @@ function doExportHTML(){
   sets.forEach((songs,si)=>{
     rows+=`<div class="st">Set ${si+1} — ${songs.length} songs · ~${durMin(songs)} min</div>`;
     songs.forEach((s,idx)=>{
-      const note = s.note ? `<div class="note">${s.note}</div>` : '';
+      const note = s.note ? `<div class="note">${esc(s.note)}</div>` : '';
       const mp   = mustPlay.has(s.id) ? '<span class="mp">⚑</span>' : '';
-      rows+=`<div class="r"><span class="n">${idx+1}</span><span class="t">${mp}${s.title}</span><span class="a">${s.artist}</span><span class="k">${s.key}</span><span class="bpm">${s.bpm}</span></div>${note}`;
+      rows+=`<div class="r"><span class="n">${idx+1}</span><span class="t">${mp}${esc(s.title)}</span><span class="a">${esc(s.artist)}</span><span class="k">${esc(s.key)}</span><span class="bpm">${s.bpm}</span></div>${note}`;
     });
   });
-  const c=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${title} — FMG</title>
+  const c=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${esc(title)} — FMG</title>
   <style>
     body{font-family:Georgia,serif;background:#fff;color:#111;padding:2rem;max-width:680px;margin:0 auto;}
     h1{font-size:2rem;margin-bottom:3px;}
@@ -1127,8 +1136,8 @@ function doExportHTML(){
     .mp{color:#c49a3c;margin-right:3px;font-size:11px;}
     .brand{margin-top:3rem;padding-top:.75rem;border-top:1px solid #eee;font-size:10px;color:#aaa;font-family:monospace;}
   </style></head><body>
-  <h1>${title}</h1>
-  <div class="meta">${date} · ${iNames}</div>
+  <h1>${esc(title)}</h1>
+  <div class="meta">${esc(date)} · ${esc(iNames)}</div>
   ${rows}
   <div class="brand">Fearlessly Media Group · FMG Setlist Builder</div>
   </body></html>`;
@@ -1151,19 +1160,19 @@ function doExportPDF(){
   sets.forEach((songs,si)=>{
     rows+=`<div class="st">Set ${si+1} &nbsp;·&nbsp; ${songs.length} songs &nbsp;·&nbsp; ~${durMin(songs)} min</div>`;
     songs.forEach((s,idx)=>{
-      const note = s.note ? `<div class="note">${s.note}</div>` : '';
+      const note = s.note ? `<div class="note">${esc(s.note)}</div>` : '';
       const mp   = mustPlay.has(s.id) ? '<span class="mp">⚑</span> ' : '';
       rows+=`<div class="r">
         <span class="n">${idx+1}</span>
-        <span class="t">${mp}${s.title}</span>
-        <span class="a">${s.artist}</span>
-        <span class="k">${s.key}</span>
+        <span class="t">${mp}${esc(s.title)}</span>
+        <span class="a">${esc(s.artist)}</span>
+        <span class="k">${esc(s.key)}</span>
         <span class="bpm">${s.bpm}</span>
       </div>${note}`;
     });
   });
   w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>${title} — FMG</title>
+  <title>${esc(title)} — FMG</title>
   <style>
     @page{margin:1.5cm 2cm;}
     *{box-sizing:border-box;}
@@ -1186,7 +1195,7 @@ function doExportPDF(){
     .brand{margin-top:2rem;padding-top:.5rem;border-top:1px solid #eee;font-size:9px;color:#bbb;font-family:monospace;}
     @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
   </style></head><body>
-  <div class="cover"><h1>${title}</h1><div class="meta">${date} · ${iNames}</div></div>
+  <div class="cover"><h1>${esc(title)}</h1><div class="meta">${esc(date)} · ${esc(iNames)}</div></div>
   ${rows}
   <div class="brand">Fearlessly Media Group · FMG Setlist Builder</div>
   </body></html>`);
