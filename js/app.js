@@ -321,12 +321,12 @@ function generate(){
   updateGenreFilters();
   const durEl = document.getElementById('dur-sel');
   const dur = durEl ? parseInt(durEl.value)||45 : 45;
-  const sps = Math.max(5, Math.round(dur / 4.5));
+  const songsPerSet = Math.max(5, Math.round(dur / 4.5));
 
   // Eligible songs
   let elig = pool.filter(s=>s.instr.some(i=>instrs.includes(i))&&selectedGenres.includes(s.genre));
-  if(elig.length < sps*numSets) elig = pool.filter(s=>selectedGenres.includes(s.genre));
-  if(elig.length < sps*numSets) elig = [...pool];
+  if(elig.length < songsPerSet*numSets) elig = pool.filter(s=>selectedGenres.includes(s.genre));
+  if(elig.length < songsPerSet*numSets) elig = [...pool];
 
   const sh = a=>[...a].sort(()=>Math.random()-.5);
 
@@ -361,13 +361,14 @@ function generate(){
   let candidates = [];
   for(let i=0;i<numSets;i++){
     const setMp = mpSongs.slice(i*mpPerSet,(i+1)*mpPerSet);
-    const rem = sps - setMp.length;
+    const rem = songsPerSet - setMp.length;
     const last = i===numSets-1;
     const lN = Math.max(0,last?Math.floor(rem*.2):Math.floor(rem*.35));
     const hN = Math.max(0,last?Math.floor(rem*.4):Math.floor(rem*.25));
     const mN = Math.max(0,rem-lN-hN);
     let arr = [...setMp,...pick(low,lN,used),...pick(mid,mN,used),...pick(high,hN,used)];
-    if(arr.length<sps) arr=[...arr,...pick(fb,sps-arr.length,used)];
+    // FIX: fill gaps with fallback so every set reaches songsPerSet
+    if(arr.length<songsPerSet) arr=[...arr,...pick(fb,songsPerSet-arr.length,used)];
     candidates.push(noConsecKey(arr));
   }
 
