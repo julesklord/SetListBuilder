@@ -118,6 +118,7 @@ function importCSV(ev){
     const VALID_GENRES_LOWER = VALID_GENRES.map(g => g.toLowerCase());
     const INSTR_MAP = {g:'g',p:'p',v:'v',o:'o',guitar:'g',piano:'p',winds:'v',voice:'o'};
     let added = 0, skipped = 0;
+    const existingSongs = new Set(pool.map(x => `${x.title.toLowerCase()}|${x.artist.toLowerCase()}`));
     for(let i=1;i<lines.length;i++){
       const vals = parseCSVLine(lines[i]);
       if(vals.length < 3) continue;
@@ -126,7 +127,9 @@ function importCSV(ev){
       const title  = row.title?.trim();
       const artist = row.artist?.trim();
       if(!title||!artist){skipped++;continue;}
-      if(pool.find(x=>x.title.toLowerCase()===title.toLowerCase()&&x.artist.toLowerCase()===artist.toLowerCase())){skipped++;continue;}
+
+      const songKey = `${title.toLowerCase()}|${artist.toLowerCase()}`;
+      if(existingSongs.has(songKey)){skipped++;continue;}
       const instr = (row.instr || 'g').split(',').map(x => INSTR_MAP[x.trim().toLowerCase()]).filter(Boolean);
       const rowGenreLower = (row.genre || '').toLowerCase();
       const genreIdx = VALID_GENRES_LOWER.indexOf(rowGenreLower);
@@ -142,6 +145,7 @@ function importCSV(ev){
         effort:Math.min(5,Math.max(1,parseInt(row.effort)||2))
       };
       pool.push(song);
+      existingSongs.add(songKey);
       added++;
     }
     persist();
@@ -1070,9 +1074,12 @@ function importPoolJSON(e){
     try{
       const imported=JSON.parse(ev.target.result);
       let added=0;
+      const existingSongs = new Set(pool.map(x => `${x.title.toLowerCase()}|${x.artist.toLowerCase()}`));
       imported.forEach(s=>{
-        if(!pool.find(x=>x.title.toLowerCase()===s.title.toLowerCase()&&x.artist.toLowerCase()===s.artist.toLowerCase())){
+        const songKey = `${s.title.toLowerCase()}|${s.artist.toLowerCase()}`;
+        if(!existingSongs.has(songKey)){
           pool.push({...s,id:nextId++});added++;
+          existingSongs.add(songKey);
         }
       });
       persist();renderPool();toast(added+tr('toast_imported'));
