@@ -215,7 +215,7 @@ const models = {
 let selectedModel = localStorage.getItem('fmg-ai-model') || 'gemini-2.5-flash';
 
 // ─── API KEY ─────────────────────────────────────────────────────────────────
-function initApiBar(){ /* AI disabled in FOSS version */ }
+
 function updateModelSelector() {
   const modelSelect = document.getElementById('ai-model');
   const providerModels = models[apiProvider] || [];
@@ -242,7 +242,7 @@ function updateApiLabel() {
   setTheme(localStorage.getItem('fmg-theme')||'dark');
 setLang(currentLang);
 renderDocs();
-initApiBar();
+
 }
 function saveApiKey() {
   const val = document.getElementById('api-key-input').value.trim();
@@ -250,7 +250,7 @@ function saveApiKey() {
   if(val.length < 10){toast('API key seems too short');return;}
   apiKeys[apiProvider] = val;
   localStorage.setItem('fmg-api-key-'+apiProvider, val);
-  initApiBar();
+
   toast(tr('toast_api_saved')+' '+apiProvider);
 }
 
@@ -1429,7 +1429,7 @@ document.addEventListener('DOMContentLoaded', function() {
 setTheme(localStorage.getItem('fmg-theme') || 'dark');
 setLang(currentLang);
 renderDocs();
-initApiBar();
+
 // Initialize aiSongCount from storage
 aiSongCount = parseInt(localStorage.getItem('fmg-ai-count') || '5');
 document.querySelectorAll('.ai-count-btn').forEach(b=>{
