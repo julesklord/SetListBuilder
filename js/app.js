@@ -544,7 +544,7 @@ function sRow(s,i,si){
       <div class="stitle">${mpIcon}${esc(s.title)}</div>
       <div class="sartist">${esc(s.artist)}</div>
     </div>
-    <span class="skey">${esc(s.key)}</span><span class="sbpm">${s.bpm}</span>
+    <span class="skey">${esc(s.key)}</span><span class="sbpm">${esc(s.bpm)}</span>
     <span class="sbadge b${gClass}">${esc(s.genre)}</span>
     <div class="emini" title="Energy">${Array.from({length:5},(_,j)=>`<div class="ed${j<s.energy?' on':''}${j<s.energy&&s.energy>=4?' hi':''}"></div>`).join('')}</div>
     <button class="note-btn" onclick="openNoteModal(${si},${s.id})" title="Add note..." style="padding:4px 8px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:var(--r);cursor:pointer;font-size:12px;transition:all .15s;">${noteIndicator || '+ note'}</button>
@@ -805,7 +805,7 @@ function renderPool(){
       <td style="color:var(--text3);font-family:var(--font-mono);font-size:10px;">${i+1}</td>
       <td class="pt">${esc(x.title)}</td><td class="pa">${esc(x.artist)}</td>
       <td><span class="sbadge b${gClass}">${esc(x.genre)}</span></td>
-      <td class="pk">${esc(x.key)}</td><td class="pb">${x.bpm}</td><td class="pe">${x.effort||2}</td><td class="pp">${esc(x.prog)}</td>
+      <td class="pk">${esc(x.key)}</td><td class="pb">${esc(x.bpm)}</td><td class="pe">${x.effort||2}</td><td class="pp">${esc(x.prog)}</td>
       <td><div class="pi">
         ${x.instr.includes('g')?'<div class="id id-g">G</div>':''}
         ${x.instr.includes('p')?'<div class="id id-p">P</div>':''}
@@ -988,7 +988,7 @@ Exact format: ${EXAMPLE}`;
       <div class="ai-result-item" id="air-${i}">
         <div class="ai-result-info">
           <div class="ai-result-title">${esc(s.title)} — ${esc(s.artist)}</div>
-          <div class="ai-result-sub">${esc(s.genre)} · ${esc(s.key)} · ${s.bpm} BPM · ${esc(s.prog)}</div>
+          <div class="ai-result-sub">${esc(s.genre)} · ${esc(s.key)} · ${esc(s.bpm)} BPM · ${esc(s.prog)}</div>
         </div>
         <button class="ai-add-song-btn" onclick="addAISong(${i})">Add to pool</button>
       </div>`).join('');
@@ -1105,7 +1105,7 @@ function renderExport(){
       ${songs.map((s,i)=>{
         const mp = mustPlay.has(s.id) ? '<span style="color:var(--gold);margin-right:3px;font-size:9px;">⚑</span>' : '';
         const note = s.note ? `<div class="exp-note">${esc(s.note)}</div>` : '';
-        return `<div class="exp-row"><span class="en">${i+1}</span><span class="et">${mp}${esc(s.title)}</span><span class="ea">${esc(s.artist)}</span><span class="ek">${esc(s.key)}</span><span class="eb">${s.bpm}</span></div>${note}`;
+        return `<div class="exp-row"><span class="en">${i+1}</span><span class="et">${mp}${esc(s.title)}</span><span class="ea">${esc(s.artist)}</span><span class="ek">${esc(s.key)}</span><span class="eb">${esc(s.bpm)}</span></div>${note}`;
       }).join('')}
     </div>`;
   });
@@ -1121,7 +1121,7 @@ function doExportHTML(){
     songs.forEach((s,idx)=>{
       const note = s.note ? `<div class="note">${esc(s.note)}</div>` : '';
       const mp   = mustPlay.has(s.id) ? '<span class="mp">⚑</span>' : '';
-      rows+=`<div class="r"><span class="n">${idx+1}</span><span class="t">${mp}${esc(s.title)}</span><span class="a">${esc(s.artist)}</span><span class="k">${esc(s.key)}</span><span class="bpm">${s.bpm}</span></div>${note}`;
+      rows+=`<div class="r"><span class="n">${idx+1}</span><span class="t">${mp}${esc(s.title)}</span><span class="a">${esc(s.artist)}</span><span class="k">${esc(s.key)}</span><span class="bpm">${esc(s.bpm)}</span></div>${note}`;
     });
   });
   const c=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${esc(title)} — FMG</title>
@@ -1171,7 +1171,7 @@ function doExportPDF(){
         <span class="t">${mp}${esc(s.title)}</span>
         <span class="a">${esc(s.artist)}</span>
         <span class="k">${esc(s.key)}</span>
-        <span class="bpm">${s.bpm}</span>
+        <span class="bpm">${esc(s.bpm)}</span>
       </div>${note}`;
     });
   });
@@ -1213,7 +1213,7 @@ function doExportText(){
   let t=title.toUpperCase()+'\n'+'─'.repeat(title.length)+'\n\n';
   sets.forEach((songs,si)=>{
     t+=`SET ${si+1}  (~${durMin(songs)} min)\n${'─'.repeat(22)}\n`;
-    songs.forEach((s,i)=>{t+=`${String(i+1).padStart(2,'0')}. ${s.title} — ${s.artist}  [${s.key} · ${s.bpm} BPM]\n`;});
+    songs.forEach((s,i)=>{t+=`${String(i+1).padStart(2,'0')}. ${s.title} — ${s.artist}  [${s.key} · ${esc(s.bpm)} BPM]\n`;});
     t+='\n';
   });
   t+='Fearlessly Media Group';
