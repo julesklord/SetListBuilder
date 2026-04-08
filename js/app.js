@@ -867,7 +867,7 @@ function cleanJSON(raw) {
   
   // Fix common issues without breaking the JSON
   // Replace smart quotes with regular quotes (outside of JSON strings)
-  clean = clean.replace(/[""]/g, '"').replace(/[']/g, "'");
+  clean = clean.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
   
   // Remove problematic control characters but keep newlines in context
   clean = clean.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
