@@ -533,7 +533,7 @@ function renderSets(){
   attachDrag();
 }
 function sRow(s,i,si){
-  const gClass=s.genre==='R&B'?'RnB':s.genre;
+  const gClass=esc(s.genre==='R&B'?'RnB':s.genre);
   const mpIcon = mustPlay.has(s.id) ? '<span class="mp-icon" title="Must Play">⚑</span>' : '';
   const effortDots = Array.from({length:5},(_,j)=>`<div class="efd${j<(s.effort||2)?' on':''}"></div>`).join('');
   const noteIndicator = s.note ? '<span style="color:var(--gold);font-size:11px;">✎</span>' : '';
@@ -800,12 +800,12 @@ function renderPool(){
   const pc=document.getElementById('pool-count');
   if(pc)pc.textContent=s.length+' / '+pool.length;
   document.getElementById('pool-tbody').innerHTML=s.map((x,i)=>{
-    const gClass=x.genre==='R&B'?'RnB':x.genre;
+    const gClass=esc(x.genre==='R&B'?'RnB':x.genre);
     return `<tr>
       <td style="color:var(--text3);font-family:var(--font-mono);font-size:10px;">${i+1}</td>
       <td class="pt">${esc(x.title)}</td><td class="pa">${esc(x.artist)}</td>
-      <td><span class="sbadge b${esc(gClass)}">${esc(x.genre)}</span></td>
-      <td class="pk">${esc(x.key)}</td><td class="pb">${esc(x.bpm)}</td><td class="pe">${x.effort||2}</td><td class="pp">${esc(x.prog)}</td>
+      <td><span class="sbadge b${gClass}">${esc(x.genre)}</span></td>
+      <td class="pk">${esc(x.key)}</td><td class="pb">${esc(x.bpm)}</td><td class="pe">${esc(x.effort||2)}</td><td class="pp">${esc(x.prog)}</td>
       <td><div class="pi">
         ${x.instr.includes('g')?'<div class="id id-g">G</div>':''}
         ${x.instr.includes('p')?'<div class="id id-p">P</div>':''}
@@ -867,7 +867,7 @@ function cleanJSON(raw) {
   
   // Fix common issues without breaking the JSON
   // Replace smart quotes with regular quotes (outside of JSON strings)
-  clean = clean.replace(/[""]/g, '"').replace(/[']/g, "'");
+  clean = clean.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
   
   // Remove problematic control characters but keep newlines in context
   clean = clean.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
@@ -984,14 +984,37 @@ Exact format: ${EXAMPLE}`;
     status.className='ai-status ok';
     status.textContent=songs.length+' song'+(songs.length!==1?'s':'')+' found';
     aiResults = songs;
-    results.innerHTML=songs.map((s,i)=>`
-      <div class="ai-result-item" id="air-${i}">
-        <div class="ai-result-info">
-          <div class="ai-result-title">${esc(s.title)} — ${esc(s.artist)}</div>
-          <div class="ai-result-sub">${esc(s.genre)} · ${esc(s.key)} · ${esc(s.bpm)} BPM · ${esc(s.prog)}</div>
-        </div>
-        <button class="ai-add-song-btn" onclick="addAISong(${i})">Add to pool</button>
-      </div>`).join('');
+    // Secure rendering to prevent XSS
+    results.innerHTML = '';
+    songs.forEach((s, i) => {
+      const item = document.createElement('div');
+      item.className = 'ai-result-item';
+      item.id = `air-${i}`;
+
+      const info = document.createElement('div');
+      info.className = 'ai-result-info';
+
+      const titleDiv = document.createElement('div');
+      titleDiv.className = 'ai-result-title';
+      titleDiv.textContent = `${s.title} — ${s.artist}`;
+
+      const subDiv = document.createElement('div');
+      subDiv.className = 'ai-result-sub';
+      subDiv.textContent = `${s.genre} · ${s.key} · ${s.bpm} BPM · ${s.prog}`;
+
+      info.appendChild(titleDiv);
+      info.appendChild(subDiv);
+
+      const btn = document.createElement('button');
+      btn.className = 'ai-add-song-btn';
+      btn.textContent = 'Add to pool';
+      btn.onclick = () => addAISong(i);
+
+      item.appendChild(info);
+      item.appendChild(btn);
+
+      results.appendChild(item);
+    });
   } catch(e) {
     status.className='ai-status err';
     status.textContent='Error: '+e.message;
