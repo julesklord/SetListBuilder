@@ -984,14 +984,37 @@ Exact format: ${EXAMPLE}`;
     status.className='ai-status ok';
     status.textContent=songs.length+' song'+(songs.length!==1?'s':'')+' found';
     aiResults = songs;
-    results.innerHTML=songs.map((s,i)=>`
-      <div class="ai-result-item" id="air-${i}">
-        <div class="ai-result-info">
-          <div class="ai-result-title">${esc(s.title)} — ${esc(s.artist)}</div>
-          <div class="ai-result-sub">${esc(s.genre)} · ${esc(s.key)} · ${esc(s.bpm)} BPM · ${esc(s.prog)}</div>
-        </div>
-        <button class="ai-add-song-btn" onclick="addAISong(${i})">Add to pool</button>
-      </div>`).join('');
+    // Secure rendering to prevent XSS
+    results.innerHTML = '';
+    songs.forEach((s, i) => {
+      const item = document.createElement('div');
+      item.className = 'ai-result-item';
+      item.id = `air-${i}`;
+
+      const info = document.createElement('div');
+      info.className = 'ai-result-info';
+
+      const titleDiv = document.createElement('div');
+      titleDiv.className = 'ai-result-title';
+      titleDiv.textContent = `${s.title} — ${s.artist}`;
+
+      const subDiv = document.createElement('div');
+      subDiv.className = 'ai-result-sub';
+      subDiv.textContent = `${s.genre} · ${s.key} · ${s.bpm} BPM · ${s.prog}`;
+
+      info.appendChild(titleDiv);
+      info.appendChild(subDiv);
+
+      const btn = document.createElement('button');
+      btn.className = 'ai-add-song-btn';
+      btn.textContent = 'Add to pool';
+      btn.onclick = () => addAISong(i);
+
+      item.appendChild(info);
+      item.appendChild(btn);
+
+      results.appendChild(item);
+    });
   } catch(e) {
     status.className='ai-status err';
     status.textContent='Error: '+e.message;
