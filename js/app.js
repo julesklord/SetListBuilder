@@ -533,7 +533,7 @@ function renderSets(){
   attachDrag();
 }
 function sRow(s,i,si){
-  const gClass=s.genre==='R&B'?'RnB':s.genre;
+  const gClass=esc(s.genre==='R&B'?'RnB':s.genre);
   const mpIcon = mustPlay.has(s.id) ? '<span class="mp-icon" title="Must Play">⚑</span>' : '';
   const effortDots = Array.from({length:5},(_,j)=>`<div class="efd${j<(s.effort||2)?' on':''}"></div>`).join('');
   const noteIndicator = s.note ? '<span style="color:var(--gold);font-size:11px;">✎</span>' : '';
@@ -800,12 +800,12 @@ function renderPool(){
   const pc=document.getElementById('pool-count');
   if(pc)pc.textContent=s.length+' / '+pool.length;
   document.getElementById('pool-tbody').innerHTML=s.map((x,i)=>{
-    const gClass=x.genre==='R&B'?'RnB':x.genre;
+    const gClass=esc(x.genre==='R&B'?'RnB':x.genre);
     return `<tr>
       <td style="color:var(--text3);font-family:var(--font-mono);font-size:10px;">${i+1}</td>
       <td class="pt">${esc(x.title)}</td><td class="pa">${esc(x.artist)}</td>
       <td><span class="sbadge b${gClass}">${esc(x.genre)}</span></td>
-      <td class="pk">${esc(x.key)}</td><td class="pb">${esc(x.bpm)}</td><td class="pe">${x.effort||2}</td><td class="pp">${esc(x.prog)}</td>
+      <td class="pk">${esc(x.key)}</td><td class="pb">${esc(x.bpm)}</td><td class="pe">${esc(x.effort||2)}</td><td class="pp">${esc(x.prog)}</td>
       <td><div class="pi">
         ${x.instr.includes('g')?'<div class="id id-g">G</div>':''}
         ${x.instr.includes('p')?'<div class="id id-p">P</div>':''}
