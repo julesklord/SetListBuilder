@@ -520,13 +520,13 @@ function renderSets(){
         <span class="set-hdr-meta">${songs.length} songs · ~${durMin(songs)} min</span>
         <div class="ebar"><div class="ebar-fill" style="width:${ep}%"></div></div>
       </div>
-      <div id="ss-${si}">${songs.map((s,i)=>sRow(s,i,si)).join('')}</div>
+      <div id="ss-${esc(si)}">${songs.map((s,i)=>sRow(s,i,si)).join('')}</div>
       <div class="add-row">
-        <select class="add-sel" id="as-${si}">
+        <select class="add-sel" id="as-${esc(si)}">
           <option value="">+ Add song…</option>
-          ${pool.map(s=>`<option value="${s.id}">${esc(s.title)} — ${esc(s.artist)}</option>`).join('')}
+          ${pool.map(s=>`<option value="${esc(s.id)}">${esc(s.title)} — ${esc(s.artist)}</option>`).join('')}
         </select>
-        <button class="add-btn" onclick="addToSet(${si})">Add</button>
+        <button class="add-btn" onclick="addToSet(${esc(si)})">Add</button>
       </div>`;
     area.appendChild(card);
   });
@@ -537,7 +537,7 @@ function sRow(s,i,si){
   const mpIcon = mustPlay.has(s.id) ? '<span class="mp-icon" title="Must Play">⚑</span>' : '';
   const effortDots = Array.from({length:5},(_,j)=>`<div class="efd${j<(s.effort||2)?' on':''}"></div>`).join('');
   const noteIndicator = s.note ? '<span style="color:var(--gold);font-size:11px;">✎</span>' : '';
-  return `<div class="song-row" draggable="true" data-id="${s.id}" data-si="${si}">
+  return `<div class="song-row" draggable="true" data-id="${esc(s.id)}" data-si="${esc(si)}">
     <span class="dh">⠿</span>
     <span class="snum">${i+1}</span>
     <div class="sinfo">
@@ -545,10 +545,10 @@ function sRow(s,i,si){
       <div class="sartist">${esc(s.artist)}</div>
     </div>
     <span class="skey">${esc(s.key)}</span><span class="sbpm">${esc(s.bpm)}</span>
-    <span class="sbadge b${gClass}">${esc(s.genre)}</span>
+    <span class="sbadge b${esc(gClass)}">${esc(s.genre)}</span>
     <div class="emini" title="Energy">${Array.from({length:5},(_,j)=>`<div class="ed${j<s.energy?' on':''}${j<s.energy&&s.energy>=4?' hi':''}"></div>`).join('')}</div>
-    <button class="note-btn" onclick="openNoteModal(${si},${s.id})" title="Add note..." style="padding:4px 8px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:var(--r);cursor:pointer;font-size:12px;transition:all .15s;">${noteIndicator || '+ note'}</button>
-    <button class="srem" onclick="remFromSet(${si},${s.id})">×</button>
+    <button class="note-btn" onclick="openNoteModal(${esc(si)},${esc(s.id)})" title="Add note..." style="padding:4px 8px;background:transparent;border:0.5px solid var(--border2);color:var(--text3);border-radius:var(--r);cursor:pointer;font-size:12px;transition:all .15s;">${noteIndicator || '+ note'}</button>
+    <button class="srem" onclick="remFromSet(${esc(si)},${esc(s.id)})">×</button>
   </div>`;
 }
 // Event delegation for drag-drop: single listener on container instead of per-element
@@ -772,8 +772,8 @@ function renderShows(){
         <div class="show-card-meta">${date ? esc(date)+' · ' : ''}${setCount} sets · ${songCount} songs</div>
       </div>
       <div class="show-card-actions">
-        <button class="btn-xs" onclick="loadNight(${n.id})">Load</button>
-        <button class="btn-xs" style="color:var(--text3)" onclick="delNight(${n.id})">×</button>
+        <button class="btn-xs" onclick="loadNight(${esc(n.id)})">Load</button>
+        <button class="btn-xs" style="color:var(--text3)" onclick="delNight(${esc(n.id)})">×</button>
       </div>
     </div>`;
   }).join('');
@@ -783,10 +783,10 @@ function renderSaved(){
   const el=document.getElementById('saved-list');
   if(!nights.length){el.innerHTML="<div class=\"sv-empty\">" + tr('no_saved') + "</div>";return;}
   el.innerHTML=nights.map(n=>`
-    <div class="sv-item" data-id="${n.id}" onclick="loadNight(${n.id})">
+    <div class="sv-item" data-id="${esc(n.id)}" onclick="loadNight(${esc(n.id)})">
       <span class="sv-date">${esc(n.date)}</span>
       <span class="sv-name">${esc(n.title)}</span>
-      <button class="sv-del" onclick="event.stopPropagation();delNight(${n.id})">×</button>
+      <button class="sv-del" onclick="event.stopPropagation();delNight(${esc(n.id)})">×</button>
     </div>`).join('');
 }
 
@@ -804,7 +804,7 @@ function renderPool(){
     return `<tr>
       <td style="color:var(--text3);font-family:var(--font-mono);font-size:10px;">${i+1}</td>
       <td class="pt">${esc(x.title)}</td><td class="pa">${esc(x.artist)}</td>
-      <td><span class="sbadge b${gClass}">${esc(x.genre)}</span></td>
+      <td><span class="sbadge b${esc(gClass)}">${esc(x.genre)}</span></td>
       <td class="pk">${esc(x.key)}</td><td class="pb">${esc(x.bpm)}</td><td class="pe">${x.effort||2}</td><td class="pp">${esc(x.prog)}</td>
       <td><div class="pi">
         ${x.instr.includes('g')?'<div class="id id-g">G</div>':''}
@@ -812,9 +812,9 @@ function renderPool(){
         ${x.instr.includes('v')?'<div class="id id-v">V</div>':''}
       </div></td>
       <td style="white-space:nowrap;display:flex;gap:3px;align-items:center;">
-        <button class="lock-btn${mustPlay.has(x.id)?' locked':''}" data-id="${x.id}" onclick="toggleMustPlay(${x.id})" title="${mustPlay.has(x.id)?'Remove Must Play':'Mark as Must Play'}">⚑</button>
-        <button class="eb-btn" onclick="openEdit(${x.id})">Edit</button>
-        <button class="dl-btn" onclick="delSong(${x.id})">×</button>
+        <button class="lock-btn${mustPlay.has(x.id)?' locked':''}" data-id="${esc(x.id)}" onclick="toggleMustPlay(${esc(x.id)})" title="${mustPlay.has(x.id)?'Remove Must Play':'Mark as Must Play'}">⚑</button>
+        <button class="eb-btn" onclick="openEdit(${esc(x.id)})">Edit</button>
+        <button class="dl-btn" onclick="delSong(${esc(x.id)})">×</button>
       </td>
     </tr>`;
   }).join('');
