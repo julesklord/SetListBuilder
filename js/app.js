@@ -319,48 +319,35 @@ function updateGenreFilters(){
   });
   if(!selectedGenres.length) selectedGenres = [...ALL_GENRES];
 }
-function generate(){
-  if(typeof mustPlay==='undefined') mustPlay=new Set();
-  if(!pool||!pool.length){toast('Pool empty — add songs first');return;}
-  updateGenreFilters();
-  const durEl = document.getElementById('dur-sel');
-  const dur = durEl ? parseInt(durEl.value)||45 : 45;
-  const songsPerSet = Math.max(5, Math.round(dur / 4.5));
+// Effort score for a song given current instrument weights
+function songEffort(s){
+  const w = s.instr.reduce((max,i)=>Math.max(max, effortWeights[i]||1.0), 1.0);
+  return (s.effort||2) * w;
+}
 
-  // Eligible songs
+// Total effort for a set
+function setEffort(arr){ return arr.reduce((t,s)=>t+songEffort(s),0); }
+
+function getEligibleSongs(pool, instrs, selectedGenres, targetCount) {
   let elig = pool.filter(s=>s.instr.some(i=>instrs.includes(i))&&selectedGenres.includes(s.genre));
-  if(elig.length < songsPerSet*numSets) elig = pool.filter(s=>selectedGenres.includes(s.genre));
-  if(elig.length < songsPerSet*numSets) elig = [...pool];
+  if(elig.length < targetCount) elig = pool.filter(s=>selectedGenres.includes(s.genre));
+  if(elig.length < targetCount) elig = [...pool];
+  return elig;
+}
 
+function pick(arr,n,usedSet){
+  const o=[];
+  for(const s of arr){if(o.length>=n)break;if(!usedSet.has(s.id)){o.push(s);usedSet.add(s.id);}}
+  return o;
+}
+
+function buildCandidateSets(mpSongs, free, songsPerSet, numSets, usedSet) {
   const sh = a=>[...a].sort(()=>Math.random()-.5);
-
-  // Must-play songs (distributed evenly)
-  const mpSongs = [...mustPlay].map(id=>pool.find(s=>s.id===id)).filter(Boolean);
-  const used = new Set(mpSongs.map(s=>s.id));
-  const free = elig.filter(s=>!mustPlay.has(s.id));
-
-  // Effort score for a song given current instrument weights
-  function songEffort(s){
-    const w = s.instr.reduce((max,i)=>Math.max(max, effortWeights[i]||1.0), 1.0);
-    return (s.effort||2) * w;
-  }
-
-  // Total effort for a set
-  function setEffort(arr){ return arr.reduce((t,s)=>t+songEffort(s),0); }
-
-  // Energy buckets
   const low  = sh(free.filter(s=>s.energy<=2));
   const mid  = sh(free.filter(s=>s.energy===3));
   const high = sh(free.filter(s=>s.energy>=4));
   const fb   = sh(free);
 
-  function pick(arr,n,usedSet){
-    const o=[];
-    for(const s of arr){if(o.length>=n)break;if(!usedSet.has(s.id)){o.push(s);usedSet.add(s.id);}}
-    return o;
-  }
-
-  // Build candidate sets
   const mpPerSet = Math.ceil(mpSongs.length/numSets);
   let candidates = [];
   for(let i=0;i<numSets;i++){
@@ -370,20 +357,16 @@ function generate(){
     const lN = Math.max(0,last?Math.floor(rem*.2):Math.floor(rem*.35));
     const hN = Math.max(0,last?Math.floor(rem*.4):Math.floor(rem*.25));
     const mN = Math.max(0,rem-lN-hN);
-    let arr = [...setMp,...pick(low,lN,used),...pick(mid,mN,used),...pick(high,hN,used)];
+    let arr = [...setMp,...pick(low,lN,usedSet),...pick(mid,mN,usedSet),...pick(high,hN,usedSet)];
     // FIX: fill gaps with fallback so every set reaches songsPerSet
-    if(arr.length<songsPerSet) arr=[...arr,...pick(fb,songsPerSet-arr.length,used)];
+    if(arr.length<songsPerSet) arr=[...arr,...pick(fb,songsPerSet-arr.length,usedSet)];
     candidates.push(noConsecKey(arr));
   }
+  return candidates;
+}
 
+function balanceEffort(candidates, mustPlay, numSets) {
   // Improved effort balancing: iterate until distribution stabilizes or max iterations
-  // Target effort per set
-  const totalEffort = candidates.flat().reduce((t,s)=>t+songEffort(s),0);
-  const targetEffort = totalEffort / numSets;
-
-  // Swap pass: for each set above target, try to swap with lighter sets
-  // Continue until: (1) all sets within ±15% of target, or (2) max 10 iterations
-  let lastImprovement = 0;
   const MAX_ITERATIONS = 10;
   const TOLERANCE = 0.15; // 15% variance acceptable
   
@@ -428,7 +411,6 @@ function generate(){
           candidates[i] = candidates[i].map(s => s.id === heavy.id ? light : s);
           candidates[j] = candidates[j].map(s => s.id === light.id ? heavy : s);
           swapped = true;
-          lastImprovement = iteration;
           break;
         }
       }
@@ -440,6 +422,27 @@ function generate(){
       break;
     }
   }
+  return candidates;
+}
+
+function generate(){
+  if(typeof mustPlay==='undefined') mustPlay=new Set();
+  if(!pool||!pool.length){toast('Pool empty — add songs first');return;}
+  updateGenreFilters();
+  const durEl = document.getElementById('dur-sel');
+  const dur = durEl ? parseInt(durEl.value)||45 : 45;
+  const songsPerSet = Math.max(5, Math.round(dur / 4.5));
+  const targetCount = songsPerSet * numSets;
+
+  const elig = getEligibleSongs(pool, instrs, selectedGenres, targetCount);
+
+  // Must-play songs (distributed evenly)
+  const mpSongs = [...mustPlay].map(id=>pool.find(s=>s.id===id)).filter(Boolean);
+  const used = new Set(mpSongs.map(s=>s.id));
+  const free = elig.filter(s=>!mustPlay.has(s.id));
+
+  let candidates = buildCandidateSets(mpSongs, free, songsPerSet, numSets, used);
+  candidates = balanceEffort(candidates, mustPlay, numSets);
 
   sets = candidates;
   renderSets();
