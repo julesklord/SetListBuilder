@@ -25,6 +25,7 @@ function assertEqual(actual, expected, message) {
 
 // Extract cleanJSON function from js/app.js for testing
 const appJsPath = path.join(__dirname, '../js/app.js');
+const songsJsContent = fs.readFileSync(path.join(__dirname, '../js/songs.js'), 'utf8');
 const appJsContent = fs.readFileSync(appJsPath, 'utf8');
 
 // Mock browser environment required by app.js
@@ -64,6 +65,7 @@ global.setTimeout = () => {};
 // Using new Function is cleaner than eval for avoiding strict mode issues
 // but eval is fine here since we control the scope
 try {
+  eval(songsJsContent);
   eval(appJsContent);
 } catch (e) {
   console.log("Error evaluating app.js, proceeding anyway assuming functions are loaded: ", e.message);
@@ -107,6 +109,27 @@ runTest('Removes problematic control characters but keeps newlines', () => {
   assertEqual(cleanJSON('[{"test": 1}]\x00\x08\n[{"test": 2}]'), '[{"test": 1}]\n[{"test": 2}]');
 });
 
+console.groupEnd();
+
+// 3. Tests for API Key Encryption
+console.group('\n✅ Test Group: API Key Encryption');
+runTest('encryptApiKey adds ENC: prefix', () => {
+  const encrypted = encryptApiKey('sk-ant-test-key');
+  assertEqual(encrypted.startsWith('ENC:'), true);
+});
+
+runTest('decryptApiKey restores original key', () => {
+  const originalKey = 'sk-ant-api03-abcdefg-12345';
+  const encrypted = encryptApiKey(originalKey);
+  const decrypted = decryptApiKey(encrypted);
+  assertEqual(decrypted, originalKey);
+});
+
+runTest('decryptApiKey handles legacy plaintext keys', () => {
+  const legacyKey = 'sk-old-plaintext-key';
+  const decrypted = decryptApiKey(legacyKey);
+  assertEqual(decrypted, legacyKey);
+});
 console.groupEnd();
 
 console.log(`\n=============================================`);

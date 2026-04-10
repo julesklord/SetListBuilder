@@ -415,11 +415,41 @@ let nextId = (() => {
   }
 })();
 let aiTab = 'lookup';
+
+// ─── SECURITY ────────────────────────────────────────────────────────────────
+const CRYPTO_KEY = "FMG_V2_PROD_KEY_2024";
+
+function encryptApiKey(plaintext) {
+  if (!plaintext) return '';
+  let encrypted = '';
+  for (let i = 0; i < plaintext.length; i++) {
+    encrypted += String.fromCharCode(plaintext.charCodeAt(i) ^ CRYPTO_KEY.charCodeAt(i % CRYPTO_KEY.length));
+  }
+  return 'ENC:' + btoa(encrypted);
+}
+
+function decryptApiKey(ciphertext) {
+  if (!ciphertext) return '';
+  if (!ciphertext.startsWith('ENC:')) {
+    return ciphertext; // Legacy plaintext
+  }
+  try {
+    let decoded = atob(ciphertext.slice(4));
+    let decrypted = '';
+    for (let i = 0; i < decoded.length; i++) {
+      decrypted += String.fromCharCode(decoded.charCodeAt(i) ^ CRYPTO_KEY.charCodeAt(i % CRYPTO_KEY.length));
+    }
+    return decrypted;
+  } catch (e) {
+    return '';
+  }
+}
+
 let apiProvider = localStorage.getItem('fmg-api-provider') || 'claude';
 let apiKeys = {
-  claude: localStorage.getItem('fmg-api-key-claude') || '',
-  gemini: localStorage.getItem('fmg-api-key-gemini') || '',
-  chatgpt: localStorage.getItem('fmg-api-key-chatgpt') || ''
+  claude: decryptApiKey(localStorage.getItem('fmg-api-key-claude')) || '',
+  gemini: decryptApiKey(localStorage.getItem('fmg-api-key-gemini')) || '',
+  chatgpt: decryptApiKey(localStorage.getItem('fmg-api-key-chatgpt')) || ''
 };
 
 // ─── TRANSLATIONS ────────────────────────────────────────────────────────────
