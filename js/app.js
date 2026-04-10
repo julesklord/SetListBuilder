@@ -1271,25 +1271,8 @@ function setTheme(t){
 }
 
 // ─── DOCS RENDERER ───────────────────────────────────────────────────────────
-function renderDocs(){
-  const area = document.getElementById('docs-area');
-  if(!area) return;
-  const T = (k) => tr(k) || '';
-  const L = currentLang;
-  const kbd = (t) => '<span class="docs-kbd">'+t+'</span>';
-  const h3 = (t) => '<h3>'+t+'</h3>';
-  const step = (n, txt) => '<div class="docs-step"><div class="docs-step-n">'+n+'</div><p>'+txt+'</p></div>';
-  const li = function(){ return '<ul>'+Array.from(arguments).map(function(i){return '<li>'+i+'</li>';}).join('')+'</ul>'; };
-  const tip = (title, body) => '<li><strong>'+title+'</strong> '+body+'</li>';
-
-  function loc(en, es, pt, ru){
-    if(L==='es') return es;
-    if(L==='pt') return pt;
-    if(L==='ru') return ru;
-    return en;
-  }
-
-  const warn = '<div class="docs-warning"><strong>'+
+function getDocsWarning(loc) {
+  return '<div class="docs-warning"><strong>'+
     loc('Important:','Importante:','Importante:','Важно:')+
     '</strong> '+
     loc(
@@ -1310,148 +1293,198 @@ function renderDocs(){
     ' <a href="https://console.anthropic.com" target="_blank">Anthropic</a> | '+
     '<a href="https://aistudio.google.com/apikey" target="_blank">Google</a> | '+
     '<a href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a>.</div>';
+}
+
+function renderDocsHero(T) {
+  return '<div class="docs-hero">'+
+    '<h1>FMG Setlist Builder</h1>'+
+    '<p>'+T('docs_hero_p')+'</p>'+
+  '</div>';
+}
+
+function renderDocsGettingStarted(T, loc, step, kbd) {
+  return '<div class="docs-section">'+
+    '<h2>'+T('docs_getting_started')+'</h2>'+
+    step(1, loc(
+      'Select the <strong>instruments available tonight</strong> in the sidebar. Choose any combination of Guitar, Piano, and Winds.',
+      'Selecciona los <strong>instrumentos disponibles esta noche</strong> en el sidebar.',
+      'Selecione os <strong>instrumentos disponíveis esta noite</strong> no sidebar.',
+      'Выберите <strong>доступные инструменты</strong> в боковой панели.'
+    ))+
+    step(2, loc(
+      'Choose the <strong>number of sets</strong> (2, 3, or 4) and <strong>duration per set</strong>.',
+      'Elige el <strong>número de sets</strong> (2, 3 o 4) y la <strong>duración por set</strong>.',
+      'Escolha o <strong>número de sets</strong> (2, 3 ou 4) e a <strong>duração por set</strong>.',
+      'Выберите <strong>количество сетов</strong> (2, 3 или 4) и <strong>длительность</strong>.'
+    ))+
+    step(3, loc(
+      'Select which <strong>genres to include</strong>. Check the boxes in the sidebar.',
+      'Selecciona los <strong>géneros a incluir</strong>. Marca las casillas en el sidebar.',
+      'Selecione os <strong>gêneros a incluir</strong>. Marque as caixas no sidebar.',
+      'Выберите <strong>жанры для включения</strong>. Отметьте в боковой панели.'
+    ))+
+    step(4,
+      loc('Click','Haz clic en','Clique em','Нажмите')+' '+
+      kbd('Generate Setlist')+'. '+
+      T('docs_energy_p')
+    )+
+    step(5, loc(
+      'Drag and drop songs within a set to reorder them. Use '+kbd('×')+' to remove a song.',
+      'Arrastra y suelta canciones para reordenarlas. Usa '+kbd('×')+' para eliminar.',
+      'Arraste e solte músicas para reordená-las. Use '+kbd('×')+' para remover.',
+      'Перетаскивайте песни для изменения порядка. Используйте '+kbd('×')+' для удаления.'
+    ))+
+    step(6,
+      loc('Give your setlist a name and click','Da un nombre y haz clic en','Dê um nome e clique em','Дайте название и нажмите')+' '+
+      kbd('Export')+' '+
+      loc('to download.','para descargar.','para baixar.','для скачивания.')
+    )+
+  '</div>';
+}
+
+function renderDocsInstrGen(T, loc, h3) {
+  return '<div class="docs-section">'+
+    '<h2>'+T('docs_instr_gen')+'</h2>'+
+    '<p>'+loc(
+      'The generator intelligently prioritizes songs based on your selected instruments and genres.',
+      'El generador prioriza canciones según los instrumentos y géneros seleccionados.',
+      'O gerador prioriza músicas com base nos instrumentos e gêneros selecionados.',
+      'Генератор приоритизирует песни по выбранным инструментам и жанрам.'
+    )+'</p>'+
+    h3(loc('How instruments work','Cómo funcionan los instrumentos','Como os instrumentos funcionam','Как работают инструменты'))+
+    '<p>'+T('docs_instr_hint')+'</p>'+
+    h3(T('docs_energy_title'))+
+    '<p>'+T('docs_energy_p')+'</p>'+
+    '<ul><li>'+T('docs_energy_1')+'</li><li>'+T('docs_energy_2')+'</li></ul>'+
+    '<p>'+T('docs_energy_note')+'</p>'+
+  '</div>';
+}
+
+function renderDocsAi(T, loc, warn, h3) {
+  return '<div class="docs-section">'+
+    '<h2>'+T('docs_ai')+'</h2>'+
+    warn+
+    h3(T('docs_ai_provider'))+
+    '<p>'+T('docs_ai_provider_p')+'</p>'+
+    h3(loc('Song lookup','Búsqueda de canción','Busca de música','Поиск песни'))+
+    '<p>'+T('docs_ai_lookup_p')+'</p>'+
+    h3(loc('Suggest by mood','Sugerir por mood','Sugerir por mood','Предложить по настроению'))+
+    '<p>'+T('docs_ai_suggest_p')+'</p>'+
+  '</div>';
+}
+
+function renderDocsPool(T, li) {
+  return '<div class="docs-section">'+
+    '<h2>'+T('docs_pool')+'</h2>'+
+    '<p>'+T('docs_pool_p')+'</p>'+
+    li(T('docs_pool_li1'),T('docs_pool_li2'),T('docs_pool_li3'),T('docs_pool_li4'),T('docs_pool_li5'))+
+    '<p>'+T('docs_pool_instr_p')+'</p>'+
+  '</div>';
+}
+
+function renderDocsExportShare(T, li) {
+  return '<div class="docs-section">'+
+    '<h2>'+T('docs_export_share')+'</h2>'+
+    '<p>'+T('docs_export_p')+'</p>'+
+    li(T('docs_export_li1'),T('docs_export_li2'),T('docs_export_li3'),T('docs_export_li4'),T('docs_export_li5'))+
+  '</div>';
+}
+
+function renderDocsGithub(T, loc, step) {
+  return '<div class="docs-section">'+
+    '<h2>'+T('docs_github')+'</h2>'+
+    '<p>'+T('docs_github_p')+'</p>'+
+    step(1,
+      loc('Create a GitHub account at','Crea una cuenta en','Crie uma conta em','Создайте аккаунт на')+
+      ' <a href="https://github.com" target="_blank">github.com</a>.'
+    )+
+    step(2,
+      loc(
+        'Create a new public repository (e.g. <code>fmg-setlist</code>).',
+        'Crea un repositorio público (ej. <code>fmg-setlist</code>).',
+        'Crie um repositório público (ex. <code>fmg-setlist</code>).',
+        'Создайте новый публичный репозиторий (напр. <code>fmg-setlist</code>).'
+      )
+    )+
+    step(3,
+      loc('Rename this file to','Renombra este archivo a','Renomeie este arquivo para','Переименуйте файл в')+
+      ' <code>index.html</code> '+
+      loc('and upload it to the repository.','y súbelo al repositorio.','e envie ao repositório.','и загрузите в репозиторий.')
+    )+
+    step(4,
+      loc('Go to','Ve a','Vá em','Перейдите в')+
+      ' <strong>Settings → Pages → Source → main branch</strong>. '+
+      loc('Save.','Guarda.','Salve.','Сохраните.')
+    )+
+    step(5,
+      loc(
+        'In a few minutes your app will be live at',
+        'En unos minutos tu app estará en',
+        'Em alguns minutos seu app estará em',
+        'Через несколько минут приложение будет доступно на'
+      )+
+      ' <code>yourusername.github.io/fmg-setlist</code>.'
+    )+
+    '<p style="margin-top:.75rem;">'+T('docs_github_note')+'</p>'+
+  '</div>';
+}
+
+function renderDocsTips(T, tip) {
+  return '<div class="docs-section">'+
+    '<h2>'+T('docs_tips')+'</h2>'+
+    '<ul>'+
+      tip(T('docs_tip1_title'), T('docs_tip1'))+
+      tip(T('docs_tip2_title'), T('docs_tip2'))+
+      tip(T('docs_tip3_title'), T('docs_tip3'))+
+      tip(T('docs_tip4_title'), T('docs_tip4'))+
+      tip(T('docs_tip5_title'), T('docs_tip5'))+
+      tip(T('docs_tip6_title'), T('docs_tip6'))+
+    '</ul>'+
+  '</div>';
+}
+
+function renderDocsFooter(T) {
+  return '<hr class="docs-divider">'+
+    '<div class="docs-fmg">'+
+      '<div class="docs-fmg-logo">Fearlessly Media Group</div>'+
+      '<div class="docs-fmg-text">'+T('docs_built')+'<br>'+T('docs_version')+'</div>'+
+    '</div>';
+}
+
+function renderDocs(){
+  const area = document.getElementById('docs-area');
+  if(!area) return;
+  const T = (k) => tr(k) || '';
+  const L = currentLang;
+  const kbd = (t) => '<span class="docs-kbd">'+t+'</span>';
+  const h3 = (t) => '<h3>'+t+'</h3>';
+  const step = (n, txt) => '<div class="docs-step"><div class="docs-step-n">'+n+'</div><p>'+txt+'</p></div>';
+  const li = function(){ return '<ul>'+Array.from(arguments).map(function(i){return '<li>'+i+'</li>';}).join('')+'</ul>'; };
+  const tip = (title, body) => '<li><strong>'+title+'</strong> '+body+'</li>';
+
+  function loc(en, es, pt, ru){
+    if(L==='es') return es;
+    if(L==='pt') return pt;
+    if(L==='ru') return ru;
+    return en;
+  }
+
+  const warn = getDocsWarning(loc);
 
   area.innerHTML =
     '<div class="docs-inner">'+
-      '<div class="docs-hero">'+
-        '<h1>FMG Setlist Builder</h1>'+
-        '<p>'+T('docs_hero_p')+'</p>'+
-      '</div>'+
-
-      '<div class="docs-section">'+
-        '<h2>'+T('docs_getting_started')+'</h2>'+
-        step(1, loc(
-          'Select the <strong>instruments available tonight</strong> in the sidebar. Choose any combination of Guitar, Piano, and Winds.',
-          'Selecciona los <strong>instrumentos disponibles esta noche</strong> en el sidebar.',
-          'Selecione os <strong>instrumentos disponíveis esta noite</strong> no sidebar.',
-          'Выберите <strong>доступные инструменты</strong> в боковой панели.'
-        ))+
-        step(2, loc(
-          'Choose the <strong>number of sets</strong> (2, 3, or 4) and <strong>duration per set</strong>.',
-          'Elige el <strong>número de sets</strong> (2, 3 o 4) y la <strong>duración por set</strong>.',
-          'Escolha o <strong>número de sets</strong> (2, 3 ou 4) e a <strong>duração por set</strong>.',
-          'Выберите <strong>количество сетов</strong> (2, 3 или 4) и <strong>длительность</strong>.'
-        ))+
-        step(3, loc(
-          'Select which <strong>genres to include</strong>. Check the boxes in the sidebar.',
-          'Selecciona los <strong>géneros a incluir</strong>. Marca las casillas en el sidebar.',
-          'Selecione os <strong>gêneros a incluir</strong>. Marque as caixas no sidebar.',
-          'Выберите <strong>жанры для включения</strong>. Отметьте в боковой панели.'
-        ))+
-        step(4,
-          loc('Click','Haz clic en','Clique em','Нажмите')+' '+
-          kbd('Generate Setlist')+'. '+
-          T('docs_energy_p')
-        )+
-        step(5, loc(
-          'Drag and drop songs within a set to reorder them. Use '+kbd('×')+' to remove a song.',
-          'Arrastra y suelta canciones para reordenarlas. Usa '+kbd('×')+' para eliminar.',
-          'Arraste e solte músicas para reordená-las. Use '+kbd('×')+' para remover.',
-          'Перетаскивайте песни для изменения порядка. Используйте '+kbd('×')+' для удаления.'
-        ))+
-        step(6,
-          loc('Give your setlist a name and click','Da un nombre y haz clic en','Dê um nome e clique em','Дайте название и нажмите')+' '+
-          kbd('Export')+' '+
-          loc('to download.','para descargar.','para baixar.','для скачивания.')
-        )+
-      '</div>'+
-
-      '<div class="docs-section">'+
-        '<h2>'+T('docs_instr_gen')+'</h2>'+
-        '<p>'+loc(
-          'The generator intelligently prioritizes songs based on your selected instruments and genres.',
-          'El generador prioriza canciones según los instrumentos y géneros seleccionados.',
-          'O gerador prioriza músicas com base nos instrumentos e gêneros selecionados.',
-          'Генератор приоритизирует песни по выбранным инструментам и жанрам.'
-        )+'</p>'+
-        h3(loc('How instruments work','Cómo funcionan los instrumentos','Como os instrumentos funcionam','Как работают инструменты'))+
-        '<p>'+T('docs_instr_hint')+'</p>'+
-        h3(T('docs_energy_title'))+
-        '<p>'+T('docs_energy_p')+'</p>'+
-        '<ul><li>'+T('docs_energy_1')+'</li><li>'+T('docs_energy_2')+'</li></ul>'+
-        '<p>'+T('docs_energy_note')+'</p>'+
-      '</div>'+
-
-      '<div class="docs-section">'+
-        '<h2>'+T('docs_ai')+'</h2>'+
-        warn+
-        h3(T('docs_ai_provider'))+
-        '<p>'+T('docs_ai_provider_p')+'</p>'+
-        h3(loc('Song lookup','Búsqueda de canción','Busca de música','Поиск песни'))+
-        '<p>'+T('docs_ai_lookup_p')+'</p>'+
-        h3(loc('Suggest by mood','Sugerir por mood','Sugerir por mood','Предложить по настроению'))+
-        '<p>'+T('docs_ai_suggest_p')+'</p>'+
-      '</div>'+
-
-      '<div class="docs-section">'+
-        '<h2>'+T('docs_pool')+'</h2>'+
-        '<p>'+T('docs_pool_p')+'</p>'+
-        li(T('docs_pool_li1'),T('docs_pool_li2'),T('docs_pool_li3'),T('docs_pool_li4'),T('docs_pool_li5'))+
-        '<p>'+T('docs_pool_instr_p')+'</p>'+
-      '</div>'+
-
-      '<div class="docs-section">'+
-        '<h2>'+T('docs_export_share')+'</h2>'+
-        '<p>'+T('docs_export_p')+'</p>'+
-        li(T('docs_export_li1'),T('docs_export_li2'),T('docs_export_li3'),T('docs_export_li4'),T('docs_export_li5'))+
-      '</div>'+
-
-      '<div class="docs-section">'+
-        '<h2>'+T('docs_github')+'</h2>'+
-        '<p>'+T('docs_github_p')+'</p>'+
-        step(1,
-          loc('Create a GitHub account at','Crea una cuenta en','Crie uma conta em','Создайте аккаунт на')+
-          ' <a href="https://github.com" target="_blank">github.com</a>.'
-        )+
-        step(2,
-          loc(
-            'Create a new public repository (e.g. <code>fmg-setlist</code>).',
-            'Crea un repositorio público (ej. <code>fmg-setlist</code>).',
-            'Crie um repositório público (ex. <code>fmg-setlist</code>).',
-            'Создайте новый публичный репозиторий (напр. <code>fmg-setlist</code>).'
-          )
-        )+
-        step(3,
-          loc('Rename this file to','Renombra este archivo a','Renomeie este arquivo para','Переименуйте файл в')+
-          ' <code>index.html</code> '+
-          loc('and upload it to the repository.','y súbelo al repositorio.','e envie ao repositório.','и загрузите в репозиторий.')
-        )+
-        step(4,
-          loc('Go to','Ve a','Vá em','Перейдите в')+
-          ' <strong>Settings → Pages → Source → main branch</strong>. '+
-          loc('Save.','Guarda.','Salve.','Сохраните.')
-        )+
-        step(5,
-          loc(
-            'In a few minutes your app will be live at',
-            'En unos minutos tu app estará en',
-            'Em alguns minutos seu app estará em',
-            'Через несколько минут приложение будет доступно на'
-          )+
-          ' <code>yourusername.github.io/fmg-setlist</code>.'
-        )+
-        '<p style="margin-top:.75rem;">'+T('docs_github_note')+'</p>'+
-      '</div>'+
-
-      '<div class="docs-section">'+
-        '<h2>'+T('docs_tips')+'</h2>'+
-        '<ul>'+
-          tip(T('docs_tip1_title'), T('docs_tip1'))+
-          tip(T('docs_tip2_title'), T('docs_tip2'))+
-          tip(T('docs_tip3_title'), T('docs_tip3'))+
-          tip(T('docs_tip4_title'), T('docs_tip4'))+
-          tip(T('docs_tip5_title'), T('docs_tip5'))+
-          tip(T('docs_tip6_title'), T('docs_tip6'))+
-        '</ul>'+
-      '</div>'+
-
-      '<hr class="docs-divider">'+
-      '<div class="docs-fmg">'+
-        '<div class="docs-fmg-logo">Fearlessly Media Group</div>'+
-        '<div class="docs-fmg-text">'+T('docs_built')+'<br>'+T('docs_version')+'</div>'+
-      '</div>'+
+      renderDocsHero(T)+
+      renderDocsGettingStarted(T, loc, step, kbd)+
+      renderDocsInstrGen(T, loc, h3)+
+      renderDocsAi(T, loc, warn, h3)+
+      renderDocsPool(T, li)+
+      renderDocsExportShare(T, li)+
+      renderDocsGithub(T, loc, step)+
+      renderDocsTips(T, tip)+
+      renderDocsFooter(T)+
     '</div>';
 }
+
 
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
