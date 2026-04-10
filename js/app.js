@@ -253,7 +253,7 @@ function saveApiKey() {
   if (!val || val.startsWith('••')) return;
   if(val.length < 10){toast('API key seems too short');return;}
   apiKeys[apiProvider] = val;
-  localStorage.setItem('fmg-api-key-'+apiProvider, val);
+  localStorage.setItem('fmg-api-key-'+apiProvider, encryptApiKey(val));
 
   toast(tr('toast_api_saved')+' '+apiProvider);
 }
