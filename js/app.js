@@ -14,6 +14,17 @@ function esc(str){
 let _genreTimer; // genre debounce — module-level so all functions can access
 let _poolSearchTimer; // pool search debounce to avoid excessive rendering
 
+// ─── CONSTANTS ──────────────────────────────────────────────────────────────
+const INSTR_DISPLAY_NAMES = {
+  'eg': 'El.Guitar', 'ag': 'Ac.Guitar', 'b': 'Bass', 'dr': 'Drums', 'k': 'Keys',
+  'sx': 'Sax', 'tp': 'Trumpet', 'tb': 'Trombone', 'vo': 'Vocal', 'bv': 'BV', 'pc': 'Perc'
+};
+
+const INSTR_CODE_TO_NAME = {
+  eg: 'eguitar', ag: 'aguitar', b: 'bass', dr: 'drums', k: 'keys', sx: 'sax',
+  tp: 'trumpet', tb: 'trombone', vo: 'vocal', bv: 'backing', pc: 'percussion'
+};
+
 // ─── APP ────────────────────────────────────────────────────────────────────
 // Depends on: songs.js → i18n.js → app.js (load order matters)
 
@@ -743,9 +754,8 @@ function loadNight(id){
   
   // Update instrument chips
   document.querySelectorAll('[id^="chip-"]').forEach(el => el.classList.remove('on'));
-  const map = {'eg':'eguitar','ag':'aguitar','b':'bass','dr':'drums','k':'keys','sx':'sax','tp':'trumpet','tb':'trombone','vo':'vocal','bv':'backing','pc':'percussion'};
   instrs.forEach(code => {
-    const chipId = map[code];
+    const chipId = INSTR_CODE_TO_NAME[code];
     if(chipId) document.getElementById('chip-'+chipId)?.classList.add('on');
   });
   
@@ -1124,7 +1134,7 @@ function renderExport(){
   }
   const title=document.getElementById('night-title').value||'Setlist';
   const date=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const iNames=instrs.map(i=>({'eg':'El.Guitar','ag':'Ac.Guitar','b':'Bass','dr':'Drums','k':'Keys','sx':'Sax','tp':'Trumpet','tb':'Trombone','vo':'Vocal','bv':'BV','pc':'Perc'}[i])||i).join(', ');
+  const iNames=instrs.map(i=>INSTR_DISPLAY_NAMES[i]||i).join(', ');
   let html=`<div class="exp-night">${esc(title)}</div><div class="exp-meta">${esc(date)} &nbsp;·&nbsp; ${esc(iNames)} &nbsp;·&nbsp; ${numSets} sets</div>`;
   sets.forEach((songs,si)=>{
     html+=`<div class="exp-set"><div class="exp-set-title">Set ${si+1} — ${songs.length} songs · ~${durMin(songs)} min</div>
@@ -1140,7 +1150,7 @@ function renderExport(){
 function doExportHTML(){
   const title=document.getElementById('night-title').value||'Setlist';
   const date=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const iNames=instrs.map(i=>({'eg':'El.Guitar','ag':'Ac.Guitar','b':'Bass','dr':'Drums','k':'Keys','sx':'Sax','tp':'Trumpet','tb':'Trombone','vo':'Vocal','bv':'BV','pc':'Perc'}[i])||i).join(', ');
+  const iNames=instrs.map(i=>INSTR_DISPLAY_NAMES[i]||i).join(', ');
   let rows='';
   sets.forEach((songs,si)=>{
     rows+=`<div class="st">Set ${si+1} — ${songs.length} songs · ~${durMin(songs)} min</div>`;
@@ -1182,7 +1192,7 @@ function doExportPDF(){
   if(!sets.length){toast(tr('generate')+'...');return;}
   const title=document.getElementById('night-title').value||'Setlist';
   const date=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const iNames=instrs.map(i=>({'eg':'El.Guitar','ag':'Ac.Guitar','b':'Bass','dr':'Drums','k':'Keys','sx':'Sax','tp':'Trumpet','tb':'Trombone','vo':'Vocal','bv':'BV','pc':'Perc'}[i])||i).join(', ');
+  const iNames=instrs.map(i=>INSTR_DISPLAY_NAMES[i]||i).join(', ');
   // Build print window
   const w=window.open('','_blank','width=700,height=900');
   if(!w){toast('Pop-up blocked — allow pop-ups for PDF');return;}
@@ -1502,9 +1512,8 @@ document.querySelectorAll('.ai-count-btn').forEach(b=>{
   if(parseInt(b.dataset.n)===aiSongCount) b.classList.add('on');
 });
 // Initialize instrument chips based on selected instrs
-const CODE_TO_NAME={eg:'eguitar',ag:'aguitar',b:'bass',dr:'drums',k:'keys',sx:'sax',tp:'trumpet',tb:'trombone',vo:'vocal',bv:'backing',pc:'percussion'};
 instrs.forEach(code=>{
-  const name=CODE_TO_NAME[code];
+  const name=INSTR_CODE_TO_NAME[code];
   if(name){
     document.getElementById('chip-'+name)?.classList.add('on');
     document.getElementById('chip-'+name+'-m')?.classList.add('on');
@@ -1557,9 +1566,8 @@ function setActiveBottomNav(v){
 
 // Keep mobile drawer chip states in sync with desktop sidebar
 function syncMobileDrawer(){
-  const CODE_TO_NAME = {eg:'eguitar',ag:'aguitar',b:'bass',dr:'drums',k:'keys',sx:'sax',tp:'trumpet',tb:'trombone',vo:'vocal',bv:'backing',pc:'percussion'};
   // Sync instrument chips desktop → mobile
-  Object.entries(CODE_TO_NAME).forEach(([code, name])=>{
+  Object.entries(INSTR_CODE_TO_NAME).forEach(([code, name])=>{
     const mob = document.getElementById('chip-'+name+'-m');
     if(mob) mob.classList.toggle('on', instrs.includes(code));
   });
