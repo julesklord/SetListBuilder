@@ -934,8 +934,6 @@ Exact format: ${EXAMPLE}`;
       try {
         songs=JSON.parse(clean);
       } catch(e) {
-        console.error('Raw response:', raw);
-        console.error('Cleaned:', clean);
         throw new Error('Invalid JSON from Claude: ' + e.message);
       }
     } else if(apiProvider==='gemini'){
@@ -953,8 +951,6 @@ Exact format: ${EXAMPLE}`;
       try {
         songs=JSON.parse(clean);
       } catch(e) {
-        console.error('Raw response:', raw);
-        console.error('Cleaned:', clean);
         throw new Error('Invalid JSON from Gemini: ' + e.message);
       }
     } else if(apiProvider==='chatgpt'){
@@ -970,8 +966,6 @@ Exact format: ${EXAMPLE}`;
       try {
         songs=JSON.parse(clean);
       } catch(e) {
-        console.error('Raw response:', raw);
-        console.error('Cleaned:', clean);
         throw new Error('Invalid JSON from ChatGPT: ' + e.message);
       }
     }
