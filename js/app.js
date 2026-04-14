@@ -307,7 +307,7 @@ function toggleInstr(name){
 
 function setN(n) {
   numSets=n;
-  document.querySelectorAll('.sc-btn').forEach((b,i)=>b.classList.toggle('on',[2,3,4][i]===n));
+  document.querySelectorAll('.sc-btn').forEach(b=>b.classList.toggle('on',Number(b.textContent)===n));
 }
 
 // ─── GENERATE ────────────────────────────────────────────────────────────────
@@ -1577,10 +1577,8 @@ function syncMobileDrawer(){
   const mobileDur  = document.getElementById('dur-sel-m');
   if(desktopDur && mobileDur) mobileDur.value = desktopDur.value;
   // Sync set count buttons
-  [2,3,4].forEach(n=>{
-    document.querySelectorAll('.sc-btn').forEach((b,i)=>{
-      b.classList.toggle('on',[2,3,4][i]===numSets);
-    });
+  document.querySelectorAll('.sc-btn').forEach(b=>{
+    b.classList.toggle('on', Number(b.textContent)===numSets);
   });
 }
 
