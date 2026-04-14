@@ -770,9 +770,8 @@ function saveApiKey() {
   const val = document.getElementById('api-key-input').value.trim();
   if (!val || val.startsWith('••')) return;
   apiKeys[apiProvider] = val;
-  localStorage.setItem('fmg-api-key-'+apiProvider, val);
   initApiBar();
-  toast('API key saved');
+  toast('API key saved for this session');
 }
 
 // ─── NAVIGATION ─────────────────────────────────────────────────────────────
