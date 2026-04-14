@@ -2734,7 +2734,7 @@
       const val = document.getElementById('api-key-input').value.trim();
       if (!val || val.startsWith('••')) return;
       apiKeys[apiProvider] = val;
-      localStorage.setItem('fmg-api-key-' + apiProvider, val);
+      localStorage.removeItem('fmg-api-key-' + apiProvider);
       initApiBar();
       toast(tr('toast_api_saved'));
     }
