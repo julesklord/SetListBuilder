@@ -1620,3 +1620,12 @@ gotoView = function(v){
 document.addEventListener('DOMContentLoaded', function(){
   initMobileGenreSync();
 });
+// Conditionally export functions for testing in Node.js environment
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    cleanJSON,
+    encryptApiKey,
+    decryptApiKey,
+    parseCSVLine
+  };
+}

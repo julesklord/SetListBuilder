@@ -132,7 +132,47 @@ runTest('decryptApiKey handles legacy plaintext keys', () => {
 });
 console.groupEnd();
 
+
+// 4. Tests for parseCSVLine
+console.group('\n✅ Test Group: CSV Parsing');
+
+function assertArrayEqual(actual, expected, message) {
+  if (!Array.isArray(actual) || !Array.isArray(expected) || actual.length !== expected.length) {
+    throw new Error(`${message ? message + ': ' : ''}Expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
+  }
+  for (let i = 0; i < actual.length; i++) {
+    if (actual[i] !== expected[i]) {
+      throw new Error(`${message ? message + ': ' : ''}Expected element ${i} to be ${JSON.stringify(expected[i])} but got ${JSON.stringify(actual[i])}`);
+    }
+  }
+}
+
+runTest('Basic comma separated values', () => {
+  assertArrayEqual(parseCSVLine('Title,Artist,Genre'), ['Title', 'Artist', 'Genre']);
+});
+
+runTest('Handles values with spaces', () => {
+  assertArrayEqual(parseCSVLine('Song Title, The Artist, Pop Rock'), ['Song Title', 'The Artist', 'Pop Rock']);
+});
+
+runTest('Handles empty fields', () => {
+  assertArrayEqual(parseCSVLine('Title,,Genre'), ['Title', '', 'Genre']);
+  assertArrayEqual(parseCSVLine(',Artist,Genre'), ['', 'Artist', 'Genre']);
+  assertArrayEqual(parseCSVLine('Title,Artist,'), ['Title', 'Artist', '']);
+});
+
+runTest('Handles quoted fields containing commas', () => {
+  assertArrayEqual(parseCSVLine('Title,"Artist, The",Genre'), ['Title', 'Artist, The', 'Genre']);
+});
+
+runTest('Trims whitespace from unquoted fields', () => {
+  assertArrayEqual(parseCSVLine('  Title  ,  Artist  ,  Genre  '), ['Title', 'Artist', 'Genre']);
+});
+
+console.groupEnd();
+
 console.log(`\n=============================================`);
+
 console.log(`Test Summary: ${passed} passed, ${failed} failed`);
 console.log(`=============================================`);
 
