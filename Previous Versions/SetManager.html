@@ -724,15 +724,24 @@ function saveSong(){
   toast(editingId?'Canción actualizada':'Canción agregada');
 }
 
+function escapeHtml(value){
+  return String(value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
 function renderExport(){
-  const title=document.getElementById('night-title').value||'Setlist';
-  const date=new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const instrNames=activeInstrs.map(i=>({g:'Guitarra',p:'Piano',v:'Vientos'}[i])).join(', ');
-  let html=`<div class="export-night-title">${title}</div><div class="export-meta">${date} &nbsp;·&nbsp; ${instrNames} &nbsp;·&nbsp; ${numSets} sets</div>`;
+  const title=escapeHtml(document.getElementById('night-title').value||'Setlist');
+  const date=escapeHtml(new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'}));
+  const instrNames=escapeHtml(activeInstrs.map(i=>({g:'Guitarra',p:'Piano',v:'Vientos'}[i])).join(', '));
+  let html=`<div class="export-night-title">${title}</div><div class="export-meta">${date} &nbsp;·&nbsp; ${instrNames} &nbsp;·&nbsp; ${escapeHtml(numSets)} sets</div>`;
   currentSets.forEach((songs,si)=>{
     const totalMin=Math.round(songs.reduce((a,s)=>a+(s.bpm>90?3.5:s.bpm>70?4.5:5.5),0));
-    html+=`<div class="export-set"><div class="export-set-title">Set ${si+1} — ${songs.length} canciones · ~${totalMin} min</div>
-      ${songs.map((s,i)=>`<div class="export-song-row"><span class="en">${i+1}</span><span class="et">${s.title}</span><span class="ea">${s.artist}</span><span class="ek">${s.key}</span><span class="eb">${s.bpm}</span></div>`).join('')}
+    html+=`<div class="export-set"><div class="export-set-title">Set ${escapeHtml(si+1)} — ${escapeHtml(songs.length)} canciones · ~${escapeHtml(totalMin)} min</div>
+      ${songs.map((s,i)=>`<div class="export-song-row"><span class="en">${escapeHtml(i+1)}</span><span class="et">${escapeHtml(s.title)}</span><span class="ea">${escapeHtml(s.artist)}</span><span class="ek">${escapeHtml(s.key)}</span><span class="eb">${escapeHtml(s.bpm)}</span></div>`).join('')}
     </div>`;
   });
   document.getElementById('export-preview').innerHTML=html;
