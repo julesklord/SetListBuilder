@@ -24,7 +24,7 @@ yarn.lock
 # Data & Validation (Hidden from Public)
 tests/
 validation-script.js
-"Previous Versions/"
+Previous Versions/
 
 # Documentation Cleanup (Internal)
 docs/CORRECTION_PLAN.md
