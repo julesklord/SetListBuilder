@@ -1,4 +1,4 @@
-# 🎼 SetManager v1.0 - Official Release
+# SetManager v1.0 - Official Release
 
 **Fearlessly Media Group**
 
@@ -12,7 +12,7 @@ Balance energy curves with physical effort • No backend • 100% offline • M
 
 ---
 
-## ✨ Official Release v1.0
+## Official Release v1.0
 
 **Production Ready** — Data integrity, reliability, and performance optimizations.
 
