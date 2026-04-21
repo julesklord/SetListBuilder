@@ -126,7 +126,8 @@ function importCSV(ev){
       return;
     }
     const VALID_GENRES = ['Blues','Rock','Pop','Soul','Funk','R&B','Ballad','Reggae','Latin','Jazz','Country'];
-    const VALID_GENRES_LOWER = VALID_GENRES.map(g => g.toLowerCase());
+    const GENRE_MAP = Object.create(null);
+    VALID_GENRES.forEach(g => GENRE_MAP[g.toLowerCase()] = g);
     const INSTR_MAP = {g:'g',p:'p',v:'v',o:'o',guitar:'g',piano:'p',winds:'v',voice:'o'};
     let added = 0, skipped = 0;
     const existingSongs = new Set(pool.map(x => `${x.title.toLowerCase()}|${x.artist.toLowerCase()}`));
@@ -142,9 +143,7 @@ function importCSV(ev){
       const songKey = `${title.toLowerCase()}|${artist.toLowerCase()}`;
       if(existingSongs.has(songKey)){skipped++;continue;}
       const instr = (row.instr || 'g').split(',').map(x => INSTR_MAP[x.trim().toLowerCase()]).filter(Boolean);
-      const rowGenreLower = (row.genre || '').toLowerCase();
-      const genreIdx = VALID_GENRES_LOWER.indexOf(rowGenreLower);
-      const genre = genreIdx !== -1 ? VALID_GENRES[genreIdx] : 'Blues';
+      const genre = GENRE_MAP[(row.genre || '').toLowerCase()] || 'Blues';
       const song = {
         id: nextId++,
         title, artist, genre,
