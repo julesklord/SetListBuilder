@@ -369,7 +369,7 @@ function buildCandidateSets(mpSongs, free, songsPerSet, numSets, usedSet) {
     const hN = Math.max(0,last?Math.floor(rem*.4):Math.floor(rem*.25));
     const mN = Math.max(0,rem-lN-hN);
     let arr = [...setMp,...pick(low,lN,usedSet),...pick(mid,mN,usedSet),...pick(high,hN,usedSet)];
-    // FIX: fill gaps with fallback so every set reaches songsPerSet
+    // Fill any remaining slots with unused songs from the fallback pool
     if(arr.length<songsPerSet) arr=[...arr,...pick(fb,songsPerSet-arr.length,usedSet)];
     candidates.push(noConsecKey(arr));
   }
