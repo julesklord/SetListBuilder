@@ -417,7 +417,49 @@ let nextId = (() => {
 let aiTab = 'lookup';
 
 // ─── SECURITY ────────────────────────────────────────────────────────────────
-const CRYPTO_KEY = "FMG_V2_PROD_KEY_2024";
+const CRYPTO_KEY = (() => {
+  const LEGACY_KEY = "FMG_V2_PROD_KEY_2024";
+  let key = localStorage.getItem('fmg-crypto-key');
+
+  if (!key) {
+    // Generate new unique key for this user/browser
+    try {
+      const array = new Uint8Array(32);
+      window.crypto.getRandomValues(array);
+      key = Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch (e) {
+      // Fallback if crypto.getRandomValues fails
+      key = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    }
+
+    // Migration: Decrypt keys using legacy hardcoded key and re-encrypt with new key
+    ['claude', 'gemini', 'chatgpt'].forEach(provider => {
+      const storageKey = 'fmg-api-key-' + provider;
+      const val = localStorage.getItem(storageKey);
+      if (val && val.startsWith('ENC:')) {
+        try {
+          const decoded = atob(val.slice(4));
+          let decrypted = '';
+          for (let i = 0; i < decoded.length; i++) {
+            decrypted += String.fromCharCode(decoded.charCodeAt(i) ^ LEGACY_KEY.charCodeAt(i % LEGACY_KEY.length));
+          }
+          if (decrypted) {
+            let newlyEncrypted = '';
+            for (let i = 0; i < decrypted.length; i++) {
+              newlyEncrypted += String.fromCharCode(decrypted.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+            }
+            localStorage.setItem(storageKey, 'ENC:' + btoa(newlyEncrypted));
+          }
+        } catch (err) {
+          console.warn('API key migration failed:', err);
+        }
+      }
+    });
+
+    localStorage.setItem('fmg-crypto-key', key);
+  }
+  return key;
+})();
 
 function encryptApiKey(plaintext) {
   if (!plaintext) return '';
