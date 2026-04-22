@@ -3115,14 +3115,22 @@
     }
 
     // ─── EXPORT SETLIST ──────────────────────────────────────────────────────────
+    function escHtml(v) {
+      return String(v)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
     function renderExport() {
       const title = document.getElementById('night-title').value || 'Setlist';
       const date = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       const iNames = instrs.map(i => ({ g: 'Guitar', p: 'Piano', v: 'Winds' }[i])).join(', ');
-      let html = `<div class="exp-night">${title}</div><div class="exp-meta">${date} &nbsp;·&nbsp; ${iNames} &nbsp;·&nbsp; ${numSets} sets</div>`;
+      let html = `<div class="exp-night">${escHtml(title)}</div><div class="exp-meta">${escHtml(date)} &nbsp;·&nbsp; ${escHtml(iNames)} &nbsp;·&nbsp; ${numSets} sets</div>`;
       sets.forEach((songs, si) => {
         html += `<div class="exp-set"><div class="exp-set-title">Set ${si + 1} — ${songs.length} songs · ~${durMin(songs)} min</div>
-      ${songs.map((s, i) => `<div class="exp-row"><span class="en">${i + 1}</span><span class="et">${s.title}</span><span class="ea">${s.artist}</span><span class="ek">${s.key}</span><span class="eb">${s.bpm}</span></div>`).join('')}
+      ${songs.map((s, i) => `<div class="exp-row"><span class="en">${i + 1}</span><span class="et">${escHtml(s.title)}</span><span class="ea">${escHtml(s.artist)}</span><span class="ek">${escHtml(s.key)}</span><span class="eb">${escHtml(s.bpm)}</span></div>`).join('')}
     </div>`;
       });
       document.getElementById('export-preview').innerHTML = html;
