@@ -318,8 +318,8 @@ runTest('Defaults to ["g"] if no valid instruments provided', () => {
   // If instr: ['invalid'], filter returns [], but .length check was on ORIGINAL s.instr.
   // Wait: s.instr.length is 1. filter returns []. So it returns [].
   // This looks like a bug in validateSong implementation if it wants to ensure at least one valid instrument.
-  // But I must test the CURRENT code.
-  assertArrayEqual(validateSong({instr: ['invalid']}).instr, []);
+  // Fix: Check filtered array length instead.
+  assertArrayEqual(validateSong({instr: ['invalid']}).instr, ['g']);
   // If instr: 'not-an-array', Array.isArray is false, returns ['g']
   assertArrayEqual(validateSong({instr: 'not-an-array'}).instr, ['g']);
 });
