@@ -1623,6 +1623,7 @@ if (typeof module !== 'undefined' && module.exports) {
     cleanJSON,
     encryptApiKey,
     decryptApiKey,
-    parseCSVLine
+    parseCSVLine,
+    normalizeInstr
   };
 }

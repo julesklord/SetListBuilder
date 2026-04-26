@@ -333,6 +333,58 @@ runTest('Truncates prog field to 40 characters', () => {
 
 console.groupEnd();
 
+// 6. Tests for normalizeInstr
+console.group('\n✅ Test Group: normalizeInstr');
+
+runTest('Returns ["g"] for non-array input', () => {
+  assertArrayEqual(normalizeInstr(null), ['g']);
+  assertArrayEqual(normalizeInstr(undefined), ['g']);
+  assertArrayEqual(normalizeInstr('guitar'), ['g']);
+  assertArrayEqual(normalizeInstr(123), ['g']);
+  assertArrayEqual(normalizeInstr({}), ['g']);
+});
+
+runTest('Returns ["g"] for empty array', () => {
+  assertArrayEqual(normalizeInstr([]), ['g']);
+});
+
+runTest('Maps instrument names to internal codes', () => {
+  assertArrayEqual(normalizeInstr(['guitar']), ['g']);
+  assertArrayEqual(normalizeInstr(['guitarra']), ['g']);
+  assertArrayEqual(normalizeInstr(['piano', 'keyboards', 'keys']), ['p']);
+  assertArrayEqual(normalizeInstr(['winds', 'wind', 'brass', 'horns']), ['v']);
+  assertArrayEqual(normalizeInstr(['voice', 'vocals', 'vocal', 'voz', 'singing']), ['o']);
+});
+
+runTest('Accepts existing codes', () => {
+  assertArrayEqual(normalizeInstr(['g', 'p', 'v', 'o']), ['g', 'p', 'v', 'o']);
+});
+
+runTest('Handles case-insensitivity and trimming', () => {
+  assertArrayEqual(normalizeInstr(['  GUITAR  ', 'Vocals ']), ['g', 'o']);
+});
+
+runTest('Removes duplicates in the resulting codes', () => {
+  assertArrayEqual(normalizeInstr(['guitar', 'guitarra', 'g']), ['g']);
+  assertArrayEqual(normalizeInstr(['piano', 'keys', 'p', 'vocals', 'o']), ['p', 'o']);
+});
+
+runTest('Filters out invalid instruments', () => {
+  assertArrayEqual(normalizeInstr(['guitar', 'invalid-instrument', 'piano']), ['g', 'p']);
+});
+
+runTest('Returns ["g"] if all instruments in array are invalid', () => {
+  assertArrayEqual(normalizeInstr(['invalid1', 'invalid2']), ['g']);
+});
+
+runTest('Handles non-string elements by converting to string', () => {
+  // Map expects strings. String(null) is "null", String(1) is "1".
+  // None of these are in the MAP, so it should filter them out and return ['g']
+  assertArrayEqual(normalizeInstr([1, null, true]), ['g']);
+});
+
+console.groupEnd();
+
 console.log(`\n=============================================`);
 console.log(`Test Summary: ${passed} passed, ${failed} failed`);
 console.log(`=============================================`);
