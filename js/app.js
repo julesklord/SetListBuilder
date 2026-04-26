@@ -523,6 +523,7 @@ function renderSets(){
     area.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-family:var(--font-mono);font-size:12px;flex-direction:column;gap:8px;"><div>No sets generated yet.</div><div style="font-size:10px;">Click Generate Setlist in the sidebar.</div></div>';
     return;
   }
+  const poolOptions = pool.map(s=>`<option value="${esc(s.id)}">${esc(s.title)} — ${esc(s.artist)}</option>`).join('');
   sets.forEach((songs,si)=>{
     const ep=Math.round((songs.reduce((a,s)=>a+s.energy,0)/(songs.length*5||1))*100);
     const card=document.createElement('div');
@@ -537,7 +538,7 @@ function renderSets(){
       <div class="add-row">
         <select class="add-sel" id="as-${esc(si)}">
           <option value="">+ Add song…</option>
-          ${pool.map(s=>`<option value="${esc(s.id)}">${esc(s.title)} — ${esc(s.artist)}</option>`).join('')}
+          ${poolOptions}
         </select>
         <button class="add-btn" onclick="addToSet(${esc(si)})">Add</button>
       </div>`;
