@@ -1,48 +1,43 @@
-# SetManager v1.0 - Official Release
-
-**Fearlessly Media Group**
-
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=flat-square)](https://github.com/julesklord/SetListBuilder)  [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](LICENSE)  [![Status](https://img.shields.io/badge/status-production%20ready-success.svg?style=flat-square)]()  [![JavaScript](https://img.shields.io/badge/javascript-vanilla-yellow.svg?style=flat-square)]()  [![No Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg?style=flat-square)]()
-
-**Intelligent setlist generator for live musicians**
-
-Balance energy curves with physical effort • No backend • 100% offline • Multi-language • Production hardened
-
-[Quick Start](#quick-start) · [Features](#key-features) · [Release Notes](RELEASE_NOTES.md) · [Testing](TESTING_GUIDE.md) · [Docs](docs/GUIDE.md)
-
----
-
-## Official Release v1.0
-
-**Production Ready** — Data integrity, reliability, and performance optimizations.
-
-- ✅ **PWA Support** — Full offline functionality and installable experience
-- ✅ **SEO Optimized** — Professional metadata and social sharing cards
-- ✅ **Schema Validation** — Automatic recovery from corrupted data
-- ✅ **Storage Management** — Intelligent quota monitoring with auto-cleanup
-- ✅ **Advanced Algorithm** — 3-pass energy optimization + 10-iteration balancing
-- ✅ **Memory Efficient** — Event delegation (95% listener reduction)
-
-[See Full Release Notes →](RELEASE_NOTES.md)
+<table border="0">
+  <tr>
+    <td valign="top">
+      <h1>SetManager</h1>
+      <p><strong>Intelligent Setlist Generator for Live Musicians</strong><br/>
+      <em>Balance energy curves with physical effort. No backend, 100% offline, multi-language.</em></p>
+      <p>
+        <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License MIT"></a>
+        <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="Version">
+        <img src="https://img.shields.io/badge/status-production%20ready-success" alt="Status">
+        <img src="https://img.shields.io/badge/javascript-vanilla-yellow" alt="JS">
+      </p>
+    </td>
+  </tr>
+</table>
 
 ---
 
-## Key Features
+## ⚡ Superpowers
 
-- **336 curated songs** — 24 genres with verified BPM, key, chord progressions
-- **11 band instruments** — guitar, bass, drums, keys, winds, vocals, percussion + effort weights
-- **Intelligent algorithm** — 50/50 balance: energy curves + physical effort distribution
-- **Must Play locking** — guarantee specific songs in every setlist
-- **Multi-format export** — PDF, HTML, JSON, plain text
-- **Multi-language** — Spanish 🇪🇸, English 🇬🇧, Português 🇧🇷, Русский 🇷🇺
-- **Fully responsive** — desktop, tablet, mobile with native bottom nav
-- **100% offline** — all data in localStorage, no server needed
-- **Private & secure** — no account, no tracking, no cloud
-- **Production Hardened** — comprehensive error handling and logging
+- **336 curated songs** — 24 genres with verified BPM, key, and chord progressions.
+- **Intelligent Algorithm** — 3-pass energy optimization + physical effort balancing.
+- **PWA Ready** — Full offline functionality and installable experience.
+- **Data Sovereignty** — 100% browser-based persistence in `localStorage`. No accounts, no cloud.
+- **Multi-language** — Full support for English, Spanish, Portuguese, and Russian.
 
 ---
 
-## Quick Start
+## 📖 Documentation
+
+For a comprehensive technical breakdown, architectural ADRs, and operational guides, visit our official **[Wiki](docs/wiki/INDEX.md)**.
+
+*   **[Technical Architecture](docs/wiki/FMG_Setlist_Builder_Docs.md)**
+*   **[User Guide](docs/wiki/GUIDE.md)**
+*   **[Deployment Guide](docs/wiki/DEPLOYMENT.md)**
+*   **[Agent SOP](docs/AGENT.md)**
+
+---
+
+## 🚀 Quick Start
 
 ### Online (No Installation)
 [**→ Launch App (Coming Soon)**](https://julesklord.github.io/SetListBuilder)
