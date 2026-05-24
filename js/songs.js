@@ -360,9 +360,11 @@ function validateSong(s) {
     prog: String(s.prog || 'I-IV-V').trim().slice(0, 40),
     energy: Math.min(5, Math.max(1, parseInt(s.energy) || 3)),
     effort: Math.min(5, Math.max(1, parseInt(s.effort) || 2)),
-    instr: Array.isArray(s.instr) && s.instr.length 
-      ? s.instr.filter(i => ['eg','ag','b','dr','k','sx','tp','tb','vo','bv','pc'].includes(i))
-      : ['g'],
+    instr: (() => {
+      if (!Array.isArray(s.instr)) return ['g'];
+      const filtered = s.instr.filter(i => ['eg','ag','b','dr','k','sx','tp','tb','vo','bv','pc'].includes(i));
+      return filtered.length > 0 ? filtered : ['g'];
+    })(),
     note: String(s.note || '').trim()
   };
 }
